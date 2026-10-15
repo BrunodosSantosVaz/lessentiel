@@ -1,0 +1,41 @@
+{
+  "name": "leitor-limpo",
+  "version": "0.1.0",
+  "description": "Projeto organizado pelo Big Bang. O produto, a stack e as funcionalidades são definidos e documentados na Fundação; este README não declara entregas que ainda não ocorreram.",
+  "keywords": [],
+  "license": "MIT",
+  "author": "",
+  "directories": {
+    "test": "tests"
+  },
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "dev": "wxt",
+    "build": "node scripts/build.mjs",
+    "package": "wxt zip",
+    "test:acceptance": "playwright test",
+    "test:architecture": "node scripts/test-architecture.mjs",
+    "test:coverage": "node scripts/coverage.mjs",
+    "lint": "oxlint . && npm run format:check",
+    "typecheck": "tsc --noEmit",
+    "format": "oxfmt .oxlintrc.json .bigbang-docs.json package.json package-lock.json \"*.ts\" \"*.mjs\" scripts tests src entrypoints --no-error-on-unmatched-pattern",
+    "format:check": "oxfmt --check .oxlintrc.json .bigbang-docs.json package.json package-lock.json \"*.ts\" \"*.mjs\" scripts tests src entrypoints --no-error-on-unmatched-pattern"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "dompurify": "^3.4.17",
+    "pdfjs-dist": "^6.4.299"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^4.1.11",
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.88.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11",
+    "wxt": "^0.21.4"
+  }
+}

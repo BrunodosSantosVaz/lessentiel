@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "commit": "ced40c31054748c5df06b620b7700aafff7c153d",
+    "base": "ced40c31054748c5df06b620b7700aafff7c153d",
+    "commit": "23d02fc94c1671fa8b45911ede58fb47cdf31300",
     "branch": "master",
-    "proposta": "bigbang/proposta-13-f5-docs"
+    "proposta": "bigbang/proposta-16-lint-typescript"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -65,27 +65,19 @@
   },
   "codigo": {
     "commit": "37ec74a3db5477be662dd701316569838637a668",
-    "raizes": [
-      "prototype/"
-    ],
+    "raizes": ["prototype/"],
     "excluir": []
   },
   "funcionalidades": [
     {
       "id": "RF-0001",
       "pagina": "Funcionalidades",
-      "requisitos": [
-        "RF-0001"
-      ],
-      "fontes": [
-        "prototype/index.html"
-      ],
+      "requisitos": ["RF-0001"],
+      "fontes": ["prototype/index.html"],
       "hashes": {
         "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
       },
-      "testes": [
-        "tests/prototype.spec.ts:smoke"
-      ]
+      "testes": ["tests/prototype.spec.ts:smoke"]
     }
   ],
   "arquivos_funcionais": [],
