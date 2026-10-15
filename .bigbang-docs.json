@@ -3,17 +3,176 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "commit": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "branch": "master"
+    "base": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
+    "commit": "fab03c741a15c1841b75a2a18d9973bd5dc2ec8f",
+    "branch": "master",
+    "proposta": "bigbang/proposta-20-leitor-pdf-local"
   },
-  "paginas": {},
-  "categorias": {},
+  "paginas": {
+    "PRODUTO.md": "PRODUTO",
+    "STACK.md": "STACK",
+    "DESIGN.md": "DESIGN",
+    "docs/decisoes/ADR-0001-stack.md": "docs-decisoes-ADR-0001-stack",
+    "docs/pesquisa/f2-stack.md": "docs-pesquisa-f2-stack",
+    "docs/arquitetura/C4.md": "docs-arquitetura-C4",
+    "docs/negocio/regras/RN-0001-extracao.md": "RN-0001-Extracao",
+    "docs/negocio/regras/RN-0002-controles.md": "RN-0002-Controles",
+    "docs/negocio/regras/RN-0003-pdf-preferencias.md": "RN-0003-PDF-e-preferencias",
+    "docs/negocio/regras/RN-0004-idiomas-pacote.md": "RN-0004-Idiomas-e-pacote",
+    "docs/negocio/regras/RN-0099-prototipo.md": "RN-0099-Prototipo",
+    "docs/negocio/requisitos.md": "Requisitos",
+    "docs/negocio/funcionalidades.md": "Funcionalidades",
+    "docs/uso-e-instalacao.md": "Uso-e-instalacao",
+    "docs/referencias.md": "Referencias",
+    "docs/seguranca.md": "Seguranca-e-privacidade",
+    "docs/operacao.md": "Operacao",
+    "docs/historico.md": "Historico"
+  },
+  "categorias": {
+    "produto": {
+      "pagina": "PRODUTO"
+    },
+    "tecnologia": {
+      "pagina": "STACK"
+    },
+    "arquitetura": {
+      "pagina": "docs-arquitetura-C4"
+    },
+    "design": {
+      "pagina": "DESIGN"
+    },
+    "requisitos": {
+      "pagina": "Requisitos"
+    },
+    "funcionalidades": {
+      "pagina": "Funcionalidades"
+    },
+    "uso": {
+      "pagina": "Uso-e-instalacao"
+    },
+    "referencia": {
+      "pagina": "Referencias"
+    },
+    "seguranca": {
+      "pagina": "Seguranca-e-privacidade"
+    },
+    "operacao": {
+      "pagina": "Operacao"
+    },
+    "historico": {
+      "pagina": "Historico"
+    }
+  },
   "codigo": {
-    "commit": "2fc070d6d4ef285a77709c5e39c0eac0ed160b44",
-    "raizes": [],
+    "commit": "e791e9d3f1067c6283bf6de6b24a9d7e1c231a90",
+    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
-  "funcionalidades": [],
-  "arquivos_funcionais": []
+  "funcionalidades": [
+    {
+      "id": "RF-0001",
+      "pagina": "Funcionalidades",
+      "requisitos": ["RF-0001"],
+      "fontes": ["prototype/index.html"],
+      "hashes": {
+        "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
+      },
+      "testes": ["tests/prototype.spec.ts:smoke"]
+    },
+    {
+      "id": "RF-0002",
+      "pagina": "Funcionalidades",
+      "requisitos": ["RF-0002"],
+      "fontes": [
+        "entrypoints/background.ts",
+        "entrypoints/options/index.html",
+        "entrypoints/options/main.ts",
+        "entrypoints/pdf/index.html",
+        "entrypoints/pdf/main.ts",
+        "entrypoints/popup/index.html",
+        "entrypoints/popup/main.ts",
+        "entrypoints/reader.content.ts",
+        "flags.toml",
+        "package.json",
+        "public/_locales/en/messages.json",
+        "public/_locales/es/messages.json",
+        "public/_locales/pt_BR/messages.json",
+        "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt",
+        "public/fonts/Lexend-OFL.txt",
+        "public/fonts/Literata-OFL.txt",
+        "public/fonts/atkinson-hyperlegible-next-latin-ext.woff2",
+        "public/fonts/atkinson-hyperlegible-next-latin.woff2",
+        "public/fonts/lexend-latin-ext.woff2",
+        "public/fonts/lexend-latin.woff2",
+        "public/fonts/literata-latin-ext.woff2",
+        "public/fonts/literata-latin.woff2",
+        "public/icon-128.png",
+        "public/icon-16.png",
+        "public/icon-32.png",
+        "public/icon-48.png",
+        "public/icon.svg",
+        "scripts/package-test.mjs",
+        "src/platform/assets.d.ts",
+        "src/platform/extract-article.ts",
+        "src/platform/feature-flag.d.ts",
+        "src/platform/reader-panel.ts",
+        "wxt.config.ts"
+      ],
+      "hashes": {
+        "entrypoints/background.ts": "ddbeedd2ee320a9b86525cb7677d2c6d388aafeb255a0c7217e200de7927ac75",
+        "entrypoints/options/index.html": "de33fbe9d91615b025a6e61c1d247f737a85bab4bbbcad07d74dbae13a803d0b",
+        "entrypoints/options/main.ts": "fae170c3067ca0b834041741eae1ab331518cd894ad1ab446ffab4873670e70e",
+        "entrypoints/pdf/index.html": "dde642e6b2649d6565e20241264f00444c97467427f6b8c884822a3b44d46668",
+        "entrypoints/pdf/main.ts": "383e8799a507613d5d714d710659ccc0360e6303b33f40d247004e07f2ec21db",
+        "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
+        "entrypoints/popup/main.ts": "1312d8c1db59c065624621971eea34ab4dc2037a1f5249a1d6b1f28aa91bc99f",
+        "entrypoints/reader.content.ts": "6a22d5dee3889aebd0ba8039d2c780b9363e9a795a1453a0658a0756d2628c89",
+        "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
+        "package.json": "c97824d2c4ee84eb3ab7c98b120290457043a08d25663664d3a632ce73e2d009",
+        "public/_locales/en/messages.json": "d700a5263a3e0cc170b2890776501fa2a3dff924044a9cb2a84c22d7c8ba3b18",
+        "public/_locales/es/messages.json": "227ea2149dac8133a993a3cb6111a1e49fe7dc6ceba6c81928a1ea721755afae",
+        "public/_locales/pt_BR/messages.json": "2c8f10fba0d9a9efe9fa3708b8bd50381cd4bad4f0c18e964725547f5f9720de",
+        "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
+        "public/fonts/Lexend-OFL.txt": "5da8505887d0fa7fe963445fd58852707fda34adfeb65af25c99d152bab285bd",
+        "public/fonts/Literata-OFL.txt": "8742963604cd89dc81437811a850018fc03b2bfad686d7422c8235967c87614e",
+        "public/fonts/atkinson-hyperlegible-next-latin-ext.woff2": "7dae0c6c66af1aec82e096186aeb1f0e6fa36ab8061ed65422f2b7daf4dd93f3",
+        "public/fonts/atkinson-hyperlegible-next-latin.woff2": "18b2a1a39a2fa298b0ba5390aca68462669826c90925656f1c1f6796e0e1bbaf",
+        "public/fonts/lexend-latin-ext.woff2": "b5d815d42066da25e5894bdfe47a415e1f79ef436486e3f843b475806d2e613c",
+        "public/fonts/lexend-latin.woff2": "b7e7538f59bff1812841d7627f8e49e70fe86438f9f7b397a028c0d05301c874",
+        "public/fonts/literata-latin-ext.woff2": "334990a82ce173e5169f5f0946c679f7d8c1ee8608eb29b56f85284802c712c9",
+        "public/fonts/literata-latin.woff2": "7478e1920209e51dcc235d151d2056a0a6e3c54b4436f7030d256f231fe09b58",
+        "public/icon-128.png": "4901bd5f98b5eb9ba797ccc7aaec61d43e21b50f0523ef6e83a23afc29236ad5",
+        "public/icon-16.png": "62f37974458896d9b227d396cf76f8e2904edc41a355df5eeb15e08bde4c3e4e",
+        "public/icon-32.png": "093d1e2d1d033f2887be1d4805f9d462670c49071f2f8c965c09ce233f59263f",
+        "public/icon-48.png": "0fbddb62901b95138ad4d3649ccfbf241a6f65d0de85ef77a1abbfe23822bb5b",
+        "public/icon.svg": "0c1c45f9fb3ff56c4857ece09d606daba6a7f9a25fe2aea88175ce036640c03d",
+        "scripts/package-test.mjs": "c750b1c5c9458835c43467965f408b652c13d0122321cf13307f5108db9edf08",
+        "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
+        "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
+        "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
+        "src/platform/reader-panel.ts": "3fe2464d0c2218393f05e33a3646904e9755323823b7225b17f3b803f25fc67f",
+        "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967"
+      },
+      "testes": [
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-02",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-03",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-04",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-05",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-06",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-07",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-08",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09"
+      ]
+    }
+  ],
+  "arquivos_funcionais": [],
+  "requisitos": {
+    "RF-0001": {
+      "pagina": "Funcionalidades"
+    },
+    "RF-0002": {
+      "pagina": "Requisitos"
+    }
+  }
 }

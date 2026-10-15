@@ -1,0 +1,105 @@
+import * as pdfjs from "pdfjs-dist";
+import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import { browser } from "wxt/browser";
+import { toggleReader } from "../../src/platform/reader-panel";
+
+pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+const picker = document.querySelector<HTMLInputElement>("#pdf-file")!;
+const button = document.querySelector<HTMLButtonElement>("#open-pdf")!;
+const status = document.querySelector<HTMLElement>("#status")!;
+const messages = {
+  "pt-BR": [
+    "Abrir PDF local",
+    "O PDF excede o limite de 100 MB.",
+    "O PDF excede o limite de 1000 páginas.",
+    "Lendo o PDF neste dispositivo…",
+    "Este PDF está sem camada de texto selecionável. PDFs digitalizados precisam de OCR.",
+    "página(s) lida(s) localmente.",
+    "Não foi possível ler este PDF. Verifique se o arquivo é válido.",
+    "A leitura avançada ainda não está liberada neste build.",
+  ],
+  en: [
+    "Open local PDF",
+    "This PDF exceeds the 100 MB limit.",
+    "This PDF exceeds the 1,000-page limit.",
+    "Reading the PDF on this device…",
+    "This PDF has no selectable text layer. Scanned PDFs require OCR.",
+    "page(s) read locally.",
+    "Could not read this PDF. Check that the file is valid.",
+    "Advanced reading is not enabled in this build yet.",
+  ],
+  es: [
+    "Abrir PDF local",
+    "El PDF supera el límite de 100 MB.",
+    "El PDF supera el límite de 1.000 páginas.",
+    "Leyendo el PDF en este dispositivo…",
+    "Este PDF no tiene texto seleccionable. Los PDF escaneados necesitan OCR.",
+    "página(s) leída(s) localmente.",
+    "No se pudo leer el PDF. Comprueba que el archivo sea válido.",
+    "La lectura avanzada aún no está habilitada en esta versión.",
+  ],
+} as const;
+let strings: readonly string[] = messages["pt-BR"];
+void browser.storage.local.get("readerPreferences").then(({ readerPreferences }) => {
+  const lang = (readerPreferences as { language?: string } | undefined)?.language;
+  strings = messages[lang === "en" || lang === "es" ? lang : "pt-BR"];
+  document.querySelector<HTMLButtonElement>("#open-pdf")!.textContent = strings[0];
+  document.documentElement.lang = lang ?? "pt-BR";
+  if (!__READER_ENABLED__) status.textContent = strings[7];
+});
+if (!__READER_ENABLED__) {
+  button.hidden = true;
+  status.textContent = strings[7];
+}
+button.addEventListener("click", () => {
+  if (__READER_ENABLED__) window.setTimeout(() => picker.click(), 40);
+});
+picker.addEventListener("change", async () => {
+  if (!__READER_ENABLED__) return;
+  const file = picker.files?.[0];
+  if (!file) return;
+  if (file.size > 100 * 1024 * 1024) {
+    status.textContent = strings[1];
+    return;
+  }
+  button.disabled = true;
+  status.textContent = strings[3];
+  try {
+    const document = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+    if (document.numPages > 1000) {
+      status.textContent = strings[2];
+      return;
+    }
+    const pages: string[] = [];
+    for (let number = 1; number <= document.numPages; number += 1) {
+      const page = await document.getPage(number);
+      const content = await page.getTextContent();
+      pages.push(
+        content.items
+          .map((item) => ("str" in item ? item.str : ""))
+          .join(" ")
+          .trim(),
+      );
+    }
+    const text = pages.filter(Boolean).join("\n\n");
+    if (!text) status.textContent = strings[4];
+    else {
+      const content = window.document.createElement("div");
+      for (const paragraph of text.split(/\n\n+/)) {
+        const element = window.document.createElement("p");
+        element.textContent = paragraph;
+        content.append(element);
+      }
+      status.textContent = `${document.numPages} ${strings[5]}`;
+      await toggleReader({ title: file.name, byline: null, content: content.innerHTML }, (close) => {
+        close();
+        window.setTimeout(() => picker.click(), 40);
+      });
+    }
+  } catch {
+    status.textContent = strings[6];
+  } finally {
+    button.disabled = false;
+    picker.value = "";
+  }
+});
