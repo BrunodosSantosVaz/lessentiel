@@ -61,6 +61,7 @@ export const readerStyle = `
     .toolbar { padding-inline: var(--espaco-4); }
     .controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espaco-2) var(--espaco-3); }
     .theme-group { grid-column: 1 / -1; }
+    .theme-group button { padding-inline: var(--espaco-2); }
     .group label, .group select { max-width: 100%; width: 100%; }
     .group input[type="range"] { width: 100%; }
     .close-reader { justify-self: end; }

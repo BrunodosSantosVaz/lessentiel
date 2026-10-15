@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "fab03c741a15c1841b75a2a18d9973bd5dc2ec8f",
-    "commit": "dceb197354bc6bbc96f4e686e1e654e3028d386d",
+    "base": "dceb197354bc6bbc96f4e686e1e654e3028d386d",
+    "commit": "c264d0a63a6cf8d956696b312f05ab351816ba12",
     "branch": "master",
-    "proposta": "bigbang/proposta-26-leitura-componentes"
+    "proposta": "bigbang/proposta-30-tema-automatico"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -67,7 +67,7 @@
     }
   },
   "codigo": {
-    "commit": "f8b588a4adb8ae515973cd123bb349e6363d69b5",
+    "commit": "ebb27db73882f3bb83f422a5850f7ecd14ab33a3",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -154,8 +154,8 @@
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "a54b466a58043ce997cda982fecdf00e64e7aa1c3ea2c8a0238d777392e6c840",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
-        "src/platform/reader-panel.ts": "623d6af930c0140b50492a82d87e06b4a6b148991f6476851705e87184c2fd1f",
-        "src/platform/reader-style.ts": "fa4103006dcaa7b32d787786476d1c02c2cd05fe4e943b8fd005e2700d38bc82",
+        "src/platform/reader-panel.ts": "0fa740b29d1e9aaa11f71c85f89851a797416ade74b8ce2d2262010eddebaea8",
+        "src/platform/reader-style.ts": "8c99e8c00a020911b059d54f72e2267a27253e9826464932e87a2f844ee18438",
         "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967"
       },
       "testes": [
@@ -168,7 +168,8 @@
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-07",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-08",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09",
-        "tests/regression/reader.spec.ts:#26"
+        "tests/regression/reader.spec.ts:#26",
+        "tests/regression/reader.spec.ts:#30"
       ]
     }
   ],
