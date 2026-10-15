@@ -64,7 +64,7 @@
     }
   },
   "codigo": {
-    "commit": "2b60880e405968fa85e7dac85c75e372a6d8fd53",
+    "commit": "ceb1d0467ffe137b53b87e39627bbfef39cd131c",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -119,16 +119,19 @@
         "wxt.config.ts"
       ],
       "hashes": {
-        "entrypoints/background.ts": "57a4806d18215fed8ece09628d751fb80b59299d4358881d1a90c491cd47047a",
+        "entrypoints/background.ts": "ddbeedd2ee320a9b86525cb7677d2c6d388aafeb255a0c7217e200de7927ac75",
         "entrypoints/options/index.html": "6f931a2882e3ca0efb57051cf7de6f514ce021c266a5d685082fd5bc64f26a07",
-        "entrypoints/options/main.ts": "e4dde98dd5df1fd6e56a877956799f130752aefcfdb23493b13799d2a52586d9",
+        "entrypoints/options/main.ts": "993c345f0a534b3732b91c25faf9c892799a2216daeb24dac41266d565b2e26c",
         "entrypoints/pdf/index.html": "dde642e6b2649d6565e20241264f00444c97467427f6b8c884822a3b44d46668",
-        "entrypoints/pdf/main.ts": "eff8bcc3b5473bef27bf4ecdc5c3c099d6b55e40c94dbcbf38df806b08f8c52d",
+        "entrypoints/pdf/main.ts": "383e8799a507613d5d714d710659ccc0360e6303b33f40d247004e07f2ec21db",
         "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
-        "entrypoints/popup/main.ts": "c338926c8315f66ea4e81e4cd6fb042e12eb84ad2e3e820dcb73467fbb32942d",
+        "entrypoints/popup/main.ts": "b8b3165137f4cc92dafa2f0ece7d83dfdb6ee9080cfd13f2ac553b9d55ae67ed",
         "entrypoints/reader.content.ts": "6a22d5dee3889aebd0ba8039d2c780b9363e9a795a1453a0658a0756d2628c89",
         "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
         "package.json": "c97824d2c4ee84eb3ab7c98b120290457043a08d25663664d3a632ce73e2d009",
+        "public/_locales/en/messages.json": "d700a5263a3e0cc170b2890776501fa2a3dff924044a9cb2a84c22d7c8ba3b18",
+        "public/_locales/es/messages.json": "227ea2149dac8133a993a3cb6111a1e49fe7dc6ceba6c81928a1ea721755afae",
+        "public/_locales/pt_BR/messages.json": "2c8f10fba0d9a9efe9fa3708b8bd50381cd4bad4f0c18e964725547f5f9720de",
         "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
         "public/fonts/Lexend-OFL.txt": "5da8505887d0fa7fe963445fd58852707fda34adfeb65af25c99d152bab285bd",
         "public/fonts/Literata-OFL.txt": "8742963604cd89dc81437811a850018fc03b2bfad686d7422c8235967c87614e",
@@ -148,7 +151,7 @@
         "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
         "src/platform/reader-panel.ts": "3fe2464d0c2218393f05e33a3646904e9755323823b7225b17f3b803f25fc67f",
-        "wxt.config.ts": "5ef1c7d487303ecedad4897f4475fba2af63204f09dcaa088405baf3df82a70a"
+        "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
