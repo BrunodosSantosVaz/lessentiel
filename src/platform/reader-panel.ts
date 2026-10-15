@@ -20,20 +20,22 @@ export function closeActiveReader(): boolean {
 type Preferences = {
   language: "pt-BR" | "en" | "es";
   theme: "light" | "sepia" | "dark" | "black" | "auto";
-  font: "Literata" | "Atkinson Hyperlegible Next" | "Lexend";
+  font: "Georgia" | "Literata" | "Atkinson Hyperlegible Next" | "Lexend";
   fontSize: number;
   width: number;
+  widthMode: "custom" | "full";
   lineHeight: number;
-  alignment: "left" | "justify";
+  alignment: "left" | "center" | "justify";
   speed: number;
 };
 
 const defaults: Preferences = {
   language: "pt-BR",
   theme: "light",
-  font: "Literata",
+  font: "Georgia",
   fontSize: 20,
   width: 760,
+  widthMode: "custom",
   lineHeight: 1.65,
   alignment: "left",
   speed: 3,
@@ -42,7 +44,7 @@ const defaults: Preferences = {
 async function loadPreferences(): Promise<Preferences> {
   try {
     const stored = (await browser.storage.local.get(preferenceKey))[preferenceKey] as Partial<Preferences> | undefined;
-    const allowedFonts: Preferences["font"][] = ["Literata", "Atkinson Hyperlegible Next", "Lexend"];
+    const allowedFonts: Preferences["font"][] = ["Georgia", "Literata", "Atkinson Hyperlegible Next", "Lexend"];
     const limit = (value: unknown, fallback: number, minimum: number, maximum: number, step: number) => {
       if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
       return Math.min(maximum, Math.max(minimum, Math.round(value / step) * step));
@@ -54,7 +56,8 @@ async function loadPreferences(): Promise<Preferences> {
       fontSize: limit(stored?.fontSize, defaults.fontSize, 14, 32, 2),
       width: limit(stored?.width, defaults.width, 560, 1000, 20),
       lineHeight: limit(stored?.lineHeight, defaults.lineHeight, 1.2, 2.2, 0.05),
-      alignment: stored?.alignment === "justify" ? "justify" : "left",
+      widthMode: stored?.widthMode === "full" ? "full" : "custom",
+      alignment: ["center", "justify"].includes(stored?.alignment ?? "") ? stored!.alignment! : "left",
       speed: limit(stored?.speed, defaults.speed, 1, 10, 1),
     };
   } catch {
@@ -80,6 +83,9 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       line: "Entrelinha",
       align: "Alinhamento do texto",
       left: "À esquerda",
+      center: "Centralizado",
+      closeIndex: "Recolher navegação",
+      fullWidth: "100% da área disponível",
       justify: "Justificado",
       index: "Índice",
       indexLabel: "Índice do artigo",
@@ -102,6 +108,9 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       line: "Line spacing",
       align: "Text alignment",
       left: "Left",
+      center: "Centered",
+      closeIndex: "Collapse navigation",
+      fullWidth: "100% of available space",
       justify: "Justified",
       index: "Contents",
       indexLabel: "Article contents",
@@ -124,6 +133,9 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       line: "Interlineado",
       align: "Alineación del texto",
       left: "A la izquierda",
+      center: "Centrado",
+      closeIndex: "Replegar navegación",
+      fullWidth: "100% del espacio disponible",
       justify: "Justificado",
       index: "Índice",
       indexLabel: "Índice del artículo",
@@ -168,26 +180,28 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
         <div class="group theme-group"><span class="group-title theme-label">Tema</span><div class="button-row">
           <button type="button" aria-label="Tema branco">Branco</button><button type="button" aria-label="Tema sépia">Sépia</button><button type="button" aria-label="Tema escuro">Escuro</button><button type="button" aria-label="Tema preto">Preto</button><button type="button" aria-label="Tema automático">Auto</button>
         </div></div>
-        <div class="group"><label>Fonte <select aria-label="Fonte"><option>Literata</option><option>Atkinson Hyperlegible Next</option><option>Lexend</option></select></label></div>
+        <div class="group"><label>Fonte <select aria-label="Fonte"><option>Georgia</option><option>Literata</option><option>Atkinson Hyperlegible Next</option><option>Lexend</option></select></label></div>
         <div class="group"><span class="group-title size-label">Tamanho</span><div class="button-row"><button type="button" aria-label="Diminuir fonte">A−</button><output class="font-size">20</output><button type="button" aria-label="Aumentar fonte">A+</button></div></div>
-        <div class="group"><label>Largura do texto <input aria-label="Largura do texto" type="range" min="560" max="1000" step="20"></label></div>
+        <div class="group"><label>Largura do texto <input aria-label="Largura do texto" type="range" min="560" max="1020" step="20"><output class="width-value" aria-hidden="true"></output></label></div>
         <div class="group"><label>Entrelinha <input aria-label="Entrelinha" type="range" min="1.2" max="2.2" step="0.05"></label></div>
-        <div class="group"><label>Alinhamento do texto <select aria-label="Alinhamento do texto"><option value="left">À esquerda</option><option value="justify">Justificado</option></select></label></div>
         <button class="close-reader" type="button" aria-label="Fechar modo de leitura">Fechar</button>
       </div>
       <div class="utility-row">
+        <div class="group alignment-group"><label>Alinhamento do texto <select aria-label="Alinhamento do texto"><option value="left">À esquerda</option><option value="center">Centralizado</option><option value="justify">Justificado</option></select></label></div>
         <div class="reading-info"><strong class="reader-brand">Leitor Limpo</strong><span class="reading-time"></span><span class="remaining-time" aria-live="polite"></span></div>
         <div class="reader-tools">
-        <button type="button" aria-label="Índice" aria-expanded="false">Índice</button>
+        <button type="button" aria-label="Índice" aria-expanded="false" aria-controls="reader-index">Índice</button>
         <button type="button" aria-label="Iniciar rolagem" aria-pressed="false">Iniciar rolagem</button>
         <label>Velocidade da rolagem <input aria-label="Velocidade da rolagem" type="range" min="1" max="10" step="1"></label>
         <button class="open-pdf" type="button" hidden></button>
         </div>
       </div>
-      <nav class="index" aria-label="Índice do artigo" hidden><ol></ol></nav>
       <progress aria-label="Progresso da leitura" value="0" max="100"></progress>
     </header>
-    <article role="article"></article>
+    <div class="reader-layout">
+      <nav id="reader-index" class="index" aria-label="Índice do artigo" hidden><div class="index-heading"><strong class="index-title">Índice</strong><button class="close-index" type="button" aria-label="Fechar índice">×</button></div><ol></ol></nav>
+      <main class="reading-content"><article role="article"></article></main>
+    </div>
   `;
   const articleElement = veil.querySelector<HTMLElement>("article");
   if (!articleElement) return;
@@ -219,6 +233,9 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     link.addEventListener("click", (event) => {
       event.preventDefault();
       window.history.replaceState(null, "", `#${heading.id}`);
+      if (window.matchMedia("(max-width: 900px)").matches) setIndexOpen(false, false);
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
       heading.scrollIntoView({ block: "start" });
       updateProgress();
     });
@@ -266,9 +283,12 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     const theme = preferences.theme === "auto" ? (colorScheme.matches ? "dark" : "light") : preferences.theme;
     veil.dataset.theme = theme;
     articleElement.dataset.theme = theme;
-    articleElement.style.setProperty("--fonte-leitura", `"${preferences.font}", ${preferences.font === "Literata" ? "Georgia, serif" : "sans-serif"}`);
+    articleElement.style.setProperty(
+      "--fonte-leitura",
+      `"${preferences.font}", ${["Literata", "Georgia"].includes(preferences.font) ? "Georgia, serif" : "sans-serif"}`,
+    );
     articleElement.style.fontSize = `${preferences.fontSize}px`;
-    articleElement.style.maxWidth = `${preferences.width}px`;
+    articleElement.style.maxWidth = preferences.widthMode === "full" ? "100%" : `${preferences.width}px`;
     articleElement.style.lineHeight = String(preferences.lineHeight);
     articleElement.style.textAlign = preferences.alignment;
     const size = veil.querySelector<HTMLOutputElement>(".font-size");
@@ -278,7 +298,12 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${label}"]`)?.setAttribute("aria-pressed", String(theme === preferences.theme));
     }
     if (fontSelect) fontSelect.value = preferences.font;
-    if (widthInput) widthInput.value = String(preferences.width);
+    if (widthInput) {
+      widthInput.value = String(preferences.widthMode === "full" ? 1020 : preferences.width);
+      widthInput.setAttribute("aria-valuetext", preferences.widthMode === "full" ? ui.fullWidth : `${preferences.width} px`);
+    }
+    const widthValue = veil.querySelector<HTMLOutputElement>(".width-value");
+    if (widthValue) widthValue.textContent = preferences.widthMode === "full" ? "100%" : `${preferences.width} px`;
     if (lineHeightInput) lineHeightInput.value = String(preferences.lineHeight);
     if (speedInput) speedInput.value = String(preferences.speed);
     if (alignmentSelect) alignmentSelect.value = preferences.alignment;
@@ -338,7 +363,8 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     savePreferences();
   });
   widthInput?.addEventListener("input", () => {
-    preferences.width = Number(widthInput.value);
+    preferences.widthMode = widthInput.value === widthInput.max ? "full" : "custom";
+    preferences.width = Math.min(1000, Number(widthInput.value));
     applyPreferences();
     savePreferences();
   });
@@ -352,11 +378,16 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     applyPreferences();
     savePreferences();
   });
-  indexButton?.addEventListener("click", () => {
-    const expanded = indexButton.getAttribute("aria-expanded") === "true";
-    indexButton.setAttribute("aria-expanded", String(!expanded));
-    if (index) index.hidden = expanded;
-  });
+  const closeIndexButton = veil.querySelector<HTMLButtonElement>(".close-index");
+  const setIndexOpen = (open: boolean, returnFocus = true) => {
+    indexButton?.setAttribute("aria-expanded", String(open));
+    veil.dataset.indexOpen = String(open);
+    if (index) index.hidden = !open;
+    if (open) closeIndexButton?.focus({ preventScroll: true });
+    else if (returnFocus) indexButton?.focus({ preventScroll: true });
+  };
+  indexButton?.addEventListener("click", () => setIndexOpen(indexButton.getAttribute("aria-expanded") !== "true"));
+  closeIndexButton?.addEventListener("click", () => setIndexOpen(false));
   scrollButton?.addEventListener("click", () => {
     if (isScrolling) {
       stopAutoScroll();
@@ -379,7 +410,11 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   veil.addEventListener("scroll", updateProgress, { passive: true });
   let onKeydown: ((event: KeyboardEvent) => void) | undefined;
   onKeydown = (event) => {
-    if (event.key === "Escape") closeReader();
+    if (event.key !== "Escape") return;
+    if (index && !index.hidden) {
+      event.preventDefault();
+      setIndexOpen(false);
+    } else closeReader();
   };
   window.addEventListener("keydown", onKeydown);
   const updateSystemTheme = () => {
@@ -424,18 +459,22 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   indexButton?.setAttribute("aria-label", ui.index);
   if (indexButton) indexButton.textContent = ui.index;
   index?.setAttribute("aria-label", ui.indexLabel);
+  veil.querySelector<HTMLElement>(".index-title")!.textContent = ui.index;
+  closeIndexButton?.setAttribute("aria-label", ui.closeIndex);
+  closeIndexButton?.setAttribute("title", ui.closeIndex);
   scrollButton?.setAttribute("aria-label", ui.start);
   if (scrollButton) scrollButton.textContent = ui.start;
   progress?.setAttribute("aria-label", ui.progress);
   if (alignmentSelect) {
     alignmentSelect.setAttribute("aria-label", ui.align);
     alignmentSelect.options[0].textContent = ui.left;
-    alignmentSelect.options[1].textContent = ui.justify;
+    alignmentSelect.options[1].textContent = ui.center;
+    alignmentSelect.options[2].textContent = ui.justify;
   }
   shadow.append(style, veil);
   const toolbar = veil.querySelector<HTMLElement>(".toolbar")!;
   const toolbarObserver = new ResizeObserver(() => {
-    veil.style.setProperty("--toolbar-height", `${toolbar.getBoundingClientRect().height + 16}px`);
+    veil.style.setProperty("--toolbar-height", `${toolbar.getBoundingClientRect().height}px`);
   });
   toolbarObserver.observe(toolbar);
   const restore = host.restorePage;

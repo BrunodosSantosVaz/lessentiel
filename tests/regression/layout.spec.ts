@@ -65,7 +65,7 @@ test("#32 RN-0002 índice fica à esquerda do artigo e permanece lateral ao rola
     await expect(page).toHaveURL(/#segunda-parte/);
     const heading = (await article.getByRole("heading", { name: "Segunda parte" }).boundingBox())!;
     expect(heading.y).toBeGreaterThanOrEqual(before);
-    await page.getByRole("button", { name: "Fechar índice", exact: true }).click();
+    await page.getByRole("button", { name: "Recolher navegação", exact: true }).click();
     await expect(index).toBeHidden();
   } finally {
     await context.close();
