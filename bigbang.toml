@@ -37,8 +37,8 @@ build = "npm run build"
 
 [tests]
 min_coverage = 80
-pending_marker = "test.failing"
-test_pattern = "(it|test)\\("
+pending_marker = "test.fail"
+test_pattern = "(it|test)(\\.fail)?\\("
 
 [security]
 asvs_level = "L2"
