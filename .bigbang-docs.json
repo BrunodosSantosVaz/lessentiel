@@ -4,7 +4,7 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "c44b7af4631ce42f0cdbe8b54bc232b9ba8c09de",
-    "commit": "e42b981aed42219715d5762b21195207d042ff89",
+    "commit": "9bc10c0e01664e10ed4eb81501907e496a7885ec",
     "branch": "master",
     "proposta": "bigbang/proposta-34-barra-adaptativa"
   },
@@ -75,7 +75,7 @@
     }
   },
   "codigo": {
-    "commit": "2f22d8dbbf3b9443f4b52dfc61830ff43a377ada",
+    "commit": "5c7c4dd3e0150f293cee735fbe83e34429c71fb1",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -166,7 +166,7 @@
         "src/platform/reader-panel.ts": "f440b7c80c873db6c3a4c9c78ae56f2ce3ac68bb92dece716a823f9c98b381d9",
         "src/platform/reader-style.ts": "83406ede612d87c00ad51863440a6cd9d650f34b1ac9172a745e653ee3a48284",
         "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967",
-        "src/platform/reader-toolbar.ts": "854d5811454cc11366b177a3e529aac0d801d15eb6af1e3ccf337df0251f927c"
+        "src/platform/reader-toolbar.ts": "57c56291c77547b0676fe5a61788e5596c5e1c89b510110cbe202e75652c62e2"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
