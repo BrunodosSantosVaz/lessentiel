@@ -48,7 +48,7 @@ sensitive_paths = ["entrypoints/**", "src/**", "wxt.config.ts", "package.json", 
 [board]
 model = "single"
 labels = "v3"
-number = 0
+number = 33
 owner = "BrunodosSantosVaz"
 
 [agents]
