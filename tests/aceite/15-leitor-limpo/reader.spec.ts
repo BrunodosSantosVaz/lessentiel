@@ -64,7 +64,7 @@ test.fail('RN-0001 CA-02 neutraliza conteúdo hostil #18', async () => { // pend
     await page.getByRole('article').getByRole('button', { name: 'Ação hostil' }).click();
     const unsafeNodes = await page.getByRole('article').evaluate(article => ({
       scripts: article.shadowRoot?.querySelectorAll('script').length ?? 0,
-      handlers: [...(article.shadowRoot?.querySelectorAll('*') ?? [])].filter(element => [...element.attributes].some(attribute => /^on/i.test(attribute.name))).length,
+      handlers: [...(article.shadowRoot?.querySelectorAll('*') ?? [])].filter(element => [...element.attributes].some(attribute => attribute.name.toLowerCase().startsWith('on'))).length,
       javascriptLinks: [...(article.shadowRoot?.querySelectorAll('a') ?? [])].filter(link => link.protocol === 'javascript:').length,
     }));
     expect(unsafeNodes).toEqual({ scripts: 0, handlers: 0, javascriptLinks: 0 });
