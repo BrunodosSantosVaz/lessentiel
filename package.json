@@ -16,13 +16,14 @@
     "build": "node scripts/build.mjs",
     "package": "wxt zip",
     "package:test": "node scripts/package-test.mjs",
-    "test:acceptance": "npm run build && playwright install chromium && playwright test",
+    "test:acceptance": "npm run build && playwright install chromium && playwright test && npm run test:regression",
     "test:architecture": "node scripts/test-architecture.mjs",
     "test:coverage": "node scripts/coverage.mjs",
     "lint": "oxlint . && npm run format:check",
     "typecheck": "tsc --noEmit",
     "format": "oxfmt .oxlintrc.json .bigbang-docs.json package.json package-lock.json \"*.ts\" \"*.mjs\" scripts tests src entrypoints --no-error-on-unmatched-pattern",
-    "format:check": "oxfmt --check .oxlintrc.json .bigbang-docs.json package.json package-lock.json \"*.ts\" \"*.mjs\" scripts tests src entrypoints --no-error-on-unmatched-pattern"
+    "format:check": "oxfmt --check .oxlintrc.json .bigbang-docs.json package.json package-lock.json \"*.ts\" \"*.mjs\" scripts tests src entrypoints --no-error-on-unmatched-pattern",
+    "test:regression": "playwright test --config playwright.regression.config.ts"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

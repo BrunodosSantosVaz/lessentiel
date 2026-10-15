@@ -1,8 +1,21 @@
 import { browser } from "wxt/browser";
+import { readerStyle } from "./reader-style";
 import type { ExtractedArticle } from "./extract-article";
 
 const hostSelector = "[data-leitor-limpo-host='true']";
 const preferenceKey = "readerPreferences";
+type ReaderHost = HTMLElement & { restorePage?: () => void; closeReader?: () => void };
+
+export function closeActiveReader(): boolean {
+  const current = document.querySelector<ReaderHost>(hostSelector);
+  if (!current) return false;
+  if (current.closeReader) current.closeReader();
+  else {
+    current.restorePage?.();
+    current.remove();
+  }
+  return true;
+}
 
 type Preferences = {
   language: "pt-BR" | "en" | "es";
@@ -50,12 +63,7 @@ async function loadPreferences(): Promise<Preferences> {
 }
 
 export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close: () => void) => void): Promise<void> {
-  const current = document.querySelector<HTMLElement & { restorePage?: () => void }>(hostSelector);
-  if (current) {
-    current.restorePage?.();
-    current.remove();
-    return;
-  }
+  if (closeActiveReader()) return;
 
   const preferences = await loadPreferences();
   const ui = {
@@ -126,7 +134,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       remaining: (n: number) => `quedan ${n} min`,
     },
   }[preferences.language];
-  const host = document.createElement("div") as HTMLElement & { restorePage?: () => void };
+  const host = document.createElement("div") as ReaderHost;
   const sourceBody = document.body;
   const previousInert = sourceBody.inert;
   const previousAriaHidden = sourceBody.getAttribute("aria-hidden");
@@ -149,55 +157,33 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     @font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400 700; src: url("${fontUrl("atkinson-hyperlegible-next-latin-ext.woff2")}") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
     @font-face { font-family: Lexend; font-style: normal; font-weight: 400 700; src: url("${fontUrl("lexend-latin.woff2")}") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
     @font-face { font-family: Lexend; font-style: normal; font-weight: 400 700; src: url("${fontUrl("lexend-latin-ext.woff2")}") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-    :host { all: initial; color-scheme: light; font-family: system-ui, sans-serif; }
-    .veil { --cor-fundo: #F7F8F6; --cor-superficie: #FFFFFF; --cor-texto: #17332E; --cor-suave: #50635F; --cor-primaria: #075E54; --cor-linha: #65736E; --cor-foco: #174EA6; --fonte-interface: system-ui, sans-serif; --leitura-fundo: #FFFFFF; --leitura-texto: #1A1A1A; --leitura-link: #075E54; --espaco-1: 4px; --espaco-2: 8px; --espaco-3: 12px; --espaco-4: 16px; --espaco-5: 24px; --espaco-6: 32px; --raio-padrao: 14px; --alvo-toque: 44px; --foco: 3px solid var(--cor-foco); position: fixed; inset: 0; z-index: 2147483647; overflow: auto; background: var(--cor-fundo); color: var(--cor-texto); font-family: var(--fonte-interface); }
-    .veil[data-theme="sepia"] { --leitura-fundo: #F4ECD8; --leitura-texto: #342D22; --leitura-link: #075E54; color-scheme: light; }
-    .veil[data-theme="dark"] { --leitura-fundo: #1E1F22; --leitura-texto: #D4D4D4; --leitura-link: #8AB4F8; color-scheme: dark; }
-    .veil[data-theme="black"] { --leitura-fundo: #000000; --leitura-texto: #E6E6E6; --leitura-link: #8AB4F8; color-scheme: dark; }
-    .toolbar { position: sticky; top: 0; z-index: 2; display: grid; gap: var(--espaco-3); padding: var(--espaco-3) var(--espaco-5); background: var(--cor-superficie); border-bottom: 1px solid var(--cor-linha); }
-    .toolbar-head, .controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espaco-2); }
-    .toolbar-head { justify-content: space-between; }
-    .toolbar strong { font-size: 16px; }
-    button, select, input { accent-color: var(--cor-primaria); }
-    button, select { min-height: var(--alvo-toque); padding: var(--espaco-2) var(--espaco-3); border: 2px solid var(--cor-primaria); border-radius: var(--raio-padrao); background: var(--cor-superficie); color: var(--cor-texto); font: 600 16px var(--fonte-interface); }
-    button { cursor: pointer; }
-    button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible { outline: var(--foco); outline-offset: 2px; }
-    label { display: inline-flex; min-height: var(--alvo-toque); align-items: center; gap: var(--espaco-2); color: var(--cor-texto); font: 14px var(--fonte-interface); }
-    input[type="range"] { box-sizing: border-box; width: 140px; min-height: var(--alvo-toque); padding: 0 8px; touch-action: pan-y; }
-    .reading-info { display: flex; justify-content: space-between; gap: var(--espaco-4); color: var(--cor-texto); font: 14px var(--fonte-interface); }
-    progress { width: 100%; height: 8px; accent-color: var(--cor-primaria); }
-    .index { padding: var(--espaco-1) var(--espaco-3) var(--espaco-2); background: var(--cor-superficie); }
-    .index[hidden] { display: none; }
-    .index ol { display: grid; gap: var(--espaco-2); margin: 0; padding-left: var(--espaco-5); }
-    .index a { display: flex; min-height: var(--alvo-toque); align-items: center; color: var(--leitura-link); font: 16px/1.4 var(--fonte-interface); }
-    article { --fonte-leitura: "Literata", Georgia, serif; box-sizing: border-box; max-width: 760px; margin: var(--espaco-6) auto 80px; padding: 0 var(--espaco-5); background: var(--leitura-fundo); color: var(--leitura-texto); font: 20px/1.6 var(--fonte-leitura); overflow-wrap: anywhere; }
-    article :where(h1, h2, h3, h4, h5, h6) { color: var(--leitura-texto); font-family: var(--fonte-leitura); line-height: 1.2; scroll-margin-top: 150px; }
-    article a { color: var(--leitura-link); }
-    article :where(img, video, iframe) { max-width: 100%; }
-    article :where(pre, table) { max-width: 100%; overflow: auto; }
-    article pre { white-space: pre-wrap; }
-    article table { border-collapse: collapse; }
-    article :where(th, td) { border: 1px solid var(--cor-linha); padding: var(--espaco-2); }
-    @media (max-width: 600px) { article { margin-top: 20px; padding: 0 16px; } .toolbar { padding: 8px 12px; } label { flex-wrap: wrap; } }
+    ${readerStyle}
   `;
   const veil = document.createElement("div");
   veil.className = "veil";
   veil.innerHTML = `
-    <header class="toolbar">
-      <div class="toolbar-head"><strong>Leitor Limpo</strong><button class="open-pdf" type="button" hidden></button><button type="button" aria-label="Fechar modo de leitura">Fechar</button></div>
+    <header class="toolbar" role="toolbar" aria-label="Controles de leitura">
       <div class="controls" aria-label="Controles de leitura">
-        <button type="button" aria-label="Tema branco">Branco</button><button type="button" aria-label="Tema sépia">Sépia</button><button type="button" aria-label="Tema escuro">Escuro</button><button type="button" aria-label="Tema preto">Preto</button>
-        <label>Fonte <select aria-label="Fonte"><option>Literata</option><option>Atkinson Hyperlegible Next</option><option>Lexend</option></select></label>
-        <button type="button" aria-label="Diminuir fonte">A−</button><button type="button" aria-label="Aumentar fonte">A+</button>
-        <label>Largura do texto <input aria-label="Largura do texto" type="range" min="560" max="1000" step="20"></label>
-        <label>Entrelinha <input aria-label="Entrelinha" type="range" min="1.2" max="2.2" step="0.05"></label>
-        <label>Alinhamento do texto <select aria-label="Alinhamento do texto"><option value="left">À esquerda</option><option value="justify">Justificado</option></select></label>
+        <div class="group theme-group"><span class="group-title theme-label">Tema</span><div class="button-row">
+          <button type="button" aria-label="Tema branco">Branco</button><button type="button" aria-label="Tema sépia">Sépia</button><button type="button" aria-label="Tema escuro">Escuro</button><button type="button" aria-label="Tema preto">Preto</button>
+        </div></div>
+        <div class="group"><label>Fonte <select aria-label="Fonte"><option>Literata</option><option>Atkinson Hyperlegible Next</option><option>Lexend</option></select></label></div>
+        <div class="group"><span class="group-title size-label">Tamanho</span><div class="button-row"><button type="button" aria-label="Diminuir fonte">A−</button><output class="font-size">20</output><button type="button" aria-label="Aumentar fonte">A+</button></div></div>
+        <div class="group"><label>Largura do texto <input aria-label="Largura do texto" type="range" min="560" max="1000" step="20"></label></div>
+        <div class="group"><label>Entrelinha <input aria-label="Entrelinha" type="range" min="1.2" max="2.2" step="0.05"></label></div>
+        <div class="group"><label>Alinhamento do texto <select aria-label="Alinhamento do texto"><option value="left">À esquerda</option><option value="justify">Justificado</option></select></label></div>
+        <button class="close-reader" type="button" aria-label="Fechar modo de leitura">Fechar</button>
+      </div>
+      <div class="utility-row">
+        <div class="reading-info"><strong class="reader-brand">Leitor Limpo</strong><span class="reading-time"></span><span class="remaining-time" aria-live="polite"></span></div>
+        <div class="reader-tools">
         <button type="button" aria-label="Índice" aria-expanded="false">Índice</button>
         <button type="button" aria-label="Iniciar rolagem" aria-pressed="false">Iniciar rolagem</button>
         <label>Velocidade da rolagem <input aria-label="Velocidade da rolagem" type="range" min="1" max="10" step="1"></label>
+        <button class="open-pdf" type="button" hidden></button>
+        </div>
       </div>
       <nav class="index" aria-label="Índice do artigo" hidden><ol></ol></nav>
-      <div class="reading-info"><span class="reading-time"></span><span class="remaining-time" aria-live="polite"></span></div>
       <progress aria-label="Progresso da leitura" value="0" max="100"></progress>
     </header>
     <article role="article"></article>
@@ -206,6 +192,11 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   if (!articleElement) return;
   articleElement.setAttribute("aria-label", article.title);
   articleElement.innerHTML = article.content;
+  if (!articleElement.querySelector("h1")) {
+    const title = document.createElement("h1");
+    title.textContent = article.title;
+    articleElement.prepend(title);
+  }
   const headings = [...articleElement.querySelectorAll<HTMLElement>("h1, h2, h3, h4, h5, h6")];
   const index = veil.querySelector<HTMLElement>(".index");
   const indexList = index?.querySelector("ol");
@@ -278,6 +269,12 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     articleElement.style.maxWidth = `${preferences.width}px`;
     articleElement.style.lineHeight = String(preferences.lineHeight);
     articleElement.style.textAlign = preferences.alignment;
+    const size = veil.querySelector<HTMLOutputElement>(".font-size");
+    if (size) size.textContent = String(preferences.fontSize);
+    for (const [theme, label] of themeButtons) {
+      veil.querySelector<HTMLButtonElement>(`button[data-theme-value="${theme}"]`)?.setAttribute("aria-pressed", String(theme === preferences.theme));
+      veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${label}"]`)?.setAttribute("aria-pressed", String(theme === preferences.theme));
+    }
     if (fontSelect) fontSelect.value = preferences.font;
     if (widthInput) widthInput.value = String(preferences.width);
     if (lineHeightInput) lineHeightInput.value = String(preferences.lineHeight);
@@ -311,6 +308,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     host.remove();
     if (previousActiveElement?.isConnected && !previousActiveElement.hasAttribute("disabled")) previousActiveElement.focus({ preventScroll: true });
   };
+  host.closeReader = closeReader;
 
   veil.querySelector<HTMLElement>(".reading-time")!.textContent = ui.time(totalMinutes);
   if (remaining) remaining.textContent = ui.remaining(totalMinutes);
@@ -397,6 +395,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   themeButtons.forEach(([, old], index) => {
     const themeButton = veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${old}"]`);
     themeButton?.setAttribute("aria-label", `${ui.theme} ${ui.themes[index]}`);
+    themeButton?.setAttribute("data-theme-value", themeButtons[index]![0]);
     if (themeButton) themeButton.textContent = ui.themes[index];
   });
   const labels = [...veil.querySelectorAll("label")];
@@ -404,6 +403,11 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   labels.forEach((label, index) => {
     if (label.firstChild) label.firstChild.textContent = `${labelText[index]} `;
   });
+  veil.querySelector<HTMLElement>(".theme-label")!.textContent = ui.theme;
+  veil.querySelector<HTMLElement>(".size-label")!.textContent = { "pt-BR": "Tamanho", en: "Size", es: "Tamaño" }[preferences.language];
+  veil
+    .querySelector<HTMLElement>(".toolbar")!
+    .setAttribute("aria-label", { "pt-BR": "Controles de leitura", en: "Reading controls", es: "Controles de lectura" }[preferences.language]);
   decreaseFont?.setAttribute("aria-label", ui.decrease);
   increaseFont?.setAttribute("aria-label", ui.increase);
   indexButton?.setAttribute("aria-label", ui.index);
@@ -418,6 +422,16 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     alignmentSelect.options[1].textContent = ui.justify;
   }
   shadow.append(style, veil);
+  const toolbar = veil.querySelector<HTMLElement>(".toolbar")!;
+  const toolbarObserver = new ResizeObserver(() => {
+    veil.style.setProperty("--toolbar-height", `${toolbar.getBoundingClientRect().height + 16}px`);
+  });
+  toolbarObserver.observe(toolbar);
+  const restore = host.restorePage;
+  host.restorePage = () => {
+    toolbarObserver.disconnect();
+    restore?.();
+  };
   sourceBody.inert = true;
   sourceBody.setAttribute("aria-hidden", "true");
   document.documentElement.append(host);
