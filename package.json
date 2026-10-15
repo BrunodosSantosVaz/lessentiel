@@ -2,10 +2,14 @@
   "name": "leitor-limpo",
   "version": "0.1.0",
   "description": "Projeto organizado pelo Big Bang. O produto, a stack e as funcionalidades são definidos e documentados na Fundação; este README não declara entregas que ainda não ocorreram.",
-  "main": "index.js",
+  "keywords": [],
+  "license": "MIT",
+  "author": "",
   "directories": {
     "test": "tests"
   },
+  "type": "module",
+  "main": "index.js",
   "scripts": {
     "test": "vitest run --passWithNoTests",
     "dev": "wxt",
@@ -14,13 +18,11 @@
     "test:acceptance": "playwright test",
     "test:architecture": "node scripts/test-architecture.mjs",
     "test:coverage": "node scripts/coverage.mjs",
-    "lint": "oxlint .",
-    "typecheck": "tsc --noEmit"
+    "lint": "oxlint . && npm run format:check",
+    "typecheck": "tsc --noEmit",
+    "format": "oxfmt .oxlintrc.json .bigbang-docs.json package.json package-lock.json \"*.ts\" \"*.mjs\" scripts tests src entrypoints --no-error-on-unmatched-pattern",
+    "format:check": "oxfmt --check .oxlintrc.json .bigbang-docs.json package.json package-lock.json \"*.ts\" \"*.mjs\" scripts tests src entrypoints --no-error-on-unmatched-pattern"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "type": "module",
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
     "dompurify": "^3.4.17",
@@ -30,6 +32,7 @@
     "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^4.1.11",
+    "oxfmt": "^0.73.0",
     "oxlint": "^1.88.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11",
