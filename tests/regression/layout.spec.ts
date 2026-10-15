@@ -1,3 +1,4 @@
+import { chooseReaderAlignment, revealReaderControl } from "../helpers/reader-controls";
 import { chromium, expect, test } from "@playwright/test";
 import { resolve } from "node:path";
 
@@ -34,12 +35,9 @@ test("#32 RN-0002 barra usa grupos horizontais e cores neutras da referência", 
   try {
     const group = page.locator(".theme-group");
     await expect(group).toHaveCSS("flex-direction", "row");
-    const label = await group.locator(".theme-label").boundingBox();
-    const buttons = await group.locator(".button-row").boundingBox();
-    expect(Math.abs(label!.y + label!.height / 2 - buttons!.y - buttons!.height / 2)).toBeLessThan(2);
-    expect(label!.x + label!.width).toBeLessThanOrEqual(buttons!.x);
+    await expect(group.locator(".theme-preview .theme-swatch")).toHaveCount(5);
     await expect(page.locator(".toolbar")).toHaveCSS("color", "rgb(34, 34, 34)");
-    await expect(page.getByRole("combobox", { name: "Fonte", exact: true })).toHaveCSS("font-family", /Segoe UI/);
+    await expect(page.locator(".toolbar")).toHaveCSS("font-family", /Segoe UI/);
     expect((await page.locator(".toolbar").boundingBox())!.height).toBeLessThanOrEqual(140);
   } finally {
     await context.close();
@@ -75,10 +73,10 @@ test("#32 RN-0002 índice fica à esquerda do artigo e permanece lateral ao rola
 test("#32 RN-0002 centraliza texto e ocupa 100% em monitores largos, persistindo ambos", async () => {
   const { context, page, article, activate, worker } = await open(1920);
   try {
-    const alignment = page.getByRole("combobox", { name: "Alinhamento do texto", exact: true });
-    await alignment.selectOption({ label: "Centralizado" });
+    await chooseReaderAlignment(page, "Centralizado");
     await expect(article).toHaveCSS("text-align", "center");
     const width = page.getByRole("slider", { name: "Largura do texto", exact: true });
+    await revealReaderControl(page, width);
     await width.focus();
     await width.press("End");
     expect((await article.boundingBox())!.width).toBeGreaterThanOrEqual(1824);
@@ -88,14 +86,15 @@ test("#32 RN-0002 centraliza texto e ocupa 100% em monitores largos, persistindo
       .toBe("full");
     await page.reload();
     await activate();
-    await expect(alignment).toHaveValue("center");
+    await expect(page.locator('select[aria-label="Alinhamento do texto"]')).toHaveValue("center");
     await expect(article).toHaveCSS("text-align", "center");
     expect((await article.boundingBox())!.width).toBeGreaterThanOrEqual(1824);
     await page.getByRole("button", { name: "Índice", exact: true }).click();
     expect((await article.boundingBox())!.width).toBeGreaterThan(1500);
+    await revealReaderControl(page, width);
     await width.focus();
     await width.press("Home");
-    await expect(article).toHaveCSS("max-width", "560px");
+    await expect(article).toHaveCSS("max-width", "30%");
     await page.setViewportSize({ width: 360, height: 900 });
     expect(await page.locator(".veil").evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   } finally {

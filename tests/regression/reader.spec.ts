@@ -1,3 +1,4 @@
+import { chooseReaderTheme } from "../helpers/reader-controls";
 import { chromium, expect, test, type Page } from "@playwright/test";
 import { resolve } from "node:path";
 
@@ -156,10 +157,10 @@ test("#26 RN-0002 barra compacta e tema aplicado à tela inteira", async () => {
     await readerVisible(page);
     const toolbar = page.locator("[data-leitor-limpo-host='true'] .toolbar");
     expect((await toolbar.boundingBox())!.height).toBeLessThanOrEqual(140);
-    await page.getByRole("button", { name: "Tema escuro" }).click();
+    await chooseReaderTheme(page, "Escuro");
     await expect(page.locator("[data-leitor-limpo-host='true'] .veil")).toHaveCSS("background-color", "rgb(30, 31, 34)");
-    await expect(page.getByRole("button", { name: "Tema escuro" })).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByRole("button", { name: "Tema branco" })).toHaveAttribute("aria-pressed", "false");
+    await expect(page.locator('[data-control="theme"] [data-choice="dark"]')).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator('[data-control="theme"] [data-choice="light"]')).toHaveAttribute("aria-pressed", "false");
   } finally {
     await context.close();
   }
@@ -174,7 +175,7 @@ test("#26 RN-0002 controles e texto continuam acessíveis em 360 px", async () =
     expect(await veil.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
     expect((await page.locator("[data-leitor-limpo-host='true'] .toolbar").boundingBox())!.height).toBeLessThanOrEqual(360);
     await expect(page.getByRole("button", { name: "Fechar", exact: true })).toBeInViewport();
-    await page.getByRole("button", { name: "Tema sépia" }).click();
+    await chooseReaderTheme(page, "Sépia");
     await expect(veil).toHaveCSS("background-color", "rgb(244, 236, 216)");
   } finally {
     await context.close();
@@ -187,18 +188,18 @@ test("#30 RN-0002 tema automático acompanha o sistema, persiste e respeita esco
     await page.emulateMedia({ colorScheme: "dark" });
     await activate();
     await readerVisible(page);
-    const automatic = page.getByRole("button", { name: "Tema Automático", exact: true });
+    const automatic = page.locator('[data-control="theme"] [data-choice="auto"]');
     const veil = page.locator("[data-leitor-limpo-host='true'] .veil");
-    await automatic.click();
+    await chooseReaderTheme(page, "Automático");
     await expect(automatic).toHaveAttribute("aria-pressed", "true");
     await expect(veil).toHaveCSS("background-color", "rgb(30, 31, 34)");
     await page.emulateMedia({ colorScheme: "light" });
     await expect(veil).toHaveCSS("background-color", "rgb(255, 255, 255)");
-    await page.getByRole("button", { name: "Tema Preto", exact: true }).click();
+    await chooseReaderTheme(page, "Preto");
     await page.emulateMedia({ colorScheme: "dark" });
     await expect(veil).toHaveCSS("background-color", "rgb(0, 0, 0)");
     await expect(automatic).toHaveAttribute("aria-pressed", "false");
-    await automatic.click();
+    await chooseReaderTheme(page, "Automático");
     await expect
       .poll(() =>
         context.serviceWorkers()[0]!.evaluate(async () => (await (globalThis as any).chrome.storage.local.get("readerPreferences")).readerPreferences.theme),

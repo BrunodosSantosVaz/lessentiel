@@ -146,6 +146,7 @@ test("#34 RN-0002 menu responsivo contém sliders e rolagem, Escape devolve foco
 test("#34 RN-0002 impressão exclui página e controles e restaura a apresentação ao fechar", async () => {
   const { context, page } = await open();
   try {
+    const originalStyle = await page.locator("body").getAttribute("style");
     await expect(page.getByRole("button", { name: "Imprimir artigo", exact: true })).toBeVisible();
     await page.emulateMedia({ media: "print" });
     await expect(page.locator("body")).toHaveCSS("display", "none");
@@ -153,8 +154,57 @@ test("#34 RN-0002 impressão exclui página e controles e restaura a apresentaç
     await expect(page.locator("[data-leitor-limpo-host] article")).toBeVisible();
     await page.emulateMedia({ media: "screen" });
     await page.getByRole("button", { name: "Fechar", exact: true }).click();
-    await expect(page.locator("style[data-leitor-print]")).toHaveCount(0);
+    expect(await page.locator("body").getAttribute("style")).toBe(originalStyle);
     await expect(page.locator("body")).not.toHaveCSS("display", "none");
+  } finally {
+    await context.close();
+  }
+});
+
+test("#34 RN-0002 migra largura antiga em pixels sem perder fonte e alinhamento", async () => {
+  const { context, page, activate, worker } = await open();
+  try {
+    await page.getByRole("button", { name: "Fechar", exact: true }).click();
+    await worker.evaluate(() =>
+      (globalThis as any).chrome.storage.local.set({ readerPreferences: { width: 760, widthMode: "custom", font: "Lexend", alignment: "justify" } }),
+    );
+    await activate();
+    const article = page.getByRole("article");
+    await expect(article).toHaveCSS("font-family", /Lexend/);
+    await expect(article).toHaveCSS("text-align", "justify");
+    expect(Math.abs((await article.boundingBox())!.width - 760)).toBeLessThanOrEqual(50);
+    await expect(page.locator(".width-value")).toHaveText(/^\d+%$/);
+    await expect
+      .poll(() => worker.evaluate(async () => (await (globalThis as any).chrome.storage.local.get("readerPreferences")).readerPreferences.widthPercent))
+      .toBeGreaterThan(0);
+    await page.getByRole("button", { name: "Fechar", exact: true }).click();
+    await worker.evaluate(() => (globalThis as any).chrome.storage.local.set({ readerPreferences: { width: 1000, widthMode: "full" } }));
+    await activate();
+    await expect(article).toHaveCSS("max-width", "100%");
+    await expect(page.locator(".width-value")).toHaveText("100%");
+  } finally {
+    await context.close();
+  }
+});
+
+test("#34 RN-0002 controle com foco migra para Mais sem perder ajuste ao reduzir a janela", async () => {
+  const { context, page } = await open();
+  try {
+    const width = page.getByRole("slider", { name: "Largura do texto", exact: true });
+    await width.focus();
+    await width.press("Home");
+    await width.press("ArrowRight");
+    await page.setViewportSize({ width: 360, height: 900 });
+    const more = page.getByRole("button", { name: "Mais opções de leitura", exact: true });
+    await expect(more).toBeFocused();
+    await more.press("Space");
+    await expect(width).toHaveValue("35");
+    await width.focus();
+    await width.press("End");
+    await expect(page.getByRole("article")).toHaveCSS("max-width", "100%");
+    await page.keyboard.press("Escape");
+    await expect(more).toBeFocused();
+    await expect(page.getByRole("article")).toBeVisible();
   } finally {
     await context.close();
   }
