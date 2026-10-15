@@ -10,9 +10,9 @@ export default defineConfig({
     default_locale: "pt_BR",
     permissions: ["activeTab", "scripting", "contextMenus", "storage"],
     // Test builds grant the synthetic page host so headless tests can exercise injection without browser UI gestures.
-    host_permissions: testMode ? ["http://*/*", "https://*/*"] : [],
+    host_permissions: readerEnabled ? [...(testMode ? ["http://*/*", "https://*/*"] : []), "file:///*"] : [],
     optional_host_permissions: ["http://*/*", "https://*/*"],
-    web_accessible_resources: [{ resources: ["fonts/*.woff2"], matches: ["http://*/*", "https://*/*"] }],
+    web_accessible_resources: [{ resources: ["fonts/*.woff2"], matches: ["http://*/*", "https://*/*", "file:///*"] }],
     action: {
       default_title: "__MSG_actionTitle__",
       default_popup: "popup.html",

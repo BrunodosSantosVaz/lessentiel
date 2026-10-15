@@ -1,55 +1,63 @@
 import { browser } from "wxt/browser";
-
-const button = document.querySelector<HTMLButtonElement>("#activate-reader");
-const status = document.querySelector<HTMLElement>("#status");
-if (!__READER_ENABLED__ && button) button.hidden = true;
-const pdfLink = document.querySelector<HTMLAnchorElement>('a[href="pdf.html"]');
-if (!__READER_ENABLED__ && pdfLink) pdfLink.hidden = true;
 const labels = {
   "pt-BR": [
     "Abra o texto desta página em uma leitura sem distrações.",
     "Ativar modo de leitura",
-    "Abrir PDF local",
     "Preferências",
     "Abrindo o modo de leitura…",
-    "Não foi possível abrir a leitura nesta página.",
+    "Não foi possível abrir esta página. Para documentos locais, habilite o acesso a arquivos nas preferências.",
+    "Seu espaço de leitura",
+    "Uma página, só o texto.",
+    "Leitura processada neste dispositivo",
   ],
   en: [
     "Read this page without distractions.",
     "Open reader mode",
-    "Open local PDF",
     "Settings",
     "Opening reader mode…",
-    "Reader mode is unavailable on this page.",
+    "Could not open this page. For local documents, enable file access in Settings.",
+    "Your reading space",
+    "Just you and the text.",
+    "Reading processed on this device",
   ],
   es: [
     "Lee esta página sin distracciones.",
     "Abrir modo de lectura",
-    "Abrir PDF local",
     "Preferencias",
     "Abriendo el modo de lectura…",
-    "No se puede abrir el modo de lectura en esta página.",
+    "No se pudo abrir esta página. Para documentos locales, habilita el acceso a archivos en Preferencias.",
+    "Tu espacio de lectura",
+    "Solo tú y el texto.",
+    "Lectura procesada en este dispositivo",
   ],
 } as const;
-
+const button = document.querySelector<HTMLButtonElement>("#activate-reader")!;
+const status = document.querySelector<HTMLElement>("#status")!;
+let text: readonly string[] = labels["pt-BR"];
+button.hidden = !__READER_ENABLED__;
 void browser.storage.local.get("readerPreferences").then(({ readerPreferences }) => {
   const lang = (readerPreferences as { language?: string } | undefined)?.language;
-  const t = labels[lang === "en" || lang === "es" ? lang : "pt-BR"];
-  document.querySelector("main > p")!.textContent = t[0];
-  button!.textContent = t[1];
-  document.querySelectorAll<HTMLAnchorElement>("main a")[0].textContent = t[2];
-  document.querySelectorAll<HTMLAnchorElement>("main a")[1].textContent = t[3];
-  document.documentElement.lang = lang ?? "pt-BR";
+  const locale = lang === "en" || lang === "es" ? lang : "pt-BR";
+  text = labels[locale];
+  document.documentElement.lang = locale;
+  document.querySelector("#intro")!.textContent = text[0];
+  button.textContent = text[1];
+  document.querySelector("#settings-label")!.textContent = text[2];
+  document.querySelector("#tagline")!.textContent = text[5];
+  document.querySelector("#heading")!.textContent = text[6];
+  document.querySelector("#privacy-label")!.textContent = text[7];
 });
-
-button?.addEventListener("click", async () => {
+button.addEventListener("click", async () => {
   if (!__READER_ENABLED__) return;
   button.disabled = true;
-  const prefs = await browser.storage.local.get("readerPreferences");
-  const lang = (prefs.readerPreferences as { language?: string } | undefined)?.language;
-  const t = labels[lang === "en" || lang === "es" ? lang : "pt-BR"];
-  if (status) status.textContent = t[4];
-  const activated = await browser.runtime.sendMessage({ type: "ACTIVATE_READER" });
-  if (!activated && status) status.textContent = t[5];
-  window.close();
+  status.textContent = text[3];
+  try {
+    const activated = await browser.runtime.sendMessage({ type: "ACTIVATE_READER" });
+    if (activated) window.close();
+    else status.textContent = text[4];
+  } catch {
+    status.textContent = text[4];
+  } finally {
+    button.disabled = false;
+  }
 });

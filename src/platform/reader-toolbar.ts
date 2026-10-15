@@ -1,3 +1,5 @@
+import { readerFontFamily } from "./reader-fonts";
+
 export type ReaderPreferences = {
   language: "pt-BR" | "en" | "es";
   theme: "light" | "sepia" | "dark" | "black" | "auto";
@@ -189,7 +191,7 @@ export function createReaderToolbar(
         option.setAttribute("role", "menuitemradio");
         option.setAttribute("aria-checked", String(preferences[key] === item.value));
         option.tabIndex = -1;
-        if (item.family) option.style.fontFamily = `"${item.family}", serif`;
+        if (item.family) option.style.fontFamily = readerFontFamily(item.family);
         menu.append(option);
       });
       menu.hidden = false;
@@ -223,7 +225,7 @@ export function createReaderToolbar(
         preferences[key] = item.value as never;
         callbacks.change();
       });
-      if (item.family) option.style.fontFamily = `"${item.family}", serif`;
+      if (item.family) option.style.fontFamily = readerFontFamily(item.family);
       labelButton(option, item.accessible, item.label);
       option.dataset.choice = item.value;
       preview.append(option);
@@ -237,7 +239,7 @@ export function createReaderToolbar(
       const current = items.find((item) => item.value === preferences[key])!;
       const sample = trigger.querySelector<HTMLElement>(".choice-current")!;
       sample.innerHTML = current.preview;
-      if (current.family) sample.style.fontFamily = `"${current.family}", serif`;
+      if (current.family) sample.style.fontFamily = readerFontFamily(current.family);
     });
   };
   const themes: ReaderPreferences["theme"][] = ["light", "sepia", "dark", "black", "auto"];
@@ -322,18 +324,18 @@ export function createReaderToolbar(
     const open = button(ui.openPdf, "PDF", callbacks.openPdf);
     pdf.element.append(open);
   }
-  const info = addGroup("info");
-  info.element.classList.add("reading-info");
+  const info = document.createElement("div");
+  info.className = "reading-info";
   const readingTime = document.createElement("span");
   readingTime.className = "reading-time";
   const remaining = document.createElement("span");
   remaining.className = "remaining-time";
   remaining.setAttribute("aria-live", "polite");
-  info.element.append(readingTime, remaining);
+  info.append(readingTime, remaining);
   let fittedWidth = -1;
-  const fit = () => {
+  const fit = (force = false) => {
     if (disposed || !element.isConnected || !line.clientWidth) return;
-    if (fittedWidth === line.clientWidth && main.scrollWidth <= main.clientWidth + 1) return;
+    if (!force && fittedWidth === line.clientWidth && main.scrollWidth <= main.clientWidth + 1) return;
     fittedWidth = line.clientWidth;
     const active = focused();
     closeMenu(false);
@@ -346,14 +348,14 @@ export function createReaderToolbar(
       const group = groups.find((group) => group.key === key);
       if (group) overflow.append(group.element);
     };
-    move("info");
-    move("pdf");
+    more.hidden = true;
     const gap = parseFloat(getComputedStyle(main).columnGap) || 0;
     const required = () => {
       const nodes = [...main.children] as HTMLElement[];
       return nodes.reduce((total, node) => total + node.getBoundingClientRect().width, 0) + Math.max(0, nodes.length - 1) * gap;
     };
     if (required() > main.clientWidth) {
+      more.hidden = false;
       move("width");
       move("line");
       move("scroll");
@@ -366,12 +368,14 @@ export function createReaderToolbar(
       if (required() <= main.clientWidth) break;
       move(key);
     }
+    more.hidden = overflow.children.length === 0;
+    if (more.hidden) closePanel(false);
     const order = new Map(groups.map((group, i) => [group.element, i]));
     [...overflow.children].sort((a, b) => order.get(a as HTMLElement)! - order.get(b as HTMLElement)!).forEach((node) => overflow.append(node));
     if (active && element.contains(active)) {
       if (panel.hidden && overflow.contains(active)) more.focus({ preventScroll: true });
       else if (active.getClientRects().length) active.focus({ preventScroll: true });
-      else more.focus({ preventScroll: true });
+      else (more.hidden ? indexButton : more).focus({ preventScroll: true });
     }
     overflow.querySelectorAll<HTMLButtonElement>("button").forEach((button) => (button.tabIndex = 0));
     rove(focused());
@@ -473,6 +477,7 @@ export function createReaderToolbar(
     closeButton,
     progress,
     remaining,
+    readingInfo: info,
     readingTime,
     speedInput: speed.input,
     fit,

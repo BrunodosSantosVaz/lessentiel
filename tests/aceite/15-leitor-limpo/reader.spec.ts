@@ -193,7 +193,7 @@ test("RN-0002 RN-0005 CA-03 aplica e persiste controles locais", async () => {
     await activate(page);
     await chooseReaderTheme(page, "Sépia");
     await chooseReaderTheme(page, "Escuro");
-    await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(30, 31, 34)");
+    await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(41, 42, 45)");
     await chooseReaderTheme(page, "Preto");
     await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(0, 0, 0)");
     await chooseReaderTheme(page, "Branco");
@@ -299,7 +299,7 @@ test("RN-0002 CA-04 navega pelo índice e mostra o tempo restante", async () => 
     await revealReaderControl(page, remaining);
     expect(Number(await progress.getAttribute("aria-valuenow"))).toBeGreaterThan(0);
     await expect(remaining).not.toHaveText(initialRemaining ?? "");
-    await page.locator("[data-leitor-limpo-host='true'] .veil").evaluate((element) => element.scrollTo(0, element.scrollHeight));
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expect(progress).toHaveAttribute("aria-valuenow", "100");
     await expect(remaining).toHaveText("restam 0 min");
   } finally {
@@ -380,14 +380,14 @@ test("RN-0003 CA-07 pede permissão específica para ativação automática", as
     await page.goto(`chrome-extension://${extensionId}/options.html`);
     await page.getByRole("textbox", { name: "Site" }).fill("https://example.test/*");
     await page.getByRole("button", { name: "Adicionar site automático" }).click();
-    await expect(page.getByText("https://example.test/*")).toBeVisible();
+    await expect(page.getByText("https://example.test", { exact: true })).toBeVisible();
     const originsAfterAdd = await page.evaluate(() => JSON.parse(sessionStorage.getItem("test-permissions") ?? "[]") as string[]);
     expect(originsAfterAdd).toContain("https://example.test/*");
     const hostPage = context.pages().find((candidate) => candidate.url().startsWith("https://example.test/"));
     expect(await hostPage?.evaluate(() => location.hostname)).toBe("example.test");
     await expect(page.getByRole("button", { name: /Remover.*example\.test/i })).toBeVisible();
     await page.getByRole("button", { name: /Remover.*example\.test/i }).click();
-    await expect(page.getByText("https://example.test/*")).toHaveCount(0);
+    await expect(page.getByText("https://example.test", { exact: true })).toHaveCount(0);
     const originsAfterRemove = await page.evaluate(() => JSON.parse(sessionStorage.getItem("test-permissions") ?? "[]") as string[]);
     expect(originsAfterRemove).not.toContain("https://example.test/*");
   } finally {
