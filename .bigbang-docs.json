@@ -64,7 +64,7 @@
     }
   },
   "codigo": {
-    "commit": "ceb1d0467ffe137b53b87e39627bbfef39cd131c",
+    "commit": "e791e9d3f1067c6283bf6de6b24a9d7e1c231a90",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -120,12 +120,12 @@
       ],
       "hashes": {
         "entrypoints/background.ts": "ddbeedd2ee320a9b86525cb7677d2c6d388aafeb255a0c7217e200de7927ac75",
-        "entrypoints/options/index.html": "6f931a2882e3ca0efb57051cf7de6f514ce021c266a5d685082fd5bc64f26a07",
-        "entrypoints/options/main.ts": "993c345f0a534b3732b91c25faf9c892799a2216daeb24dac41266d565b2e26c",
+        "entrypoints/options/index.html": "de33fbe9d91615b025a6e61c1d247f737a85bab4bbbcad07d74dbae13a803d0b",
+        "entrypoints/options/main.ts": "fae170c3067ca0b834041741eae1ab331518cd894ad1ab446ffab4873670e70e",
         "entrypoints/pdf/index.html": "dde642e6b2649d6565e20241264f00444c97467427f6b8c884822a3b44d46668",
         "entrypoints/pdf/main.ts": "383e8799a507613d5d714d710659ccc0360e6303b33f40d247004e07f2ec21db",
         "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
-        "entrypoints/popup/main.ts": "b8b3165137f4cc92dafa2f0ece7d83dfdb6ee9080cfd13f2ac553b9d55ae67ed",
+        "entrypoints/popup/main.ts": "1312d8c1db59c065624621971eea34ab4dc2037a1f5249a1d6b1f28aa91bc99f",
         "entrypoints/reader.content.ts": "6a22d5dee3889aebd0ba8039d2c780b9363e9a795a1453a0658a0756d2628c89",
         "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
         "package.json": "c97824d2c4ee84eb3ab7c98b120290457043a08d25663664d3a632ce73e2d009",
