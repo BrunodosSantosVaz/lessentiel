@@ -19,7 +19,7 @@ export function closeActiveReader(): boolean {
 
 type Preferences = {
   language: "pt-BR" | "en" | "es";
-  theme: "light" | "sepia" | "dark" | "black";
+  theme: "light" | "sepia" | "dark" | "black" | "auto";
   font: "Literata" | "Atkinson Hyperlegible Next" | "Lexend";
   fontSize: number;
   width: number;
@@ -49,7 +49,7 @@ async function loadPreferences(): Promise<Preferences> {
     };
     return {
       language: ["en", "es"].includes(stored?.language ?? "") ? (stored!.language as "en" | "es") : defaults.language,
-      theme: ["light", "sepia", "dark", "black"].includes(stored?.theme ?? "") ? (stored!.theme as Preferences["theme"]) : defaults.theme,
+      theme: ["light", "sepia", "dark", "black", "auto"].includes(stored?.theme ?? "") ? (stored!.theme as Preferences["theme"]) : defaults.theme,
       font: allowedFonts.includes(stored?.font as Preferences["font"]) ? (stored!.font as Preferences["font"]) : defaults.font,
       fontSize: limit(stored?.fontSize, defaults.fontSize, 14, 32, 2),
       width: limit(stored?.width, defaults.width, 560, 1000, 20),
@@ -66,11 +66,12 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   if (closeActiveReader()) return;
 
   const preferences = await loadPreferences();
+  const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
   const ui = {
     "pt-BR": {
       close: "Fechar",
       openPdf: "Abrir PDF local",
-      themes: ["Branco", "Sépia", "Escuro", "Preto"],
+      themes: ["Branco", "Sépia", "Escuro", "Preto", "Automático"],
       theme: "Tema",
       font: "Fonte",
       decrease: "Diminuir fonte",
@@ -92,7 +93,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     en: {
       close: "Close",
       openPdf: "Open local PDF",
-      themes: ["White", "Sepia", "Dark", "Black"],
+      themes: ["White", "Sepia", "Dark", "Black", "Automatic"],
       theme: "Theme",
       font: "Font",
       decrease: "Decrease font size",
@@ -114,7 +115,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     es: {
       close: "Cerrar",
       openPdf: "Abrir PDF local",
-      themes: ["Blanco", "Sepia", "Oscuro", "Negro"],
+      themes: ["Blanco", "Sepia", "Oscuro", "Negro", "Automático"],
       theme: "Tema",
       font: "Fuente",
       decrease: "Reducir tamaño",
@@ -165,7 +166,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     <header class="toolbar" role="toolbar" aria-label="Controles de leitura">
       <div class="controls" aria-label="Controles de leitura">
         <div class="group theme-group"><span class="group-title theme-label">Tema</span><div class="button-row">
-          <button type="button" aria-label="Tema branco">Branco</button><button type="button" aria-label="Tema sépia">Sépia</button><button type="button" aria-label="Tema escuro">Escuro</button><button type="button" aria-label="Tema preto">Preto</button>
+          <button type="button" aria-label="Tema branco">Branco</button><button type="button" aria-label="Tema sépia">Sépia</button><button type="button" aria-label="Tema escuro">Escuro</button><button type="button" aria-label="Tema preto">Preto</button><button type="button" aria-label="Tema automático">Auto</button>
         </div></div>
         <div class="group"><label>Fonte <select aria-label="Fonte"><option>Literata</option><option>Atkinson Hyperlegible Next</option><option>Lexend</option></select></label></div>
         <div class="group"><span class="group-title size-label">Tamanho</span><div class="button-row"><button type="button" aria-label="Diminuir fonte">A−</button><output class="font-size">20</output><button type="button" aria-label="Aumentar fonte">A+</button></div></div>
@@ -262,8 +263,9 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     void browser.storage.local.set({ [preferenceKey]: preferences });
   };
   const applyPreferences = () => {
-    veil.dataset.theme = preferences.theme;
-    articleElement.dataset.theme = preferences.theme;
+    const theme = preferences.theme === "auto" ? (colorScheme.matches ? "dark" : "light") : preferences.theme;
+    veil.dataset.theme = theme;
+    articleElement.dataset.theme = theme;
     articleElement.style.setProperty("--fonte-leitura", `"${preferences.font}", ${preferences.font === "Literata" ? "Georgia, serif" : "sans-serif"}`);
     articleElement.style.fontSize = `${preferences.fontSize}px`;
     articleElement.style.maxWidth = `${preferences.width}px`;
@@ -289,6 +291,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     ["sepia", "sépia"],
     ["dark", "escuro"],
     ["black", "preto"],
+    ["auto", "automático"],
   ];
   const decreaseFont = veil.querySelector<HTMLButtonElement>('button[aria-label="Diminuir fonte"]');
   const increaseFont = veil.querySelector<HTMLButtonElement>('button[aria-label="Aumentar fonte"]');
@@ -379,10 +382,15 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     if (event.key === "Escape") closeReader();
   };
   window.addEventListener("keydown", onKeydown);
+  const updateSystemTheme = () => {
+    if (preferences.theme === "auto") applyPreferences();
+  };
+  colorScheme.addEventListener("change", updateSystemTheme);
   host.restorePage = () => {
     restorePage();
     stopAutoScroll();
     if (onKeydown) window.removeEventListener("keydown", onKeydown);
+    colorScheme.removeEventListener("change", updateSystemTheme);
   };
   closeButton?.addEventListener("click", closeReader);
   if (onOpenPdf && openPdfButton) {
@@ -396,7 +404,10 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     const themeButton = veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${old}"]`);
     themeButton?.setAttribute("aria-label", `${ui.theme} ${ui.themes[index]}`);
     themeButton?.setAttribute("data-theme-value", themeButtons[index]![0]);
-    if (themeButton) themeButton.textContent = ui.themes[index];
+    if (themeButton) {
+      themeButton.textContent = themeButtons[index]![0] === "auto" ? "Auto" : ui.themes[index];
+      themeButton.title = ui.themes[index]!;
+    }
   });
   const labels = [...veil.querySelectorAll("label")];
   const labelText = [ui.font, ui.width, ui.line, ui.align, ui.speed];
