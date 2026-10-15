@@ -373,6 +373,7 @@ export function createReaderToolbar(
       else if (active.getClientRects().length) active.focus({ preventScroll: true });
       else more.focus({ preventScroll: true });
     }
+    overflow.querySelectorAll<HTMLButtonElement>("button").forEach((button) => (button.tabIndex = 0));
     rove(focused());
   };
   const schedule = () => {

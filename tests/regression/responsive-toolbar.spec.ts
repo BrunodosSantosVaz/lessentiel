@@ -30,7 +30,7 @@ async function open(width = 1920) {
   return { context, page, activate, worker };
 }
 
-test("#34 RN-0002 barra permanece em uma linha e distribui controles sem perda ao redimensionar", async () => {
+test("#34 RN-0002 RN-0005 barra permanece em uma linha e distribui controles sem perda ao redimensionar", async () => {
   const { context, page } = await open();
   try {
     for (const width of [1920, 1440, 1280, 1024, 768, 360, 1920]) {
@@ -60,7 +60,7 @@ test("#34 RN-0002 barra permanece em uma linha e distribui controles sem perda a
   }
 });
 
-test("#34 RN-0002 amostras visuais têm nomes e expansão por teclado com listas nomeadas", async () => {
+test("#34 RN-0002 RN-0005 amostras visuais têm nomes e expansão por teclado com listas nomeadas", async () => {
   const { context, page } = await open();
   try {
     await expect(page.locator(".theme-preview .theme-swatch")).toHaveCount(5);
@@ -90,7 +90,7 @@ test("#34 RN-0002 amostras visuais têm nomes e expansão por teclado com listas
   }
 });
 
-test("#34 RN-0002 tamanho junto ao rótulo e largura apenas percentual persistem", async () => {
+test("#34 RN-0002 RN-0005 tamanho junto ao rótulo e largura apenas percentual persistem", async () => {
   const { context, page, activate, worker } = await open();
   try {
     await expect(page.locator(".size-heading")).toHaveText(/Tamanho\s*20/);
@@ -117,7 +117,7 @@ test("#34 RN-0002 tamanho junto ao rótulo e largura apenas percentual persistem
   }
 });
 
-test("#34 RN-0002 menu responsivo contém sliders e rolagem, Escape devolve foco", async () => {
+test("#34 RN-0002 RN-0005 menu responsivo contém sliders e rolagem, Escape devolve foco", async () => {
   const { context, page } = await open(360);
   try {
     const more = page.getByRole("button", { name: "Mais opções de leitura", exact: true });
@@ -143,7 +143,7 @@ test("#34 RN-0002 menu responsivo contém sliders e rolagem, Escape devolve foco
   }
 });
 
-test("#34 RN-0002 impressão exclui página e controles e restaura a apresentação ao fechar", async () => {
+test("#34 RN-0002 RN-0005 impressão exclui página e controles e restaura a apresentação ao fechar", async () => {
   const { context, page } = await open();
   try {
     const originalStyle = await page.locator("body").getAttribute("style");
@@ -161,7 +161,7 @@ test("#34 RN-0002 impressão exclui página e controles e restaura a apresentaç
   }
 });
 
-test("#34 RN-0002 migra largura antiga em pixels sem perder fonte e alinhamento", async () => {
+test("#34 RN-0002 RN-0005 migra largura antiga em pixels sem perder fonte e alinhamento", async () => {
   const { context, page, activate, worker } = await open();
   try {
     await page.getByRole("button", { name: "Fechar", exact: true }).click();
@@ -187,7 +187,7 @@ test("#34 RN-0002 migra largura antiga em pixels sem perder fonte e alinhamento"
   }
 });
 
-test("#34 RN-0002 controle com foco migra para Mais sem perder ajuste ao reduzir a janela", async () => {
+test("#34 RN-0002 RN-0005 controle com foco migra para Mais sem perder ajuste ao reduzir a janela", async () => {
   const { context, page } = await open();
   try {
     const width = page.getByRole("slider", { name: "Largura do texto", exact: true });
@@ -205,6 +205,26 @@ test("#34 RN-0002 controle com foco migra para Mais sem perder ajuste ao reduzir
     await page.keyboard.press("Escape");
     await expect(more).toBeFocused();
     await expect(page.getByRole("article")).toBeVisible();
+  } finally {
+    await context.close();
+  }
+});
+
+test("#34 RN-0002 RN-0005 todos os controles do painel continuam alcançáveis por Tab após reduzir a janela", async () => {
+  const { context, page } = await open();
+  try {
+    await page.setViewportSize({ width: 360, height: 900 });
+    const more = page.getByRole("button", { name: "Mais opções de leitura", exact: true });
+    await more.focus();
+    await more.press("Space");
+    const controls = page.getByRole("region", { name: "Mais opções de leitura", exact: true }).locator("button:visible, select:visible, input:visible");
+    expect(await controls.count()).toBeGreaterThanOrEqual(7);
+    for (const control of await controls.all()) {
+      await expect(control).toBeFocused();
+      await page.keyboard.press("Tab");
+    }
+    await page.keyboard.press("Escape");
+    await expect(more).toBeFocused();
   } finally {
     await context.close();
   }

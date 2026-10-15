@@ -187,7 +187,7 @@ test("RN-0001 CA-02 neutraliza conteúdo hostil", async () => {
 });
 
 // oxfmt-ignore
-test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
+test("RN-0002 RN-0005 CA-03 aplica e persiste controles locais", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
     await activate(page);

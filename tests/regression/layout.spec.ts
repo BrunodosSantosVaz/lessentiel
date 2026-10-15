@@ -96,7 +96,7 @@ test("#32 RN-0002 centraliza texto e ocupa 100% em monitores largos, persistindo
     await width.press("Home");
     await expect(article).toHaveCSS("max-width", "30%");
     await page.setViewportSize({ width: 360, height: 900 });
-    expect(await page.locator(".veil").evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
+    await expect.poll(() => page.locator(".veil").evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   } finally {
     await context.close();
   }
