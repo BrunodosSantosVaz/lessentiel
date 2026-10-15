@@ -17,6 +17,24 @@ declare global {
 const extensionPath = process.env.MLA_EXTENSION_DIR ?? resolve(".output/chrome-mv3");
 const articleUrl = "https://example.test/article";
 const otherUrl = "https://example.test/other";
+function pdfWithPages(pageCount: number): Buffer {
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    `<< /Type /Pages /Kids [${Array.from({ length: pageCount }, (_, index) => `${index + 3} 0 R`).join(" ")}] /Count ${pageCount} >>`,
+    ...Array.from({ length: pageCount }, () => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 1 1] >>"),
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  for (const [index, object] of objects.entries()) {
+    offsets.push(Buffer.byteLength(pdf, "latin1"));
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  }
+  const xrefOffset = Buffer.byteLength(pdf, "latin1");
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (const offset of offsets.slice(1)) pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+  return Buffer.from(pdf, "latin1");
+}
 const articleHtml = `<!doctype html><html lang="pt-BR"><head><title>Artigo de teste</title></head><body>
   <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p onclick="window.__handlerExecutado = (window.__handlerExecutado ?? 0) + 1">Texto principal para validar a leitura local.</p>
   <h2>Segunda seção</h2><ul><li>Item preservado</li></ul><table><thead><tr><th>Campo</th></tr></thead><tbody><tr><td>Valor</td></tr></tbody></table>
@@ -319,6 +337,10 @@ test("RN-0003 CA-06 abre PDF local com texto selecionável", async () => {
     await expect(page.getByRole("article")).toContainText("PDF de teste");
     await expect(page.getByRole("button", { name: "Fechar" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Tema branco" })).toBeVisible();
+    const oversizedChooser = page.waitForEvent("filechooser");
+    await page.getByRole("button", { name: "Abrir PDF local" }).click();
+    await (await oversizedChooser).setFiles({ name: "1001-pages.pdf", mimeType: "application/pdf", buffer: pdfWithPages(1001) });
+    await expect(page.getByRole("status")).toContainText("limite de 1000 páginas");
     const scannedChooser = page.waitForEvent("filechooser");
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
     await (await scannedChooser).setFiles(resolve("tests/fixtures/scanned.pdf"));
