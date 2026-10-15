@@ -4,10 +4,13 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "commit": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "branch": "master"
+    "commit": "aaf93d66e55f552e60b43780f1d7f5fb7094bc89",
+    "branch": "master",
+    "proposta": "bigbang/proposta-5-produto"
   },
-  "paginas": {},
+  "paginas": {
+    "PRODUTO.md": "PRODUTO"
+  },
   "categorias": {},
   "codigo": {
     "commit": "2fc070d6d4ef285a77709c5e39c0eac0ed160b44",
