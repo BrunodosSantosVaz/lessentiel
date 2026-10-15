@@ -64,42 +64,25 @@
     }
   },
   "codigo": {
-    "commit": "d0299c35e8b7022f92016b7893436a82ee94ca5a",
-    "raizes": [
-      "entrypoints/",
-      "flags.toml",
-      "package.json",
-      "prototype/",
-      "public/",
-      "scripts/package-test.mjs",
-      "src/",
-      "wxt.config.ts"
-    ],
+    "commit": "2b60880e405968fa85e7dac85c75e372a6d8fd53",
+    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
   "funcionalidades": [
     {
       "id": "RF-0001",
       "pagina": "Funcionalidades",
-      "requisitos": [
-        "RF-0001"
-      ],
-      "fontes": [
-        "prototype/index.html"
-      ],
+      "requisitos": ["RF-0001"],
+      "fontes": ["prototype/index.html"],
       "hashes": {
         "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
       },
-      "testes": [
-        "tests/prototype.spec.ts:smoke"
-      ]
+      "testes": ["tests/prototype.spec.ts:smoke"]
     },
     {
       "id": "RF-0002",
       "pagina": "Funcionalidades",
-      "requisitos": [
-        "RF-0002"
-      ],
+      "requisitos": ["RF-0002"],
       "fontes": [
         "entrypoints/background.ts",
         "entrypoints/options/index.html",
@@ -133,14 +116,14 @@
         "wxt.config.ts"
       ],
       "hashes": {
-        "entrypoints/background.ts": "3ff1a2aa0c6ef121d03cb201003d3e37d8cab3510525b616e4a792401f24bd73",
+        "entrypoints/background.ts": "57a4806d18215fed8ece09628d751fb80b59299d4358881d1a90c491cd47047a",
         "entrypoints/options/index.html": "6f931a2882e3ca0efb57051cf7de6f514ce021c266a5d685082fd5bc64f26a07",
         "entrypoints/options/main.ts": "e4dde98dd5df1fd6e56a877956799f130752aefcfdb23493b13799d2a52586d9",
-        "entrypoints/pdf/index.html": "6c059cb8e050e4e655abf1443b5d999bf614b7b86959bb63a9f7a24f9edc760a",
-        "entrypoints/pdf/main.ts": "7d859f0a6085788127940905bc45c0dff2843a89c59be2fc1cbf4988864ab841",
+        "entrypoints/pdf/index.html": "dde642e6b2649d6565e20241264f00444c97467427f6b8c884822a3b44d46668",
+        "entrypoints/pdf/main.ts": "eff8bcc3b5473bef27bf4ecdc5c3c099d6b55e40c94dbcbf38df806b08f8c52d",
         "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
         "entrypoints/popup/main.ts": "c338926c8315f66ea4e81e4cd6fb042e12eb84ad2e3e820dcb73467fbb32942d",
-        "entrypoints/reader.content.ts": "1fac8ab33c69a2b70a279e656f8df5d00b8ff1e6d6bed09fbdd0a439b544caab",
+        "entrypoints/reader.content.ts": "6a22d5dee3889aebd0ba8039d2c780b9363e9a795a1453a0658a0756d2628c89",
         "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
         "package.json": "c97824d2c4ee84eb3ab7c98b120290457043a08d25663664d3a632ce73e2d009",
         "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
@@ -161,7 +144,7 @@
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
-        "src/platform/reader-panel.ts": "8664a3c126cf0fe714b8371294919ec17b88daecc1168aed91320eee7d01fe76",
+        "src/platform/reader-panel.ts": "3fe2464d0c2218393f05e33a3646904e9755323823b7225b17f3b803f25fc67f",
         "wxt.config.ts": "5ef1c7d487303ecedad4897f4475fba2af63204f09dcaa088405baf3df82a70a"
       },
       "testes": [
