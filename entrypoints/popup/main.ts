@@ -2,6 +2,7 @@ import { browser } from "wxt/browser";
 
 const button = document.querySelector<HTMLButtonElement>("#activate-reader");
 const status = document.querySelector<HTMLElement>("#status");
+if (!__READER_ENABLED__ && button) button.hidden = true;
 const pdfLink = document.querySelector<HTMLAnchorElement>('a[href="pdf.html"]');
 if (!__READER_ENABLED__ && pdfLink) pdfLink.hidden = true;
 const labels = {
@@ -42,6 +43,7 @@ void browser.storage.local.get("readerPreferences").then(({ readerPreferences })
 });
 
 button?.addEventListener("click", async () => {
+  if (!__READER_ENABLED__) return;
   button.disabled = true;
   const prefs = await browser.storage.local.get("readerPreferences");
   const lang = (prefs.readerPreferences as { language?: string } | undefined)?.language;

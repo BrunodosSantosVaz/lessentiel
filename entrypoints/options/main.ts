@@ -49,6 +49,8 @@ const language = document.querySelector<HTMLSelectElement>("#language")!;
 const siteInput = document.querySelector<HTMLInputElement>("#site")!;
 const siteList = document.querySelector<HTMLUListElement>("#sites")!;
 const status = document.querySelector<HTMLElement>("#status")!;
+const automaticSettings = document.querySelector<HTMLElement>("#automatic-settings")!;
+automaticSettings.hidden = !__READER_ENABLED__;
 let sites: string[] = [];
 type PermissionCalls = Pick<typeof browser.permissions, "request" | "contains" | "remove">;
 const testPermissions = __MLA_TEST_MODE__ ? (window as Window & { __mlaTestPermissions?: PermissionCalls }).__mlaTestPermissions : undefined;
@@ -86,6 +88,7 @@ function renderSites() {
 }
 
 async function removeSite(site: string) {
+  if (!__READER_ENABLED__) return;
   if (!(await permissions.remove({ origins: [site] }))) return;
   sites = sites.filter((item) => item !== site);
   await browser.storage.local.set({ automaticSites: sites });
@@ -93,6 +96,7 @@ async function removeSite(site: string) {
 }
 
 document.querySelector<HTMLButtonElement>("#add-site")!.addEventListener("click", async () => {
+  if (!__READER_ENABLED__) return;
   const t = translations[language.value as keyof typeof translations];
   const value = siteInput.value.trim();
   let url: URL;
