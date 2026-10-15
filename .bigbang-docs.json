@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "ced40c31054748c5df06b620b7700aafff7c153d",
-    "commit": "23d02fc94c1671fa8b45911ede58fb47cdf31300",
+    "base": "23d02fc94c1671fa8b45911ede58fb47cdf31300",
+    "commit": "65f47ad341da63e9e2724cdc19078337e3f5e12e",
     "branch": "master",
-    "proposta": "bigbang/proposta-16-lint-typescript"
+    "proposta": "bigbang/proposta-18-arquitetura-leitura-web"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -65,7 +65,7 @@
   },
   "codigo": {
     "commit": "37ec74a3db5477be662dd701316569838637a668",
-    "raizes": ["prototype/"],
+    "raizes": ["prototype/", "entrypoints/", "src/", "wxt.config.ts"],
     "excluir": []
   },
   "funcionalidades": [
@@ -78,12 +78,39 @@
         "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
       },
       "testes": ["tests/prototype.spec.ts:smoke"]
+    },
+    {
+      "id": "RF-0002",
+      "pagina": "Funcionalidades",
+      "requisitos": ["RF-0002"],
+      "fontes": [
+        "entrypoints/background.ts",
+        "entrypoints/popup/main.ts",
+        "entrypoints/popup/index.html",
+        "entrypoints/reader.content.ts",
+        "src/platform/extract-article.ts",
+        "src/platform/reader-panel.ts",
+        "wxt.config.ts"
+      ],
+      "hashes": {
+        "entrypoints/background.ts": "a7f96534bec7c038d4dd95ea4810bc70117a66f14e0316771e178c8bd5039f17",
+        "entrypoints/popup/main.ts": "0897835e9ec11791ec397cd293fab13d9123ff4e296970a78c3e7f1f28c21818",
+        "entrypoints/popup/index.html": "c1428d0161b72f679e4a42936f99a0c66c39f948304dd9664ffd5ede938e5b74",
+        "entrypoints/reader.content.ts": "240aa19ae6e6f7212b79e2833c3e40b877013b6af366433f476fdbaa2055a87c",
+        "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
+        "src/platform/reader-panel.ts": "e84ff5d9f19d0c283d607e44fa058e04f710ed11d3218ff1f02a61c1e0c1a0a6",
+        "wxt.config.ts": "3dc6e8ac2325b7061ab60140dc4cfe6d3640ce5699d1ceb3819034049839c057"
+      },
+      "testes": ["tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01", "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-02"]
     }
   ],
   "arquivos_funcionais": [],
   "requisitos": {
     "RF-0001": {
       "pagina": "Funcionalidades"
+    },
+    "RF-0002": {
+      "pagina": "Requisitos"
     }
   }
 }
