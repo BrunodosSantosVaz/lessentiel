@@ -9,3 +9,5 @@ O tema **Auto** acompanha o modo claro/escuro do sistema e mantém a escolha nes
 [Documentação](https://github.com/BrunodosSantosVaz/mla/wiki) · [Discussions](https://github.com/BrunodosSantosVaz/mla/discussions) · [Issues](https://github.com/BrunodosSantosVaz/mla/issues) · [Painel público #33](https://github.com/users/BrunodosSantosVaz/projects/33)
 
 Licença: [MIT](LICENSE). O framework Big Bang mantém licença própria em `.bigbang/LICENSE`.
+
+[Releases](https://github.com/BrunodosSantosVaz/mla/releases) · [Critérios e evidências](https://github.com/BrunodosSantosVaz/mla/wiki/Aceite-do-MVP) · [Segurança](SECURITY.md) · [Contribuindo](CONTRIBUTING.md)

@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "dceb197354bc6bbc96f4e686e1e654e3028d386d",
-    "commit": "c264d0a63a6cf8d956696b312f05ab351816ba12",
+    "base": "c264d0a63a6cf8d956696b312f05ab351816ba12",
+    "commit": "2ae24b927ef91d3fb6af4dca9c0519f217aa76b5",
     "branch": "master",
-    "proposta": "bigbang/proposta-30-tema-automatico"
+    "proposta": "bigbang/proposta-21-documentacao-consolidada"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -29,7 +29,11 @@
     "docs/historico.md": "Historico",
     "docs/decisoes/ADR-0002-leitura-componentes.md": "docs-decisoes-ADR-0002-leitura-componentes",
     "docs/correcao-26.md": "Correcao-26",
-    "docs/memoria.md": "Memoria"
+    "docs/memoria.md": "Memoria",
+    "CHANGELOG.md": "CHANGELOG",
+    "docs/dados/inventario.md": "Inventario-de-dados",
+    "docs/glossario.md": "Glossario",
+    "docs/aceite-mvp.md": "Aceite-do-MVP"
   },
   "categorias": {
     "produto": {
@@ -67,7 +71,7 @@
     }
   },
   "codigo": {
-    "commit": "ebb27db73882f3bb83f422a5850f7ecd14ab33a3",
+    "commit": "a5a9041f12ca82305edbcb0f3abeb14c87f60515",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -169,7 +173,8 @@
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-08",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09",
         "tests/regression/reader.spec.ts:#26",
-        "tests/regression/reader.spec.ts:#30"
+        "tests/regression/reader.spec.ts:#30",
+        "tests/regression/reader.spec.ts:#30 RN-0002"
       ]
     }
   ],
