@@ -33,7 +33,7 @@ async function readerVisible(page: Page) {
   await expect(page.locator("[data-leitor-limpo-host='true'] article")).toBeVisible();
 }
 
-test("#26 extrai artigo em Shadow DOM aninhado, preserva slots e restaura a página", async () => {
+test("#26 RN-0001 extrai artigo em Shadow DOM aninhado, preserva slots e restaura a página", async () => {
   const html = `<!doctype html><title>Artigo em componente</title><article>; ; ; <button>Continuar lendo</button></article><news-shell></news-shell>
     <script>
       const shell = document.querySelector('news-shell').attachShadow({mode:'open'});
@@ -68,7 +68,7 @@ test("#26 extrai artigo em Shadow DOM aninhado, preserva slots e restaura a pág
   }
 });
 
-test("#26 rejeita fragmento sem artigo em vez de exibir pontuação e controles", async () => {
+test("#26 RN-0001 rejeita fragmento sem artigo em vez de exibir pontuação e controles", async () => {
   const { context, page, activate } = await open("<!doctype html><title>Sem artigo</title><article>; ; ; <button>Continuar lendo</button></article>");
   try {
     await activate();
@@ -79,7 +79,7 @@ test("#26 rejeita fragmento sem artigo em vez de exibir pontuação e controles"
   }
 });
 
-test("#26 sanitiza o conteúdo vindo do Shadow DOM", async () => {
+test("#26 RN-0001 sanitiza o conteúdo vindo do Shadow DOM", async () => {
   const hostile = article.replace(
     "</article>",
     '<p onclick="window.shadowHandlerExecuted=true">Trecho hostil</p><a href="javascript:window.shadowLinkExecuted=true">Link hostil</a><img src="https://outside.test/leak" onerror="window.shadowHandlerExecuted=true"></article>',
@@ -103,7 +103,7 @@ test("#26 sanitiza o conteúdo vindo do Shadow DOM", async () => {
   }
 });
 
-test("#26 barra compacta e tema aplicado à tela inteira", async () => {
+test("#26 RN-0002 barra compacta e tema aplicado à tela inteira", async () => {
   const { context, page, activate } = await open(`<!doctype html><title>Leitura tranquila</title>${article}`);
   try {
     await activate();
@@ -119,7 +119,7 @@ test("#26 barra compacta e tema aplicado à tela inteira", async () => {
   }
 });
 
-test("#26 controles e texto continuam acessíveis em 360 px", async () => {
+test("#26 RN-0002 controles e texto continuam acessíveis em 360 px", async () => {
   const { context, page, activate } = await open(`<!doctype html><title>Leitura tranquila</title>${article}`, 360);
   try {
     await activate();
