@@ -7,13 +7,14 @@ export default defineConfig({
   manifest: {
     name: "Leitor Limpo",
     description: "Leitura local e sem distrações para páginas web.",
+    default_locale: "pt_BR",
     permissions: ["activeTab", "scripting", "contextMenus", "storage"],
     // Test builds grant the synthetic page host so headless tests can exercise injection without browser UI gestures.
     host_permissions: testMode ? ["http://*/*", "https://*/*"] : [],
     optional_host_permissions: ["http://*/*", "https://*/*"],
     web_accessible_resources: [{ resources: ["fonts/*.woff2"], matches: ["http://*/*", "https://*/*"] }],
     action: {
-      default_title: "Abrir Leitor Limpo",
+      default_title: "__MSG_actionTitle__",
       default_popup: "popup.html",
       default_icon: {
         16: "icon-16.png",
@@ -32,7 +33,7 @@ export default defineConfig({
     commands: {
       "activate-reader": {
         suggested_key: { default: "Alt+Shift+R" },
-        description: "Ativar ou fechar o modo de leitura",
+        description: "__MSG_activateReaderCommand__",
       },
     },
   },

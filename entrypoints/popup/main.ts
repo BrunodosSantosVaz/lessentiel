@@ -2,6 +2,8 @@ import { browser } from "wxt/browser";
 
 const button = document.querySelector<HTMLButtonElement>("#activate-reader");
 const status = document.querySelector<HTMLElement>("#status");
+const pdfLink = document.querySelector<HTMLAnchorElement>('a[href="pdf.html"]');
+if (!__READER_ENABLED__ && pdfLink) pdfLink.hidden = true;
 const labels = {
   "pt-BR": [
     "Abra o texto desta página em uma leitura sem distrações.",

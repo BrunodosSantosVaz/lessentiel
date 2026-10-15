@@ -6,6 +6,7 @@ declare global {
   interface Window {
     chrome: {
       runtime: { getURL: (path: string) => string; sendMessage: (message: unknown) => Promise<unknown> };
+      action: { getTitle: (details: Record<string, never>) => Promise<string> };
     };
     __conteudoExecutado?: number;
     __handlerExecutado?: number;
@@ -367,14 +368,27 @@ test("RN-0004 CA-08 apresenta a interface nos três idiomas", async () => {
   try {
     await page.goto(`chrome-extension://${extensionId}/options.html`);
     const language = page.getByRole("combobox", { name: "Idioma" });
-    for (const [value, label] of [
-      ["pt-BR", "Preferências"],
-      ["en", "Settings"],
-      ["es", "Preferencias"],
+    for (const [value, label, saveLabel, actionTitle] of [
+      ["pt-BR", "Preferências", "Salvar preferências", "Abrir Leitor Limpo"],
+      ["en", "Settings", "Save preferences", "Open Leitor Limpo"],
+      ["es", "Preferencias", "Guardar preferencias", "Abrir Leitor Limpo"],
     ]) {
       await language.selectOption(value);
       await expect(page.getByRole("heading", { name: label })).toBeVisible();
+      await page.getByRole("button", { name: saveLabel }).click();
+      const worker = context.serviceWorkers()[0]!;
+      await expect
+        .poll(() => worker.evaluate(() => (globalThis as typeof globalThis & { chrome: Window["chrome"] }).chrome.action.getTitle({})))
+        .toBe(actionTitle);
     }
+    const localization = await page.evaluate(async () => {
+      const runtime = (globalThis as typeof globalThis & { chrome: Window["chrome"] }).chrome.runtime;
+      const response = await fetch(runtime.getURL("_locales/en/messages.json"));
+      return { manifest: await (await fetch(runtime.getURL("manifest.json"))).json(), english: await response.json() };
+    });
+    expect(localization.manifest.default_locale).toBe("pt_BR");
+    expect(localization.manifest.commands["activate-reader"].description).toBe("__MSG_activateReaderCommand__");
+    expect(localization.english.activateReaderCommand.message).toBe("Open or close reader mode");
   } finally {
     await context.close();
   }

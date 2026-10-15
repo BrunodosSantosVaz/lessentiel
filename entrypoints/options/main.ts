@@ -65,6 +65,7 @@ function renderLanguage() {
   document.querySelector<HTMLButtonElement>("#save")!.textContent = t.save;
   document.querySelector("#language-label")!.textContent = t.language;
   document.querySelector<HTMLAnchorElement>("#pdf-link")!.textContent = t.pdf;
+  document.querySelector<HTMLAnchorElement>("#pdf-link")!.hidden = !__READER_ENABLED__;
   renderSites();
 }
 

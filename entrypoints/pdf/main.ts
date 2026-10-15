@@ -16,6 +16,7 @@ const messages = {
     "Este PDF está sem camada de texto selecionável. PDFs digitalizados precisam de OCR.",
     "página(s) lida(s) localmente.",
     "Não foi possível ler este PDF. Verifique se o arquivo é válido.",
+    "A leitura avançada ainda não está liberada neste build.",
   ],
   en: [
     "Open local PDF",
@@ -25,6 +26,7 @@ const messages = {
     "This PDF has no selectable text layer. Scanned PDFs require OCR.",
     "page(s) read locally.",
     "Could not read this PDF. Check that the file is valid.",
+    "Advanced reading is not enabled in this build yet.",
   ],
   es: [
     "Abrir PDF local",
@@ -34,6 +36,7 @@ const messages = {
     "Este PDF no tiene texto seleccionable. Los PDF escaneados necesitan OCR.",
     "página(s) leída(s) localmente.",
     "No se pudo leer el PDF. Comprueba que el archivo sea válido.",
+    "La lectura avanzada aún no está habilitada en esta versión.",
   ],
 } as const;
 let strings: readonly string[] = messages["pt-BR"];
@@ -42,9 +45,17 @@ void browser.storage.local.get("readerPreferences").then(({ readerPreferences })
   strings = messages[lang === "en" || lang === "es" ? lang : "pt-BR"];
   document.querySelector<HTMLButtonElement>("#open-pdf")!.textContent = strings[0];
   document.documentElement.lang = lang ?? "pt-BR";
+  if (!__READER_ENABLED__) status.textContent = strings[7];
 });
-button.addEventListener("click", () => window.setTimeout(() => picker.click(), 40));
+if (!__READER_ENABLED__) {
+  button.hidden = true;
+  status.textContent = strings[7];
+}
+button.addEventListener("click", () => {
+  if (__READER_ENABLED__) window.setTimeout(() => picker.click(), 40);
+});
 picker.addEventListener("change", async () => {
+  if (!__READER_ENABLED__) return;
   const file = picker.files?.[0];
   if (!file) return;
   if (file.size > 100 * 1024 * 1024) {

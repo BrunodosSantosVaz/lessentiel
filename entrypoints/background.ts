@@ -32,6 +32,7 @@ export default defineBackground(() => {
   };
 
   const menuTitles = { "pt-BR": "Abrir no Leitor Limpo", en: "Open in Leitor Limpo", es: "Abrir en Leitor Limpo" };
+  const actionTitles = { "pt-BR": "Abrir Leitor Limpo", en: "Open Leitor Limpo", es: "Abrir Leitor Limpo" };
   const menus = browser.contextMenus as unknown as {
     removeAll: (callback: () => void) => void;
     create: (properties: { id: string; title: string; contexts: ["page"] }, callback: () => void) => void;
@@ -40,11 +41,13 @@ export default defineBackground(() => {
   const refreshContextMenu = async () => {
     const { readerPreferences } = await browser.storage.local.get("readerPreferences");
     const language = (readerPreferences as { language?: string } | undefined)?.language;
+    const locale = language === "en" || language === "es" ? language : "pt-BR";
+    await browser.action.setTitle({ title: actionTitles[locale] });
     menus.removeAll(() => {
       menus.create(
         {
           id: contextMenuId,
-          title: menuTitles[language === "en" || language === "es" ? language : "pt-BR"],
+          title: menuTitles[locale],
           contexts: ["page"],
         },
         () => {
