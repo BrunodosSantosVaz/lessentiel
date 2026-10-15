@@ -1,3 +1,4 @@
+import { chooseReaderTheme, chooseReaderFont, chooseReaderAlignment, revealReaderControl } from "../../helpers/reader-controls";
 import { chromium, expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
@@ -186,21 +187,20 @@ test("RN-0001 CA-02 neutraliza conteúdo hostil", async () => {
 });
 
 // oxfmt-ignore
-test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
+test("RN-0002 RN-0005 CA-03 aplica e persiste controles locais", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
     await activate(page);
-    await page.getByRole("button", { name: "Tema sépia" }).click();
-    await page.getByRole("button", { name: "Tema escuro" }).click();
+    await chooseReaderTheme(page, "Sépia");
+    await chooseReaderTheme(page, "Escuro");
     await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(30, 31, 34)");
-    await page.getByRole("button", { name: "Tema preto" }).click();
+    await chooseReaderTheme(page, "Preto");
     await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(0, 0, 0)");
-    await page.getByRole("button", { name: "Tema branco" }).click();
+    await chooseReaderTheme(page, "Branco");
     await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(255, 255, 255)");
-    await page.getByRole("button", { name: "Tema sépia" }).click();
-    const font = page.getByRole("combobox", { name: "Fonte" });
+    await chooseReaderTheme(page, "Sépia");
     for (const family of ["Literata", "Atkinson Hyperlegible Next", "Lexend"]) {
-      await font.selectOption(family);
+      await chooseReaderFont(page, family);
       await expect(page.getByRole("article")).toHaveCSS("font-family", new RegExp(family));
     }
     const fontPage = await context.newPage();
@@ -227,10 +227,11 @@ test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
     await expect(page.getByRole("article")).toHaveAttribute("data-theme", "sepia");
     await expect(page.getByRole("article")).toHaveCSS("font-size", "32px");
     await expect(page.getByRole("article")).toHaveCSS("font-family", /Lexend/);
-    await expect(page.getByRole("button", { name: "Tema sépia" })).toHaveCSS("border-radius", "14px");
-    await expect(page.getByRole("combobox", { name: "Fonte" })).toHaveCSS("font-family", /system-ui/);
+    await expect(page.locator('[data-control="theme"] [data-choice="sepia"]')).toHaveCSS("border-radius", "14px");
+    await expect(page.locator('select[aria-label="Fonte"]')).toHaveCSS("font-family", /system-ui/);
     await expect.poll(() => page.evaluate(() => document.fonts.check('20px "Lexend"'))).toBe(true);
     for (const name of ["Largura do texto", "Entrelinha", "Velocidade da rolagem"]) {
+      await revealReaderControl(page, page.getByRole("slider", { name }));
       expect(await page.getByRole("slider", { name }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
     }
     await page.getByRole("button", { name: "Índice" }).click();
@@ -239,20 +240,22 @@ test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
     }
     await page.getByRole("button", { name: "Índice" }).click();
     const article = page.getByRole("article");
-    const initialWidth = await article.evaluate((element) => getComputedStyle(element).maxWidth);
     const width = page.getByRole("slider", { name: "Largura do texto" });
+    await revealReaderControl(page, width);
     await width.focus();
+    await width.press("Home");
+    const initialWidth = await article.evaluate((element) => getComputedStyle(element).maxWidth);
     await width.press("End");
     const appliedWidth = await article.evaluate((element) => getComputedStyle(element).maxWidth);
     expect(appliedWidth).not.toBe(initialWidth);
     const initialLineHeight = await article.evaluate((element) => getComputedStyle(element).lineHeight);
     const lineHeight = page.getByRole("slider", { name: "Entrelinha" });
+    await revealReaderControl(page, lineHeight);
     await lineHeight.focus();
     await lineHeight.press("End");
     const appliedLineHeight = await article.evaluate((element) => getComputedStyle(element).lineHeight);
     expect(appliedLineHeight).not.toBe(initialLineHeight);
-    const alignment = page.getByRole("combobox", { name: "Alinhamento do texto" });
-    await alignment.selectOption("justify");
+    await chooseReaderAlignment(page, "Justificado");
     await expect(page.getByRole("article")).toHaveCSS("text-align", "justify");
     const widthValue = await width.inputValue();
     const lineHeightValue = await lineHeight.inputValue();
@@ -263,13 +266,14 @@ test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
     await page.reload();
     await activate(page);
     await expect(page.getByRole("article")).toHaveAttribute("data-theme", "sepia");
-    await expect(page.getByRole("combobox", { name: "Fonte" })).toHaveValue("Lexend");
+    await expect(page.locator('select[aria-label="Fonte"]')).toHaveValue("Lexend");
     await expect(page.getByRole("article")).toHaveCSS("font-size", "32px");
     await expect(page.getByRole("article")).toHaveCSS("max-width", appliedWidth);
     await expect(page.getByRole("article")).toHaveCSS("line-height", appliedLineHeight);
+    await revealReaderControl(page, page.getByRole("slider", { name: "Largura do texto" }));
     await expect(page.getByRole("slider", { name: "Largura do texto" })).toHaveValue(widthValue);
     await expect(page.getByRole("slider", { name: "Entrelinha" })).toHaveValue(lineHeightValue);
-    await expect(page.getByRole("combobox", { name: "Alinhamento do texto" })).toHaveValue("justify");
+    await expect(page.locator('select[aria-label="Alinhamento do texto"]')).toHaveValue("justify");
   } finally {
     await context.close();
   }
@@ -283,6 +287,7 @@ test("RN-0002 CA-04 navega pelo índice e mostra o tempo restante", async () => 
     await page.getByRole("button", { name: "Índice" }).click();
     await page.getByRole("link", { name: "Segunda seção" }).click();
     await expect(page).toHaveURL(/#segunda-secao/);
+    await revealReaderControl(page, page.getByText(/min de leitura/));
     await expect(page.getByText(/min de leitura/)).toBeVisible();
     const progress = page.getByRole("progressbar", { name: "Progresso da leitura" });
     await expect(progress).toBeVisible();
@@ -291,6 +296,7 @@ test("RN-0002 CA-04 navega pelo índice e mostra o tempo restante", async () => 
     const initialRemaining = await remaining.textContent();
     await page.getByRole("link", { name: "Ritmo próprio" }).click();
     await expect(page).toHaveURL(/#ritmo-proprio/);
+    await revealReaderControl(page, remaining);
     expect(Number(await progress.getAttribute("aria-valuenow"))).toBeGreaterThan(0);
     await expect(remaining).not.toHaveText(initialRemaining ?? "");
     await page.locator("[data-leitor-limpo-host='true'] .veil").evaluate((element) => element.scrollTo(0, element.scrollHeight));
@@ -306,6 +312,7 @@ test("RN-0002 CA-05 inicia, pausa e ajusta a rolagem automática", async () => {
   const { context, page } = await openExtension();
   try {
     await activate(page);
+    await revealReaderControl(page, page.getByRole("button", { name: "Iniciar rolagem" }));
     await page.getByRole("button", { name: "Iniciar rolagem" }).click();
     await expect(page.getByRole("button", { name: "Pausar rolagem" })).toHaveAttribute("aria-pressed", "true");
     const speed = page.getByRole("slider", { name: "Velocidade da rolagem" });
@@ -317,6 +324,7 @@ test("RN-0002 CA-05 inicia, pausa e ajusta a rolagem automática", async () => {
     await expect(page.getByRole("button", { name: "Iniciar rolagem" })).toHaveAttribute("aria-pressed", "false");
     await page.emulateMedia({ reducedMotion: "reduce" });
     const readingPosition = await page.getByRole("heading", { name: "Ritmo próprio" }).evaluate((element) => element.getBoundingClientRect().top);
+    await revealReaderControl(page, page.getByRole("button", { name: "Iniciar rolagem" }));
     await page.getByRole("button", { name: "Iniciar rolagem" }).click();
     await page.waitForTimeout(250);
     await expect(page.getByRole("button", { name: "Iniciar rolagem" })).toHaveAttribute("aria-pressed", "false");
@@ -332,16 +340,19 @@ test("RN-0003 CA-06 abre PDF local com texto selecionável", async () => {
   try {
     await page.goto(`chrome-extension://${extensionId}/pdf.html`);
     const chooser = page.waitForEvent("filechooser");
+    await revealReaderControl(page, page.getByRole("button", { name: "Abrir PDF local" }));
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
     await (await chooser).setFiles(resolve("tests/fixtures/sample.pdf"));
     await expect(page.getByRole("article")).toContainText("PDF de teste");
     await expect(page.getByRole("button", { name: "Fechar" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Tema branco" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Escolher tema", exact: true })).toBeVisible();
     const oversizedChooser = page.waitForEvent("filechooser");
+    await revealReaderControl(page, page.getByRole("button", { name: "Abrir PDF local" }));
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
     await (await oversizedChooser).setFiles({ name: "1001-pages.pdf", mimeType: "application/pdf", buffer: pdfWithPages(1001) });
     await expect(page.getByRole("status")).toContainText("limite de 1000 páginas");
     const scannedChooser = page.waitForEvent("filechooser");
+    await revealReaderControl(page, page.getByRole("button", { name: "Abrir PDF local" }));
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
     await (await scannedChooser).setFiles(resolve("tests/fixtures/scanned.pdf"));
     await expect(page.getByRole("status")).toContainText(/sem camada de texto/i);

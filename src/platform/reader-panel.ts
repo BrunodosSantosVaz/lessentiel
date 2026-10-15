@@ -1,5 +1,6 @@
 import { browser } from "wxt/browser";
 import { readerStyle } from "./reader-style";
+import { createReaderToolbar, type ReaderPreferences } from "./reader-toolbar";
 import type { ExtractedArticle } from "./extract-article";
 
 const hostSelector = "[data-leitor-limpo-host='true']";
@@ -17,17 +18,7 @@ export function closeActiveReader(): boolean {
   return true;
 }
 
-type Preferences = {
-  language: "pt-BR" | "en" | "es";
-  theme: "light" | "sepia" | "dark" | "black" | "auto";
-  font: "Georgia" | "Literata" | "Atkinson Hyperlegible Next" | "Lexend";
-  fontSize: number;
-  width: number;
-  widthMode: "custom" | "full";
-  lineHeight: number;
-  alignment: "left" | "center" | "justify";
-  speed: number;
-};
+type Preferences = ReaderPreferences;
 
 const defaults: Preferences = {
   language: "pt-BR",
@@ -36,6 +27,7 @@ const defaults: Preferences = {
   fontSize: 20,
   width: 760,
   widthMode: "custom",
+  widthPercent: 100,
   lineHeight: 1.65,
   alignment: "left",
   speed: 3,
@@ -57,7 +49,15 @@ async function loadPreferences(): Promise<Preferences> {
       width: limit(stored?.width, defaults.width, 560, 1000, 20),
       lineHeight: limit(stored?.lineHeight, defaults.lineHeight, 1.2, 2.2, 0.05),
       widthMode: stored?.widthMode === "full" ? "full" : "custom",
-      alignment: ["center", "justify"].includes(stored?.alignment ?? "") ? stored!.alignment! : "left",
+      widthPercent:
+        typeof stored?.widthPercent === "number"
+          ? limit(stored.widthPercent, defaults.widthPercent, 30, 100, 5)
+          : stored?.widthMode === "full"
+            ? 100
+            : typeof stored?.width === "number" && Number.isFinite(stored.width)
+              ? 0
+              : defaults.widthPercent,
+      alignment: ["center", "right", "justify"].includes(stored?.alignment ?? "") ? stored!.alignment! : "left",
       speed: limit(stored?.speed, defaults.speed, 1, 10, 1),
     };
   } catch {
@@ -72,6 +72,18 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
   const ui = {
     "pt-BR": {
+      toolbar: "Controles de leitura",
+      size: "Tamanho",
+      more: "Mais opções de leitura",
+      print: "Imprimir artigo",
+      chooseTheme: "Escolher tema",
+      chooseFont: "Escolher fonte",
+      chooseAlignment: "Escolher alinhamento",
+      right: "À direita",
+      alignLeft: "Alinhar à esquerda",
+      alignCenter: "Alinhar ao centro",
+      alignRight: "Alinhar à direita",
+      alignJustify: "Justificar texto",
       close: "Fechar",
       openPdf: "Abrir PDF local",
       themes: ["Branco", "Sépia", "Escuro", "Preto", "Automático"],
@@ -97,6 +109,18 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       remaining: (n: number) => `restam ${n} min`,
     },
     en: {
+      toolbar: "Reading controls",
+      size: "Size",
+      more: "More reading options",
+      print: "Print article",
+      chooseTheme: "Choose theme",
+      chooseFont: "Choose font",
+      chooseAlignment: "Choose alignment",
+      right: "Right",
+      alignLeft: "Align left",
+      alignCenter: "Align center",
+      alignRight: "Align right",
+      alignJustify: "Justify text",
       close: "Close",
       openPdf: "Open local PDF",
       themes: ["White", "Sepia", "Dark", "Black", "Automatic"],
@@ -122,6 +146,18 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       remaining: (n: number) => `${n} min remaining`,
     },
     es: {
+      toolbar: "Controles de lectura",
+      size: "Tamaño",
+      more: "Más opciones de lectura",
+      print: "Imprimir artículo",
+      chooseTheme: "Elegir tema",
+      chooseFont: "Elegir fuente",
+      chooseAlignment: "Elegir alineación",
+      right: "A la derecha",
+      alignLeft: "Alinear a la izquierda",
+      alignCenter: "Alinear al centro",
+      alignRight: "Alinear a la derecha",
+      alignJustify: "Justificar texto",
       close: "Cerrar",
       openPdf: "Abrir PDF local",
       themes: ["Blanco", "Sepia", "Oscuro", "Negro", "Automático"],
@@ -174,35 +210,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   `;
   const veil = document.createElement("div");
   veil.className = "veil";
-  veil.innerHTML = `
-    <header class="toolbar" role="toolbar" aria-label="Controles de leitura">
-      <div class="controls" aria-label="Controles de leitura">
-        <div class="group theme-group"><span class="group-title theme-label">Tema</span><div class="button-row">
-          <button type="button" aria-label="Tema branco">Branco</button><button type="button" aria-label="Tema sépia">Sépia</button><button type="button" aria-label="Tema escuro">Escuro</button><button type="button" aria-label="Tema preto">Preto</button><button type="button" aria-label="Tema automático">Auto</button>
-        </div></div>
-        <div class="group"><label>Fonte <select aria-label="Fonte"><option>Georgia</option><option>Literata</option><option>Atkinson Hyperlegible Next</option><option>Lexend</option></select></label></div>
-        <div class="group"><span class="group-title size-label">Tamanho</span><div class="button-row"><button type="button" aria-label="Diminuir fonte">A−</button><output class="font-size">20</output><button type="button" aria-label="Aumentar fonte">A+</button></div></div>
-        <div class="group"><label>Largura do texto <input aria-label="Largura do texto" type="range" min="560" max="1020" step="20"><output class="width-value" aria-hidden="true"></output></label></div>
-        <div class="group"><label>Entrelinha <input aria-label="Entrelinha" type="range" min="1.2" max="2.2" step="0.05"></label></div>
-        <button class="close-reader" type="button" aria-label="Fechar modo de leitura">Fechar</button>
-      </div>
-      <div class="utility-row">
-        <div class="group alignment-group"><label>Alinhamento do texto <select aria-label="Alinhamento do texto"><option value="left">À esquerda</option><option value="center">Centralizado</option><option value="justify">Justificado</option></select></label></div>
-        <div class="reading-info"><strong class="reader-brand">Leitor Limpo</strong><span class="reading-time"></span><span class="remaining-time" aria-live="polite"></span></div>
-        <div class="reader-tools">
-        <button type="button" aria-label="Índice" aria-expanded="false" aria-controls="reader-index">Índice</button>
-        <button type="button" aria-label="Iniciar rolagem" aria-pressed="false">Iniciar rolagem</button>
-        <label>Velocidade da rolagem <input aria-label="Velocidade da rolagem" type="range" min="1" max="10" step="1"></label>
-        <button class="open-pdf" type="button" hidden></button>
-        </div>
-      </div>
-      <progress aria-label="Progresso da leitura" value="0" max="100"></progress>
-    </header>
-    <div class="reader-layout">
-      <nav id="reader-index" class="index" aria-label="Índice do artigo" hidden><div class="index-heading"><strong class="index-title">Índice</strong><button class="close-index" type="button" aria-label="Fechar índice">×</button></div><ol></ol></nav>
-      <main class="reading-content"><article role="article"></article></main>
-    </div>
-  `;
+  veil.innerHTML = `<div class="reader-layout"><nav id="reader-index" class="index" hidden><div class="index-heading"><strong class="index-title"></strong><button class="close-index" type="button">×</button></div><ol></ol></nav><main class="reading-content"><article role="article"></article></main></div>`;
   const articleElement = veil.querySelector<HTMLElement>("article");
   if (!articleElement) return;
   articleElement.setAttribute("aria-label", article.title);
@@ -243,43 +251,47 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     indexList.append(item);
   });
 
-  const fontSelect = veil.querySelector<HTMLSelectElement>('select[aria-label="Fonte"]');
-  const widthInput = veil.querySelector<HTMLInputElement>('input[aria-label="Largura do texto"]');
-  const lineHeightInput = veil.querySelector<HTMLInputElement>('input[aria-label="Entrelinha"]');
-  const speedInput = veil.querySelector<HTMLInputElement>('input[aria-label="Velocidade da rolagem"]');
-  const alignmentSelect = veil.querySelector<HTMLSelectElement>('select[aria-label="Alinhamento do texto"]');
-  const progress = veil.querySelector<HTMLProgressElement>("progress");
-  const remaining = veil.querySelector<HTMLElement>(".remaining-time");
-  speedInput?.setAttribute("aria-valuemin", speedInput.min);
-  speedInput?.setAttribute("aria-valuemax", speedInput.max);
-  const wordCount = (articleElement.textContent ?? "").trim().split(/\s+/).filter(Boolean).length;
-  const totalMinutes = Math.ceil(wordCount / 200);
-  const stopAutoScroll = () => {
-    isScrolling = false;
-    if (frame !== null) cancelAnimationFrame(frame);
-    frame = null;
-    scrollButton?.setAttribute("aria-label", ui.start);
-    scrollButton?.setAttribute("aria-pressed", "false");
-    if (scrollButton) scrollButton.textContent = ui.start;
-  };
+  const previousActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   let isScrolling = false;
   let frame: number | null = null;
   let lastFrame = 0;
-  const scrollButton = veil.querySelector<HTMLButtonElement>("button[aria-label='Iniciar rolagem']");
+  const toolbar = createReaderToolbar(preferences, ui, {
+    change: () => {
+      applyPreferences();
+      savePreferences();
+    },
+    index: () => setIndexOpen(toolbar.indexButton.getAttribute("aria-expanded") !== "true"),
+    close: () => closeReader(),
+    scroll: () => toggleAutoScroll(),
+    print: () => {
+      stopAutoScroll();
+      toolbar.closePopovers();
+      window.print();
+    },
+    ...(onOpenPdf ? { openPdf: () => onOpenPdf(closeReader) } : {}),
+  });
+  veil.prepend(toolbar.element);
+  const wordCount = (articleElement.textContent ?? "").trim().split(/\s+/).filter(Boolean).length;
+  const totalMinutes = Math.ceil(wordCount / 200);
   const updateProgress = () => {
     const maxScroll = veil.scrollHeight - veil.clientHeight;
     const value = maxScroll > 0 ? Math.round((veil.scrollTop / maxScroll) * 100) : 0;
-    if (progress) {
-      progress.value = value;
-      progress.setAttribute("aria-valuenow", String(value));
-    }
-    const wordsRemaining = Math.ceil((wordCount * (100 - value)) / 100);
-    if (remaining) remaining.textContent = ui.remaining(Math.ceil(wordsRemaining / 200));
+    toolbar.progress.value = value;
+    toolbar.progress.setAttribute("aria-valuenow", String(value));
+    toolbar.remaining.textContent = ui.remaining(Math.ceil(Math.ceil((wordCount * (100 - value)) / 100) / 200));
   };
   const savePreferences = () => {
     void browser.storage.local.set({ [preferenceKey]: preferences });
   };
   const applyPreferences = () => {
+    if (preferences.widthPercent === 0 && articleElement.parentElement?.clientWidth) {
+      const container = articleElement.parentElement;
+      const computed = getComputedStyle(container);
+      const available = container.clientWidth - parseFloat(computed.paddingLeft) - parseFloat(computed.paddingRight);
+      preferences.widthPercent = Math.max(30, Math.min(100, Math.round((preferences.width / Math.max(1, available)) * 20) * 5));
+      savePreferences();
+    }
+    preferences.widthMode = preferences.widthPercent === 100 ? "full" : "custom";
     const theme = preferences.theme === "auto" ? (colorScheme.matches ? "dark" : "light") : preferences.theme;
     veil.dataset.theme = theme;
     articleElement.dataset.theme = theme;
@@ -288,48 +300,52 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       `"${preferences.font}", ${["Literata", "Georgia"].includes(preferences.font) ? "Georgia, serif" : "sans-serif"}`,
     );
     articleElement.style.fontSize = `${preferences.fontSize}px`;
-    articleElement.style.maxWidth = preferences.widthMode === "full" ? "100%" : `${preferences.width}px`;
+    articleElement.style.maxWidth = `${preferences.widthPercent || defaults.widthPercent}%`;
     articleElement.style.lineHeight = String(preferences.lineHeight);
     articleElement.style.textAlign = preferences.alignment;
-    const size = veil.querySelector<HTMLOutputElement>(".font-size");
-    if (size) size.textContent = String(preferences.fontSize);
-    for (const [theme, label] of themeButtons) {
-      veil.querySelector<HTMLButtonElement>(`button[data-theme-value="${theme}"]`)?.setAttribute("aria-pressed", String(theme === preferences.theme));
-      veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${label}"]`)?.setAttribute("aria-pressed", String(theme === preferences.theme));
-    }
-    if (fontSelect) fontSelect.value = preferences.font;
-    if (widthInput) {
-      widthInput.value = String(preferences.widthMode === "full" ? 1020 : preferences.width);
-      widthInput.setAttribute("aria-valuetext", preferences.widthMode === "full" ? ui.fullWidth : `${preferences.width} px`);
-    }
-    const widthValue = veil.querySelector<HTMLOutputElement>(".width-value");
-    if (widthValue) widthValue.textContent = preferences.widthMode === "full" ? "100%" : `${preferences.width} px`;
-    if (lineHeightInput) lineHeightInput.value = String(preferences.lineHeight);
-    if (speedInput) speedInput.value = String(preferences.speed);
-    if (alignmentSelect) alignmentSelect.value = preferences.alignment;
+    toolbar.update();
+    updateProgress();
   };
-  const closeButton = veil.querySelector<HTMLButtonElement>('button[aria-label="Fechar modo de leitura"]');
-  const openPdfButton = veil.querySelector<HTMLButtonElement>("button.open-pdf");
-  const previousActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-  const themeButtons: [Preferences["theme"], string][] = [
-    ["light", "branco"],
-    ["sepia", "sépia"],
-    ["dark", "escuro"],
-    ["black", "preto"],
-    ["auto", "automático"],
-  ];
-  const decreaseFont = veil.querySelector<HTMLButtonElement>('button[aria-label="Diminuir fonte"]');
-  const increaseFont = veil.querySelector<HTMLButtonElement>('button[aria-label="Aumentar fonte"]');
-  const indexButton = veil.querySelector<HTMLButtonElement>('button[aria-label="Índice"]');
-  const scrollToTop = () => {
+  const stopAutoScroll = () => {
+    isScrolling = false;
+    if (frame !== null) cancelAnimationFrame(frame);
+    frame = null;
+    toolbar.setScrolling(false);
+  };
+  const scrollFrame = () => {
+    if (!isScrolling) return;
     const now = performance.now();
-    if (now - lastFrame >= 32 && isScrolling) {
-      veil.scrollTop += Number(speedInput?.value ?? defaults.speed) / 4;
+    if (now - lastFrame >= 32) {
+      veil.scrollTop += preferences.speed / 4;
       lastFrame = now;
       updateProgress();
     }
-    if (isScrolling) frame = requestAnimationFrame(scrollToTop);
+    frame = requestAnimationFrame(scrollFrame);
   };
+  const toggleAutoScroll = () => {
+    if (isScrolling) {
+      stopAutoScroll();
+      return;
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    isScrolling = true;
+    lastFrame = 0;
+    toolbar.setScrolling(true);
+    frame = requestAnimationFrame(scrollFrame);
+  };
+  const closeIndexButton = veil.querySelector<HTMLButtonElement>(".close-index")!;
+  closeIndexButton.setAttribute("aria-label", ui.closeIndex);
+  closeIndexButton.title = ui.closeIndex;
+  index?.setAttribute("aria-label", ui.indexLabel);
+  veil.querySelector(".index-title")!.textContent = ui.index;
+  const setIndexOpen = (open: boolean, returnFocus = true) => {
+    toolbar.indexButton.setAttribute("aria-expanded", String(open));
+    veil.dataset.indexOpen = String(open);
+    if (index) index.hidden = !open;
+    if (open) closeIndexButton.focus({ preventScroll: true });
+    else if (returnFocus) toolbar.indexButton.focus({ preventScroll: true });
+  };
+  closeIndexButton.addEventListener("click", () => setIndexOpen(false));
   const closeReader = () => {
     stopAutoScroll();
     host.restorePage?.();
@@ -337,154 +353,74 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     if (previousActiveElement?.isConnected && !previousActiveElement.hasAttribute("disabled")) previousActiveElement.focus({ preventScroll: true });
   };
   host.closeReader = closeReader;
-
-  veil.querySelector<HTMLElement>(".reading-time")!.textContent = ui.time(totalMinutes);
-  if (remaining) remaining.textContent = ui.remaining(totalMinutes);
-  applyPreferences();
-  for (const [theme, label] of themeButtons)
-    veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${label}"]`)?.addEventListener("click", () => {
-      preferences.theme = theme;
-      applyPreferences();
-      savePreferences();
-    });
-  fontSelect?.addEventListener("change", () => {
-    preferences.font = fontSelect.value as Preferences["font"];
-    applyPreferences();
-    savePreferences();
-  });
-  decreaseFont?.addEventListener("click", () => {
-    preferences.fontSize = Math.max(14, preferences.fontSize - 2);
-    applyPreferences();
-    savePreferences();
-  });
-  increaseFont?.addEventListener("click", () => {
-    preferences.fontSize = Math.min(32, preferences.fontSize + 2);
-    applyPreferences();
-    savePreferences();
-  });
-  widthInput?.addEventListener("input", () => {
-    preferences.widthMode = widthInput.value === widthInput.max ? "full" : "custom";
-    preferences.width = Math.min(1000, Number(widthInput.value));
-    applyPreferences();
-    savePreferences();
-  });
-  lineHeightInput?.addEventListener("input", () => {
-    preferences.lineHeight = Number(lineHeightInput.value);
-    applyPreferences();
-    savePreferences();
-  });
-  alignmentSelect?.addEventListener("change", () => {
-    preferences.alignment = alignmentSelect.value as Preferences["alignment"];
-    applyPreferences();
-    savePreferences();
-  });
-  const closeIndexButton = veil.querySelector<HTMLButtonElement>(".close-index");
-  const setIndexOpen = (open: boolean, returnFocus = true) => {
-    indexButton?.setAttribute("aria-expanded", String(open));
-    veil.dataset.indexOpen = String(open);
-    if (index) index.hidden = !open;
-    if (open) closeIndexButton?.focus({ preventScroll: true });
-    else if (returnFocus) indexButton?.focus({ preventScroll: true });
-  };
-  indexButton?.addEventListener("click", () => setIndexOpen(indexButton.getAttribute("aria-expanded") !== "true"));
-  closeIndexButton?.addEventListener("click", () => setIndexOpen(false));
-  scrollButton?.addEventListener("click", () => {
-    if (isScrolling) {
-      stopAutoScroll();
+  const onKeydown = (event: KeyboardEvent) => {
+    if (event.key !== "Escape" || event.defaultPrevented) return;
+    if (toolbar.closePopovers()) {
+      event.preventDefault();
       return;
     }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    isScrolling = true;
-    scrollButton.setAttribute("aria-label", ui.pause);
-    scrollButton.setAttribute("aria-pressed", "true");
-    scrollButton.textContent = ui.pause;
-    lastFrame = 0;
-    frame = requestAnimationFrame(scrollToTop);
-  });
-  speedInput?.addEventListener("input", () => {
-    preferences.speed = Number(speedInput.value);
-    speedInput.setAttribute("aria-valuenow", speedInput.value);
-    savePreferences();
-  });
-  if (speedInput) speedInput.setAttribute("aria-valuenow", speedInput.value);
-  veil.addEventListener("scroll", updateProgress, { passive: true });
-  let onKeydown: ((event: KeyboardEvent) => void) | undefined;
-  onKeydown = (event) => {
-    if (event.key !== "Escape") return;
     if (index && !index.hidden) {
       event.preventDefault();
       setIndexOpen(false);
     } else closeReader();
   };
-  window.addEventListener("keydown", onKeydown);
-  const updateSystemTheme = () => {
+  const onSystemTheme = () => {
     if (preferences.theme === "auto") applyPreferences();
   };
-  colorScheme.addEventListener("change", updateSystemTheme);
+  window.addEventListener("keydown", onKeydown);
+  colorScheme.addEventListener("change", onSystemTheme);
+  veil.addEventListener("scroll", updateProgress, { passive: true });
+  const toolbarObserver = new ResizeObserver(() => {
+    veil.style.setProperty("--toolbar-height", `${toolbar.element.getBoundingClientRect().height}px`);
+    updateProgress();
+  });
+  toolbarObserver.observe(toolbar.element);
+  const printMedia = window.matchMedia("print");
+  let printDisplay: { value: string; priority: string; hadStyle: boolean } | null = null;
+  const beforePrint = () => {
+    if (printDisplay) return;
+    stopAutoScroll();
+    toolbar.closePopovers();
+    printDisplay = {
+      value: sourceBody.style.getPropertyValue("display"),
+      priority: sourceBody.style.getPropertyPriority("display"),
+      hadStyle: sourceBody.hasAttribute("style"),
+    };
+    sourceBody.style.setProperty("display", "none", "important");
+  };
+  const afterPrint = () => {
+    if (!printDisplay) return;
+    if (printDisplay.value) sourceBody.style.setProperty("display", printDisplay.value, printDisplay.priority);
+    else sourceBody.style.removeProperty("display");
+    if (!printDisplay.hadStyle && !sourceBody.style.length) sourceBody.removeAttribute("style");
+    printDisplay = null;
+  };
+  const onPrintMedia = () => {
+    if (printMedia.matches) beforePrint();
+    else afterPrint();
+  };
+  window.addEventListener("beforeprint", beforePrint);
+  window.addEventListener("afterprint", afterPrint);
+  printMedia.addEventListener("change", onPrintMedia);
   host.restorePage = () => {
     restorePage();
     stopAutoScroll();
-    if (onKeydown) window.removeEventListener("keydown", onKeydown);
-    colorScheme.removeEventListener("change", updateSystemTheme);
-  };
-  closeButton?.addEventListener("click", closeReader);
-  if (onOpenPdf && openPdfButton) {
-    openPdfButton.hidden = false;
-    openPdfButton.textContent = ui.openPdf;
-    openPdfButton.addEventListener("click", () => onOpenPdf(closeReader));
-  }
-  closeButton?.setAttribute("aria-label", ui.close);
-  if (closeButton) closeButton.textContent = ui.close;
-  themeButtons.forEach(([, old], index) => {
-    const themeButton = veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${old}"]`);
-    themeButton?.setAttribute("aria-label", `${ui.theme} ${ui.themes[index]}`);
-    themeButton?.setAttribute("data-theme-value", themeButtons[index]![0]);
-    if (themeButton) {
-      themeButton.textContent = themeButtons[index]![0] === "auto" ? "Auto" : ui.themes[index];
-      themeButton.title = ui.themes[index]!;
-    }
-  });
-  const labels = [...veil.querySelectorAll("label")];
-  const labelText = [ui.font, ui.width, ui.line, ui.align, ui.speed];
-  labels.forEach((label, index) => {
-    if (label.firstChild) label.firstChild.textContent = `${labelText[index]} `;
-  });
-  veil.querySelector<HTMLElement>(".theme-label")!.textContent = ui.theme;
-  veil.querySelector<HTMLElement>(".size-label")!.textContent = { "pt-BR": "Tamanho", en: "Size", es: "Tamaño" }[preferences.language];
-  veil
-    .querySelector<HTMLElement>(".toolbar")!
-    .setAttribute("aria-label", { "pt-BR": "Controles de leitura", en: "Reading controls", es: "Controles de lectura" }[preferences.language]);
-  decreaseFont?.setAttribute("aria-label", ui.decrease);
-  increaseFont?.setAttribute("aria-label", ui.increase);
-  indexButton?.setAttribute("aria-label", ui.index);
-  if (indexButton) indexButton.textContent = ui.index;
-  index?.setAttribute("aria-label", ui.indexLabel);
-  veil.querySelector<HTMLElement>(".index-title")!.textContent = ui.index;
-  closeIndexButton?.setAttribute("aria-label", ui.closeIndex);
-  closeIndexButton?.setAttribute("title", ui.closeIndex);
-  scrollButton?.setAttribute("aria-label", ui.start);
-  if (scrollButton) scrollButton.textContent = ui.start;
-  progress?.setAttribute("aria-label", ui.progress);
-  if (alignmentSelect) {
-    alignmentSelect.setAttribute("aria-label", ui.align);
-    alignmentSelect.options[0].textContent = ui.left;
-    alignmentSelect.options[1].textContent = ui.center;
-    alignmentSelect.options[2].textContent = ui.justify;
-  }
-  shadow.append(style, veil);
-  const toolbar = veil.querySelector<HTMLElement>(".toolbar")!;
-  const toolbarObserver = new ResizeObserver(() => {
-    veil.style.setProperty("--toolbar-height", `${toolbar.getBoundingClientRect().height}px`);
-  });
-  toolbarObserver.observe(toolbar);
-  const restore = host.restorePage;
-  host.restorePage = () => {
+    toolbar.destroy();
     toolbarObserver.disconnect();
-    restore?.();
+    window.removeEventListener("keydown", onKeydown);
+    colorScheme.removeEventListener("change", onSystemTheme);
+    window.removeEventListener("beforeprint", beforePrint);
+    window.removeEventListener("afterprint", afterPrint);
+    printMedia.removeEventListener("change", onPrintMedia);
+    afterPrint();
   };
+  toolbar.readingTime.textContent = ui.time(totalMinutes);
+  shadow.append(style, veil);
   sourceBody.inert = true;
   sourceBody.setAttribute("aria-hidden", "true");
   document.documentElement.append(host);
-  closeButton?.focus();
+  applyPreferences();
+  toolbar.fit();
+  toolbar.closeButton.focus({ preventScroll: true });
   updateProgress();
 }
