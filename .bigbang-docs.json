@@ -3,7 +3,7 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "23d02fc94c1671fa8b45911ede58fb47cdf31300",
+    "base": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
     "commit": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
     "branch": "master",
     "proposta": "bigbang/proposta-19-controles-leitura"
@@ -65,7 +65,7 @@
   },
   "codigo": {
     "commit": "37ec74a3db5477be662dd701316569838637a668",
-    "raizes": ["prototype/", "entrypoints/", "src/", "wxt.config.ts", "public/"],
+    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/", "src/", "wxt.config.ts"],
     "excluir": []
   },
   "funcionalidades": [
@@ -85,9 +85,15 @@
       "requisitos": ["RF-0002"],
       "fontes": [
         "entrypoints/background.ts",
+        "entrypoints/options/index.html",
+        "entrypoints/options/main.ts",
+        "entrypoints/pdf/index.html",
+        "entrypoints/pdf/main.ts",
         "entrypoints/popup/index.html",
         "entrypoints/popup/main.ts",
         "entrypoints/reader.content.ts",
+        "flags.toml",
+        "package.json",
         "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt",
         "public/fonts/Lexend-OFL.txt",
         "public/fonts/Literata-OFL.txt",
@@ -102,15 +108,24 @@
         "public/icon-32.png",
         "public/icon-48.png",
         "public/icon.svg",
+        "scripts/package-test.mjs",
+        "src/platform/assets.d.ts",
         "src/platform/extract-article.ts",
+        "src/platform/feature-flag.d.ts",
         "src/platform/reader-panel.ts",
         "wxt.config.ts"
       ],
       "hashes": {
-        "entrypoints/background.ts": "a7f96534bec7c038d4dd95ea4810bc70117a66f14e0316771e178c8bd5039f17",
-        "entrypoints/popup/index.html": "c1428d0161b72f679e4a42936f99a0c66c39f948304dd9664ffd5ede938e5b74",
-        "entrypoints/popup/main.ts": "0897835e9ec11791ec397cd293fab13d9123ff4e296970a78c3e7f1f28c21818",
+        "entrypoints/background.ts": "3ff1a2aa0c6ef121d03cb201003d3e37d8cab3510525b616e4a792401f24bd73",
+        "entrypoints/options/index.html": "6f931a2882e3ca0efb57051cf7de6f514ce021c266a5d685082fd5bc64f26a07",
+        "entrypoints/options/main.ts": "e4dde98dd5df1fd6e56a877956799f130752aefcfdb23493b13799d2a52586d9",
+        "entrypoints/pdf/index.html": "6c059cb8e050e4e655abf1443b5d999bf614b7b86959bb63a9f7a24f9edc760a",
+        "entrypoints/pdf/main.ts": "7d859f0a6085788127940905bc45c0dff2843a89c59be2fc1cbf4988864ab841",
+        "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
+        "entrypoints/popup/main.ts": "c338926c8315f66ea4e81e4cd6fb042e12eb84ad2e3e820dcb73467fbb32942d",
         "entrypoints/reader.content.ts": "1fac8ab33c69a2b70a279e656f8df5d00b8ff1e6d6bed09fbdd0a439b544caab",
+        "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
+        "package.json": "c97824d2c4ee84eb3ab7c98b120290457043a08d25663664d3a632ce73e2d009",
         "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
         "public/fonts/Lexend-OFL.txt": "5da8505887d0fa7fe963445fd58852707fda34adfeb65af25c99d152bab285bd",
         "public/fonts/Literata-OFL.txt": "8742963604cd89dc81437811a850018fc03b2bfad686d7422c8235967c87614e",
@@ -125,16 +140,23 @@
         "public/icon-32.png": "093d1e2d1d033f2887be1d4805f9d462670c49071f2f8c965c09ce233f59263f",
         "public/icon-48.png": "0fbddb62901b95138ad4d3649ccfbf241a6f65d0de85ef77a1abbfe23822bb5b",
         "public/icon.svg": "0c1c45f9fb3ff56c4857ece09d606daba6a7f9a25fe2aea88175ce036640c03d",
+        "scripts/package-test.mjs": "c750b1c5c9458835c43467965f408b652c13d0122321cf13307f5108db9edf08",
+        "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
-        "src/platform/reader-panel.ts": "714855e2ac5774053965d4af1733857fd947d3d55cf2b087ac629adf790d4f1e",
-        "wxt.config.ts": "2760e068ca1a6fb65085a82f95463a6f473d28da210152891961873cf0a48de1"
+        "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
+        "src/platform/reader-panel.ts": "8664a3c126cf0fe714b8371294919ec17b88daecc1168aed91320eee7d01fe76",
+        "wxt.config.ts": "5ef1c7d487303ecedad4897f4475fba2af63204f09dcaa088405baf3df82a70a"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-02",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-03",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-04",
-        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-05"
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-05",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-06",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-07",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-08",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09"
       ]
     }
   ],

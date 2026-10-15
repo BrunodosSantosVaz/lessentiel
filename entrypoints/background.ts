@@ -7,6 +7,7 @@ const readerScript = "content-scripts/reader.js";
 export default defineBackground(() => {
   let contextMenuReady = false;
   const activateTab = async (tabId: number | undefined) => {
+    if (!__READER_ENABLED__) return false;
     if (tabId === undefined) return false;
     try {
       await browser.scripting.executeScript({ target: { tabId }, files: [readerScript] });
@@ -15,6 +16,13 @@ export default defineBackground(() => {
       // Browser-internal pages and tabs without temporary access cannot run extension scripts.
       return false;
     }
+  };
+
+  const activateIfAllowed = async (tabId: number | undefined, url?: string) => {
+    if (!__READER_ENABLED__ || tabId === undefined || !url) return;
+    const { automaticSites = [] } = await browser.storage.local.get("automaticSites");
+    const site = (automaticSites as string[]).find((pattern) => url.startsWith(pattern.slice(0, -1)));
+    if (site && (await browser.permissions.contains({ origins: [site] }))) await activateTab(tabId);
   };
 
   const activateCurrentTab = async () => {
@@ -35,6 +43,13 @@ export default defineBackground(() => {
   });
 
   browser.action.onClicked.addListener((tab) => activateTab(tab.id));
+  browser.tabs.onUpdated.addListener((tabId, change, tab) => {
+    if (change.status === "complete") void activateIfAllowed(tabId, tab.url);
+  });
+  browser.tabs.onActivated.addListener(async ({ tabId }) => {
+    const tab = await browser.tabs.get(tabId);
+    void activateIfAllowed(tabId, tab.url);
+  });
   browser.commands.onCommand.addListener((command) => {
     if (command === "activate-reader") void activateCurrentTab();
   });
@@ -51,6 +66,11 @@ export default defineBackground(() => {
     if (message.type === "ACTIVATE_READER") {
       void activateCurrentTab().then(sendResponse);
       return true;
+    }
+    if (message.type === "OPEN_OPTIONS") {
+      void browser.runtime.openOptionsPage();
+      sendResponse(true);
+      return false;
     }
     if (message.type === "GET_CONTEXT_MENU_STATUS") {
       sendResponse(contextMenuReady);

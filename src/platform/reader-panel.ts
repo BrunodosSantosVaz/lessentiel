@@ -5,6 +5,7 @@ const hostSelector = "[data-leitor-limpo-host='true']";
 const preferenceKey = "readerPreferences";
 
 type Preferences = {
+  language: "pt-BR" | "en" | "es";
   theme: "light" | "sepia" | "dark" | "black";
   font: "Literata" | "Atkinson Hyperlegible Next" | "Lexend";
   fontSize: number;
@@ -15,6 +16,7 @@ type Preferences = {
 };
 
 const defaults: Preferences = {
+  language: "pt-BR",
   theme: "light",
   font: "Literata",
   fontSize: 20,
@@ -33,6 +35,7 @@ async function loadPreferences(): Promise<Preferences> {
       return Math.min(maximum, Math.max(minimum, Math.round(value / step) * step));
     };
     return {
+      language: ["en", "es"].includes(stored?.language ?? "") ? (stored!.language as "en" | "es") : defaults.language,
       theme: ["light", "sepia", "dark", "black"].includes(stored?.theme ?? "") ? (stored!.theme as Preferences["theme"]) : defaults.theme,
       font: allowedFonts.includes(stored?.font as Preferences["font"]) ? (stored!.font as Preferences["font"]) : defaults.font,
       fontSize: limit(stored?.fontSize, defaults.fontSize, 14, 32, 2),
@@ -55,6 +58,71 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
   }
 
   const preferences = await loadPreferences();
+  const ui = {
+    "pt-BR": {
+      close: "Fechar",
+      themes: ["Branco", "Sépia", "Escuro", "Preto"],
+      theme: "Tema",
+      font: "Fonte",
+      decrease: "Diminuir fonte",
+      increase: "Aumentar fonte",
+      width: "Largura do texto",
+      line: "Entrelinha",
+      align: "Alinhamento do texto",
+      left: "À esquerda",
+      justify: "Justificado",
+      index: "Índice",
+      indexLabel: "Índice do artigo",
+      start: "Iniciar rolagem",
+      pause: "Pausar rolagem",
+      speed: "Velocidade da rolagem",
+      progress: "Progresso da leitura",
+      time: (n: number) => `${n} min de leitura`,
+      remaining: (n: number) => `restam ${n} min`,
+    },
+    en: {
+      close: "Close",
+      themes: ["White", "Sepia", "Dark", "Black"],
+      theme: "Theme",
+      font: "Font",
+      decrease: "Decrease font size",
+      increase: "Increase font size",
+      width: "Text width",
+      line: "Line spacing",
+      align: "Text alignment",
+      left: "Left",
+      justify: "Justified",
+      index: "Contents",
+      indexLabel: "Article contents",
+      start: "Start scrolling",
+      pause: "Pause scrolling",
+      speed: "Scroll speed",
+      progress: "Reading progress",
+      time: (n: number) => `${n} min read`,
+      remaining: (n: number) => `${n} min remaining`,
+    },
+    es: {
+      close: "Cerrar",
+      themes: ["Blanco", "Sepia", "Oscuro", "Negro"],
+      theme: "Tema",
+      font: "Fuente",
+      decrease: "Reducir tamaño",
+      increase: "Aumentar tamaño",
+      width: "Ancho del texto",
+      line: "Interlineado",
+      align: "Alineación del texto",
+      left: "A la izquierda",
+      justify: "Justificado",
+      index: "Índice",
+      indexLabel: "Índice del artículo",
+      start: "Iniciar desplazamiento",
+      pause: "Pausar desplazamiento",
+      speed: "Velocidad de desplazamiento",
+      progress: "Progreso de lectura",
+      time: (n: number) => `${n} min de lectura`,
+      remaining: (n: number) => `quedan ${n} min`,
+    },
+  }[preferences.language];
   const host = document.createElement("div") as HTMLElement & { restorePage?: () => void };
   const sourceBody = document.body;
   const previousInert = sourceBody.inert;
@@ -178,9 +246,9 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     isScrolling = false;
     if (frame !== null) cancelAnimationFrame(frame);
     frame = null;
-    scrollButton?.setAttribute("aria-label", "Iniciar rolagem");
+    scrollButton?.setAttribute("aria-label", ui.start);
     scrollButton?.setAttribute("aria-pressed", "false");
-    if (scrollButton) scrollButton.textContent = "Iniciar rolagem";
+    if (scrollButton) scrollButton.textContent = ui.start;
   };
   let isScrolling = false;
   let frame: number | null = null;
@@ -194,7 +262,7 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
       progress.setAttribute("aria-valuenow", String(value));
     }
     const wordsRemaining = Math.ceil((wordCount * (100 - value)) / 100);
-    if (remaining) remaining.textContent = `restam ${Math.ceil(wordsRemaining / 200)} min`;
+    if (remaining) remaining.textContent = ui.remaining(Math.ceil(wordsRemaining / 200));
   };
   const savePreferences = () => {
     void browser.storage.local.set({ [preferenceKey]: preferences });
@@ -240,8 +308,8 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     if (previousActiveElement?.isConnected && !previousActiveElement.hasAttribute("disabled")) previousActiveElement.focus({ preventScroll: true });
   };
 
-  veil.querySelector<HTMLElement>(".reading-time")!.textContent = `${totalMinutes} min de leitura`;
-  if (remaining) remaining.textContent = `restam ${totalMinutes} min`;
+  veil.querySelector<HTMLElement>(".reading-time")!.textContent = ui.time(totalMinutes);
+  if (remaining) remaining.textContent = ui.remaining(totalMinutes);
   applyPreferences();
   for (const [theme, label] of themeButtons)
     veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${label}"]`)?.addEventListener("click", () => {
@@ -291,9 +359,9 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     }
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     isScrolling = true;
-    scrollButton.setAttribute("aria-label", "Pausar rolagem");
+    scrollButton.setAttribute("aria-label", ui.pause);
     scrollButton.setAttribute("aria-pressed", "true");
-    scrollButton.textContent = "Pausar rolagem";
+    scrollButton.textContent = ui.pause;
     lastFrame = 0;
     frame = requestAnimationFrame(scrollToTop);
   });
@@ -315,6 +383,31 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     if (onKeydown) window.removeEventListener("keydown", onKeydown);
   };
   closeButton?.addEventListener("click", closeReader);
+  closeButton?.setAttribute("aria-label", ui.close);
+  if (closeButton) closeButton.textContent = ui.close;
+  themeButtons.forEach(([, old], index) => {
+    const themeButton = veil.querySelector<HTMLButtonElement>(`button[aria-label="Tema ${old}"]`);
+    themeButton?.setAttribute("aria-label", `${ui.theme} ${ui.themes[index]}`);
+    if (themeButton) themeButton.textContent = ui.themes[index];
+  });
+  const labels = [...veil.querySelectorAll("label")];
+  const labelText = [ui.font, ui.width, ui.line, ui.align, ui.speed];
+  labels.forEach((label, index) => {
+    if (label.firstChild) label.firstChild.textContent = `${labelText[index]} `;
+  });
+  decreaseFont?.setAttribute("aria-label", ui.decrease);
+  increaseFont?.setAttribute("aria-label", ui.increase);
+  indexButton?.setAttribute("aria-label", ui.index);
+  if (indexButton) indexButton.textContent = ui.index;
+  index?.setAttribute("aria-label", ui.indexLabel);
+  scrollButton?.setAttribute("aria-label", ui.start);
+  if (scrollButton) scrollButton.textContent = ui.start;
+  progress?.setAttribute("aria-label", ui.progress);
+  if (alignmentSelect) {
+    alignmentSelect.setAttribute("aria-label", ui.align);
+    alignmentSelect.options[0].textContent = ui.left;
+    alignmentSelect.options[1].textContent = ui.justify;
+  }
   shadow.append(style, veil);
   sourceBody.inert = true;
   sourceBody.setAttribute("aria-hidden", "true");

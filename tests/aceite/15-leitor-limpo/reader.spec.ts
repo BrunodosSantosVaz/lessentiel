@@ -308,7 +308,7 @@ test("RN-0002 CA-05 inicia, pausa e ajusta a rolagem automática", async () => {
 });
 
 // oxfmt-ignore
-test.fail("RN-0003 CA-06 abre PDF local com texto selecionável", async () => { // pendente da tarefa #20
+test("RN-0003 CA-06 abre PDF local com texto selecionável", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
     await page.goto(`chrome-extension://${extensionId}/pdf.html`);
@@ -325,34 +325,33 @@ test.fail("RN-0003 CA-06 abre PDF local com texto selecionável", async () => { 
 });
 
 // oxfmt-ignore
-test.fail("RN-0003 CA-07 pede permissão específica para ativação automática", async () => { // pendente da tarefa #20
+test("RN-0003 CA-07 pede permissão específica para ativação automática", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
+    // Chrome headless cannot accept its native host-permission prompt; keep this test focused on the exact origin requested and revoked by the UI.
+    await page.addInitScript(() => {
+      const granted = new Set<string>();
+      Object.defineProperty(globalThis, "__mlaTestPermissions", {
+        configurable: true,
+        value: {
+          request: async ({ origins }: { origins: string[] }) => { origins.forEach((origin) => granted.add(origin)); sessionStorage.setItem("test-permissions", JSON.stringify([...granted])); return true; },
+          contains: async ({ origins }: { origins: string[] }) => origins.every((origin) => granted.has(origin)),
+          remove: async ({ origins }: { origins: string[] }) => { origins.forEach((origin) => granted.delete(origin)); sessionStorage.setItem("test-permissions", JSON.stringify([...granted])); return true; },
+        },
+      });
+    });
     await page.goto(`chrome-extension://${extensionId}/options.html`);
     await page.getByRole("textbox", { name: "Site" }).fill("https://example.test/*");
     await page.getByRole("button", { name: "Adicionar site automático" }).click();
     await expect(page.getByText("https://example.test/*")).toBeVisible();
-    const originsAfterAdd = await page.evaluate(async () => {
-      const api = (
-        globalThis as typeof globalThis & {
-          chrome: { permissions: { getAll: () => Promise<{ origins: string[] }> } };
-        }
-      ).chrome;
-      return (await api.permissions.getAll()).origins;
-    });
+    const originsAfterAdd = await page.evaluate(() => JSON.parse(sessionStorage.getItem("test-permissions") ?? "[]") as string[]);
     expect(originsAfterAdd).toContain("https://example.test/*");
-    expect(await context.pages()[0].evaluate(() => location.hostname)).toBe("example.test");
+    const hostPage = context.pages().find((candidate) => candidate.url().startsWith("https://example.test/"));
+    expect(await hostPage?.evaluate(() => location.hostname)).toBe("example.test");
     await expect(page.getByRole("button", { name: /Remover.*example\.test/i })).toBeVisible();
     await page.getByRole("button", { name: /Remover.*example\.test/i }).click();
     await expect(page.getByText("https://example.test/*")).toHaveCount(0);
-    const originsAfterRemove = await page.evaluate(async () => {
-      const api = (
-        globalThis as typeof globalThis & {
-          chrome: { permissions: { getAll: () => Promise<{ origins: string[] }> } };
-        }
-      ).chrome;
-      return (await api.permissions.getAll()).origins;
-    });
+    const originsAfterRemove = await page.evaluate(() => JSON.parse(sessionStorage.getItem("test-permissions") ?? "[]") as string[]);
     expect(originsAfterRemove).not.toContain("https://example.test/*");
   } finally {
     await context.close();
@@ -360,7 +359,7 @@ test.fail("RN-0003 CA-07 pede permissão específica para ativação automática
 });
 
 // oxfmt-ignore
-test.fail("RN-0004 CA-08 apresenta a interface nos três idiomas", async () => { // pendente da tarefa #20
+test("RN-0004 CA-08 apresenta a interface nos três idiomas", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
     await page.goto(`chrome-extension://${extensionId}/options.html`);
@@ -379,7 +378,7 @@ test.fail("RN-0004 CA-08 apresenta a interface nos três idiomas", async () => {
 });
 
 // oxfmt-ignore
-test.fail("RN-0004 CA-09 carrega como extensão local sem backend", async () => { // pendente da tarefa #20
+test("RN-0004 CA-09 carrega como extensão local sem backend", async () => {
   const { context, page, extensionId, remoteRequests } = await openExtension();
   try {
     await page.goto(`chrome-extension://${extensionId}/options.html`);
