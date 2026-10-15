@@ -64,7 +64,7 @@
     }
   },
   "codigo": {
-    "commit": "37ec74a3db5477be662dd701316569838637a668",
+    "commit": "d0299c35e8b7022f92016b7893436a82ee94ca5a",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/", "src/", "wxt.config.ts"],
     "excluir": []
   },
