@@ -92,6 +92,39 @@ test("#26 RN-0001 mantém o título editorial dos metadados", async () => {
   }
 });
 
+test("#26 RN-0001 mantém metadados JSON-LD sem executar scripts", async () => {
+  const metadata = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: "Título editorial em JSON-LD",
+    author: { "@type": "Person", name: "Autora fictícia" },
+  });
+  const { context, page, activate } = await open(
+    `<!doctype html><title>Título genérico do portal</title><script type="application/ld+json">${metadata}</script>${article}`,
+  );
+  try {
+    await activate();
+    await readerVisible(page);
+    await expect(page.locator("[data-leitor-limpo-host='true'] article")).toHaveAttribute("aria-label", "Título editorial em JSON-LD");
+    await expect(page.locator("[data-leitor-limpo-host='true'] article script")).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
+});
+
+test("#26 RN-0001 recusa cópia acima do limite de caracteres", async () => {
+  const { context, page, activate } = await open(
+    `<!doctype html><title>Artigo grande</title><article><h1>Artigo grande</h1><p>${"conteúdo local ".repeat(360000)}</p></article>`,
+  );
+  try {
+    await activate();
+    await expect(page.locator("[data-leitor-limpo-host='true'] article")).toHaveCount(0);
+    await expect(page.getByRole("status")).toContainText("Não foi possível identificar");
+  } finally {
+    await context.close();
+  }
+});
+
 test("#26 RN-0001 sanitiza o conteúdo vindo do Shadow DOM", async () => {
   const hostile = article.replace(
     "</article>",
