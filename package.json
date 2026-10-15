@@ -15,7 +15,7 @@
     "dev": "wxt",
     "build": "node scripts/build.mjs",
     "package": "wxt zip",
-    "test:acceptance": "playwright test",
+    "test:acceptance": "playwright install chromium && playwright test",
     "test:architecture": "node scripts/test-architecture.mjs",
     "test:coverage": "node scripts/coverage.mjs",
     "lint": "oxlint . && npm run format:check",
