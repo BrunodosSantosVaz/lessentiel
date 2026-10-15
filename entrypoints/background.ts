@@ -18,8 +18,8 @@ export default defineBackground(() => {
   };
 
   const activateCurrentTab = async () => {
-    const tabs = await browser.tabs.query({ currentWindow: true });
-    const tab = tabs.find(({ url }) => url?.startsWith("http://") || url?.startsWith("https://")) ?? tabs.find(({ active }) => active);
+    const tabs = await browser.tabs.query({ currentWindow: true, active: true });
+    const tab = tabs.find(({ url }) => url?.startsWith("http://") || url?.startsWith("https://"));
     return activateTab(tab?.id);
   };
 

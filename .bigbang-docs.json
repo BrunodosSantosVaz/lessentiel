@@ -93,7 +93,7 @@
         "wxt.config.ts"
       ],
       "hashes": {
-        "entrypoints/background.ts": "221f0502a2e41c0e3ffa0e15ebf06b1abb8bb57fdbd8abbe16ad24b2593c8e49",
+        "entrypoints/background.ts": "a7f96534bec7c038d4dd95ea4810bc70117a66f14e0316771e178c8bd5039f17",
         "entrypoints/popup/main.ts": "0897835e9ec11791ec397cd293fab13d9123ff4e296970a78c3e7f1f28c21818",
         "entrypoints/popup/index.html": "c1428d0161b72f679e4a42936f99a0c66c39f948304dd9664ffd5ede938e5b74",
         "entrypoints/reader.content.ts": "240aa19ae6e6f7212b79e2833c3e40b877013b6af366433f476fdbaa2055a87c",

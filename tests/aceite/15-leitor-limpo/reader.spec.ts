@@ -15,6 +15,7 @@ declare global {
 
 const extensionPath = process.env.MLA_EXTENSION_DIR ?? resolve(".output/chrome-mv3");
 const articleUrl = "https://example.test/article";
+const otherUrl = "https://example.test/other";
 const articleHtml = `<!doctype html><html lang="pt-BR"><head><title>Artigo de teste</title></head><body>
   <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p onclick="window.__handlerExecutado = (window.__handlerExecutado ?? 0) + 1">Texto principal para validar a leitura local.</p>
   <h2>Segunda seção</h2><ul><li>Item preservado</li></ul><table><thead><tr><th>Campo</th></tr></thead><tbody><tr><td>Valor</td></tr></tbody></table>
@@ -39,15 +40,18 @@ async function openExtension(): Promise<{
   });
   const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker"));
   const extensionId = new URL(worker.url()).host;
-  const page = await context.newPage();
-  page.setDefaultTimeout(2000);
   const remoteRequests: string[] = [];
   await context.route(/^https?:\/\//, (route) => {
     const url = route.request().url();
     if (url === articleUrl) return route.fulfill({ status: 200, contentType: "text/html", body: articleHtml });
+    if (url === otherUrl) return route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><article><h1>Outra aba</h1></article>" });
     remoteRequests.push(url);
     return route.abort();
   });
+  const otherTab = await context.newPage();
+  await otherTab.goto(otherUrl);
+  const page = await context.newPage();
+  page.setDefaultTimeout(2000);
   await page.goto(articleUrl);
   return { context, page, extensionId, remoteRequests };
 }
@@ -121,8 +125,10 @@ test("RN-0001 CA-01 ativa e preserva a estrutura do artigo", async () => {
       return response.json();
     });
     expect(manifest.commands["activate-reader"].suggested_key.default).toBe("Alt+Shift+R");
+    await page.bringToFront();
     await popup.getByRole("button", { name: "Ativar modo de leitura" }).click();
     await expect(page.getByRole("article", { name: "Artigo de teste" })).toBeVisible();
+    await expect(context.pages()[0].locator("[data-leitor-limpo-host='true']")).toHaveCount(0);
   } finally {
     await context.close();
   }
