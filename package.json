@@ -13,7 +13,7 @@
     "package": "wxt zip",
     "test:acceptance": "playwright test",
     "test:architecture": "node scripts/test-architecture.mjs",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "node scripts/coverage.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
