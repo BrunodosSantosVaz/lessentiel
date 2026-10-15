@@ -316,8 +316,11 @@ test("RN-0003 CA-06 abre PDF local com texto selecionável", async () => {
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
     await (await chooser).setFiles(resolve("tests/fixtures/sample.pdf"));
     await expect(page.getByRole("article")).toContainText("PDF de teste");
+    await expect(page.getByRole("button", { name: "Fechar" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Tema branco" })).toBeVisible();
+    const scannedChooser = page.waitForEvent("filechooser");
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
-    await (await page.waitForEvent("filechooser")).setFiles(resolve("tests/fixtures/scanned.pdf"));
+    await (await scannedChooser).setFiles(resolve("tests/fixtures/scanned.pdf"));
     await expect(page.getByRole("status")).toContainText(/sem camada de texto/i);
   } finally {
     await context.close();

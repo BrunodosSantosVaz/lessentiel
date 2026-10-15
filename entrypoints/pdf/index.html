@@ -9,12 +9,10 @@
       body { margin: 0; background: #f7f8f6; color: #17332e; font: 16px/1.6 system-ui, sans-serif; }
       header { position: sticky; top: 0; padding: 16px; background: white; border-bottom: 1px solid #65736e; }
       button { min-height: 48px; padding: 8px 16px; border: 0; border-radius: 8px; background: #075e54; color: white; font: inherit; cursor: pointer; }
-      article { max-width: 760px; margin: 32px auto; padding: 0 20px; background: white; color: #1a1a1a; font: 20px/1.7 Literata, Georgia, serif; overflow-wrap: anywhere; white-space: pre-wrap; }
       :focus-visible { outline: 3px solid #174ea6; outline-offset: 2px; }
     </style>
   </head>
   <body>
     <header><h1>Leitor Limpo</h1><button id="open-pdf" type="button">Abrir PDF local</button><input id="pdf-file" type="file" accept="application/pdf,.pdf" hidden /><p id="status" role="status" aria-live="polite"></p></header>
-    <article id="article" role="article" aria-label="Texto do PDF"></article>
   </body>
 </html>

@@ -49,7 +49,7 @@ async function loadPreferences(): Promise<Preferences> {
   }
 }
 
-export async function toggleReader(article: ExtractedArticle): Promise<void> {
+export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close: () => void) => void): Promise<void> {
   const current = document.querySelector<HTMLElement & { restorePage?: () => void }>(hostSelector);
   if (current) {
     current.restorePage?.();
@@ -61,6 +61,7 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
   const ui = {
     "pt-BR": {
       close: "Fechar",
+      openPdf: "Abrir PDF local",
       themes: ["Branco", "Sépia", "Escuro", "Preto"],
       theme: "Tema",
       font: "Fonte",
@@ -82,6 +83,7 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     },
     en: {
       close: "Close",
+      openPdf: "Open local PDF",
       themes: ["White", "Sepia", "Dark", "Black"],
       theme: "Theme",
       font: "Font",
@@ -103,6 +105,7 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     },
     es: {
       close: "Cerrar",
+      openPdf: "Abrir PDF local",
       themes: ["Blanco", "Sepia", "Oscuro", "Negro"],
       theme: "Tema",
       font: "Fuente",
@@ -181,7 +184,7 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
   veil.className = "veil";
   veil.innerHTML = `
     <header class="toolbar">
-      <div class="toolbar-head"><strong>Leitor Limpo</strong><button type="button" aria-label="Fechar modo de leitura">Fechar</button></div>
+      <div class="toolbar-head"><strong>Leitor Limpo</strong><button class="open-pdf" type="button" hidden></button><button type="button" aria-label="Fechar modo de leitura">Fechar</button></div>
       <div class="controls" aria-label="Controles de leitura">
         <button type="button" aria-label="Tema branco">Branco</button><button type="button" aria-label="Tema sépia">Sépia</button><button type="button" aria-label="Tema escuro">Escuro</button><button type="button" aria-label="Tema preto">Preto</button>
         <label>Fonte <select aria-label="Fonte"><option>Literata</option><option>Atkinson Hyperlegible Next</option><option>Lexend</option></select></label>
@@ -282,6 +285,7 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     if (alignmentSelect) alignmentSelect.value = preferences.alignment;
   };
   const closeButton = veil.querySelector<HTMLButtonElement>('button[aria-label="Fechar modo de leitura"]');
+  const openPdfButton = veil.querySelector<HTMLButtonElement>("button.open-pdf");
   const previousActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   const themeButtons: [Preferences["theme"], string][] = [
     ["light", "branco"],
@@ -383,6 +387,11 @@ export async function toggleReader(article: ExtractedArticle): Promise<void> {
     if (onKeydown) window.removeEventListener("keydown", onKeydown);
   };
   closeButton?.addEventListener("click", closeReader);
+  if (onOpenPdf && openPdfButton) {
+    openPdfButton.hidden = false;
+    openPdfButton.textContent = ui.openPdf;
+    openPdfButton.addEventListener("click", () => onOpenPdf(closeReader));
+  }
   closeButton?.setAttribute("aria-label", ui.close);
   if (closeButton) closeButton.textContent = ui.close;
   themeButtons.forEach(([, old], index) => {

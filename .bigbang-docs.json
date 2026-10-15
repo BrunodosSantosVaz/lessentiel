@@ -65,24 +65,41 @@
   },
   "codigo": {
     "commit": "d0299c35e8b7022f92016b7893436a82ee94ca5a",
-    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
+    "raizes": [
+      "entrypoints/",
+      "flags.toml",
+      "package.json",
+      "prototype/",
+      "public/",
+      "scripts/package-test.mjs",
+      "src/",
+      "wxt.config.ts"
+    ],
     "excluir": []
   },
   "funcionalidades": [
     {
       "id": "RF-0001",
       "pagina": "Funcionalidades",
-      "requisitos": ["RF-0001"],
-      "fontes": ["prototype/index.html"],
+      "requisitos": [
+        "RF-0001"
+      ],
+      "fontes": [
+        "prototype/index.html"
+      ],
       "hashes": {
         "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
       },
-      "testes": ["tests/prototype.spec.ts:smoke"]
+      "testes": [
+        "tests/prototype.spec.ts:smoke"
+      ]
     },
     {
       "id": "RF-0002",
       "pagina": "Funcionalidades",
-      "requisitos": ["RF-0002"],
+      "requisitos": [
+        "RF-0002"
+      ],
       "fontes": [
         "entrypoints/background.ts",
         "entrypoints/options/index.html",

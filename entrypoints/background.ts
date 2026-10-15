@@ -31,15 +31,31 @@ export default defineBackground(() => {
     return activateTab(tab?.id);
   };
 
+  const menuTitles = { "pt-BR": "Abrir no Leitor Limpo", en: "Open in Leitor Limpo", es: "Abrir en Leitor Limpo" };
   const menus = browser.contextMenus as unknown as {
     removeAll: (callback: () => void) => void;
     create: (properties: { id: string; title: string; contexts: ["page"] }, callback: () => void) => void;
   };
   const runtime = browser.runtime as unknown as { lastError?: { message?: string } };
-  menus.removeAll(() => {
-    menus.create({ id: contextMenuId, title: "Abrir no Leitor Limpo", contexts: ["page"] }, () => {
-      contextMenuReady = runtime.lastError === undefined;
+  const refreshContextMenu = async () => {
+    const { readerPreferences } = await browser.storage.local.get("readerPreferences");
+    const language = (readerPreferences as { language?: string } | undefined)?.language;
+    menus.removeAll(() => {
+      menus.create(
+        {
+          id: contextMenuId,
+          title: menuTitles[language === "en" || language === "es" ? language : "pt-BR"],
+          contexts: ["page"],
+        },
+        () => {
+          contextMenuReady = runtime.lastError === undefined;
+        },
+      );
     });
+  };
+  void refreshContextMenu();
+  browser.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.readerPreferences) void refreshContextMenu();
   });
 
   browser.action.onClicked.addListener((tab) => activateTab(tab.id));
