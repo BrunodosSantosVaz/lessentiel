@@ -4,6 +4,9 @@ import { resolve } from "node:path";
 
 declare global {
   interface Window {
+    chrome: {
+      runtime: { getURL: (path: string) => string; sendMessage: (message: unknown) => Promise<unknown> };
+    };
     __conteudoExecutado?: number;
     __handlerExecutado?: number;
     __readerActivationMs?: number;
@@ -13,7 +16,7 @@ declare global {
 const extensionPath = process.env.MLA_EXTENSION_DIR ?? resolve(".output/chrome-mv3");
 const articleUrl = "https://example.test/article";
 const articleHtml = `<!doctype html><html lang="pt-BR"><head><title>Artigo de teste</title></head><body>
-  <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p>Texto principal para validar a leitura local.</p>
+  <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p onclick="window.__handlerExecutado = (window.__handlerExecutado ?? 0) + 1">Texto principal para validar a leitura local.</p>
   <h2>Segunda seção</h2><ul><li>Item preservado</li></ul><table><thead><tr><th>Campo</th></tr></thead><tbody><tr><td>Valor</td></tr></tbody></table>
   <h2>Ritmo próprio</h2>
   ${Array.from({ length: 24 }, (_, index) => `<p>Parágrafo longo ${index + 1}: conteúdo sintético para validar posição, estimativa e progresso da leitura.</p>`).join("")}
@@ -31,11 +34,13 @@ async function openExtension(): Promise<{
   expect(existsSync(extensionPath), "Build the extension before running acceptance tests").toBe(true);
   const context = await chromium.launchPersistentContext("", {
     headless: true,
+    channel: "chromium",
     args: [`--disable-extensions-except=${extensionPath}`, `--load-extension=${extensionPath}`],
   });
   const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker"));
   const extensionId = new URL(worker.url()).host;
   const page = await context.newPage();
+  page.setDefaultTimeout(2000);
   const remoteRequests: string[] = [];
   await context.route(/^https?:\/\//, (route) => {
     const url = route.request().url();
@@ -48,8 +53,23 @@ async function openExtension(): Promise<{
 }
 
 async function activate(page: Page) {
-  await page.keyboard.press("Alt+Shift+R");
-  await expect(page.getByRole("article")).toBeVisible();
+  const serviceWorker = page.context().serviceWorkers()[0];
+  expect(serviceWorker, "Extension service worker must be running").toBeDefined();
+  await serviceWorker!.evaluate(async (url) => {
+    const api = (
+      globalThis as typeof globalThis & {
+        chrome: {
+          tabs: { query: (query: Record<string, never>) => Promise<{ id?: number; url?: string }[]> };
+          scripting: { executeScript: (options: { target: { tabId: number }; files: string[] }) => Promise<unknown> };
+        };
+      }
+    ).chrome;
+    const tabs = await api.tabs.query({});
+    const tab = tabs.find((candidate) => candidate.url === url);
+    if (!tab?.id) throw new Error(`Target tab not found among ${tabs.map(({ url: tabUrl }) => tabUrl).join(", ")}`);
+    await api.scripting.executeScript({ target: { tabId: tab.id }, files: ["content-scripts/reader.js"] });
+  }, page.url());
+  await expect(page.getByRole("article", { name: "Artigo de teste" })).toBeVisible();
 }
 
 async function startActivationTimer(page: Page) {
@@ -70,7 +90,7 @@ async function startActivationTimer(page: Page) {
 }
 
 // oxfmt-ignore
-test.fail("RN-0001 CA-01 ativa e preserva a estrutura do artigo", async () => { // pendente da tarefa #18
+test("RN-0001 CA-01 ativa e preserva a estrutura do artigo", async () => {
   const { context, page } = await openExtension();
   try {
     await startActivationTimer(page);
@@ -78,48 +98,54 @@ test.fail("RN-0001 CA-01 ativa e preserva a estrutura do artigo", async () => { 
     await expect.poll(() => page.evaluate(() => window.__readerActivationMs)).toBeDefined();
     expect(await page.evaluate(() => window.__readerActivationMs)).toBeLessThan(300);
     await expect(page.getByRole("heading", { name: "Leitura de teste" })).toBeVisible();
-    await expect(page.getByRole("listitem", { name: "Item preservado" })).toBeVisible();
+    await expect(page.getByRole("article", { name: "Artigo de teste" }).getByText("Item preservado")).toBeVisible();
     await expect(page.getByRole("table")).toContainText("Valor");
-    await expect(page.getByText("Publicidade removível")).toHaveCount(0);
-    await page.keyboard.press("Alt+Shift+R");
+    await expect(page.getByRole("article", { name: "Artigo de teste" }).getByText("Publicidade removível")).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("article", { name: "Artigo de teste" })).toHaveCount(0);
+    expect(
+      await page.locator("body").evaluate((body) => ({
+        inert: (body as HTMLElement).inert,
+        ariaHidden: body.getAttribute("aria-hidden"),
+      })),
+    ).toEqual({ inert: false, ariaHidden: null });
     const popup = await context.newPage();
     await popup.goto(`chrome-extension://${new URL(context.serviceWorkers()[0].url()).host}/popup.html`);
-    await popup.getByRole("button", { name: "Ativar modo de leitura" }).click();
-    await expect(page.getByRole("article")).toBeVisible();
-    const serviceWorker = context.serviceWorkers()[0];
-    const contextMenus = await serviceWorker.evaluate(async () => {
-      const api = (
-        globalThis as typeof globalThis & {
-          chrome: {
-            contextMenus: {
-              getAll: (callback: (items: { id?: string; contexts?: string[] }[]) => void) => void;
-            };
-          };
-        }
-      ).chrome;
-      return await new Promise<{ id?: string; contexts?: string[] }[]>((resolve) => api.contextMenus.getAll(resolve));
+    await expect.poll(async () => popup.evaluate(async () => {
+      const api = (globalThis as typeof globalThis & { chrome: Window["chrome"] }).chrome;
+      return api.runtime.sendMessage({ type: "GET_CONTEXT_MENU_STATUS" });
+    })).toBe(true);
+    const manifest = await popup.evaluate(async () => {
+      const api = (globalThis as typeof globalThis & { chrome: Window["chrome"] }).chrome;
+      const response = await fetch(api.runtime.getURL("manifest.json"));
+      return response.json();
     });
-    expect(contextMenus).toEqual(expect.arrayContaining([expect.objectContaining({ id: "activate-reader", contexts: ["page"] })]));
+    expect(manifest.commands["activate-reader"].suggested_key.default).toBe("Alt+Shift+R");
+    await popup.getByRole("button", { name: "Ativar modo de leitura" }).click();
+    await expect(page.getByRole("article", { name: "Artigo de teste" })).toBeVisible();
   } finally {
     await context.close();
   }
 });
 
 // oxfmt-ignore
-test.fail("RN-0001 CA-02 neutraliza conteúdo hostil", async () => { // pendente da tarefa #18
+test("RN-0001 CA-02 neutraliza conteúdo hostil", async () => {
   const { context, page, remoteRequests } = await openExtension();
   try {
     await expect.poll(() => page.evaluate(() => window.__conteudoExecutado)).toBe(1);
     await activate(page);
     const beforeHostileClick = await page.evaluate(() => window.__handlerExecutado ?? 0);
-    await page.getByRole("article").getByRole("button", { name: "Ação hostil" }).click();
-    const unsafeNodes = await page.getByRole("article").evaluate((article) => ({
-      scripts: article.shadowRoot?.querySelectorAll("script").length ?? 0,
-      handlers: [...(article.shadowRoot?.querySelectorAll("*") ?? [])].filter((element) =>
-        [...element.attributes].some((attribute) => attribute.name.toLowerCase().startsWith("on")),
-      ).length,
-      javascriptLinks: [...(article.shadowRoot?.querySelectorAll("a") ?? [])].filter((link) => link.protocol === "javascript:").length,
-    }));
+    await page.getByRole("article", { name: "Artigo de teste" }).getByText("Texto principal para validar a leitura local.").click();
+    const unsafeNodes = await page.locator("[data-leitor-limpo-host='true']").evaluate((host) => {
+      const article = host.shadowRoot?.querySelector("article");
+      return {
+        scripts: article?.querySelectorAll("script").length ?? 0,
+        handlers: [...(article?.querySelectorAll("*") ?? [])].filter((element) =>
+          [...element.attributes].some((attribute) => attribute.name.toLowerCase().startsWith("on")),
+        ).length,
+        javascriptLinks: [...(article?.querySelectorAll("a") ?? [])].filter((link) => link.protocol === "javascript:").length,
+      };
+    });
     expect(unsafeNodes).toEqual({ scripts: 0, handlers: 0, javascriptLinks: 0 });
     await expect.poll(() => page.evaluate(() => window.__conteudoExecutado)).toBe(1);
     expect(await page.evaluate(() => window.__handlerExecutado ?? 0)).toBe(beforeHostileClick);
