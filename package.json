@@ -9,7 +9,7 @@
   "scripts": {
     "test": "vitest run --passWithNoTests",
     "dev": "wxt",
-    "build": "wxt build",
+    "build": "node scripts/build.mjs",
     "package": "wxt zip",
     "test:acceptance": "playwright test",
     "test:architecture": "node scripts/test-architecture.mjs",
