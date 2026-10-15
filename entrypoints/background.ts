@@ -7,6 +7,7 @@ const readerScript = "content-scripts/reader.js";
 export default defineBackground(() => {
   let contextMenuReady = false;
   const activateTab = async (tabId: number | undefined) => {
+    if (!__READER_ENABLED__) return false;
     if (tabId === undefined) return false;
     try {
       await browser.scripting.executeScript({ target: { tabId }, files: [readerScript] });
@@ -17,24 +18,57 @@ export default defineBackground(() => {
     }
   };
 
+  const activateIfAllowed = async (tabId: number | undefined, url?: string) => {
+    if (!__READER_ENABLED__ || tabId === undefined || !url) return;
+    const { automaticSites = [] } = await browser.storage.local.get("automaticSites");
+    const site = (automaticSites as string[]).find((pattern) => url.startsWith(pattern.slice(0, -1)));
+    if (site && (await browser.permissions.contains({ origins: [site] }))) await activateTab(tabId);
+  };
+
   const activateCurrentTab = async () => {
     const tabs = await browser.tabs.query({ currentWindow: true, active: true });
     const tab = tabs.find(({ url }) => url?.startsWith("http://") || url?.startsWith("https://"));
     return activateTab(tab?.id);
   };
 
+  const menuTitles = { "pt-BR": "Abrir no Leitor Limpo", en: "Open in Leitor Limpo", es: "Abrir en Leitor Limpo" };
+  const actionTitles = { "pt-BR": "Abrir Leitor Limpo", en: "Open Leitor Limpo", es: "Abrir Leitor Limpo" };
   const menus = browser.contextMenus as unknown as {
     removeAll: (callback: () => void) => void;
     create: (properties: { id: string; title: string; contexts: ["page"] }, callback: () => void) => void;
   };
   const runtime = browser.runtime as unknown as { lastError?: { message?: string } };
-  menus.removeAll(() => {
-    menus.create({ id: contextMenuId, title: "Abrir no Leitor Limpo", contexts: ["page"] }, () => {
-      contextMenuReady = runtime.lastError === undefined;
+  const refreshContextMenu = async () => {
+    const { readerPreferences } = await browser.storage.local.get("readerPreferences");
+    const language = (readerPreferences as { language?: string } | undefined)?.language;
+    const locale = language === "en" || language === "es" ? language : "pt-BR";
+    await browser.action.setTitle({ title: actionTitles[locale] });
+    menus.removeAll(() => {
+      menus.create(
+        {
+          id: contextMenuId,
+          title: menuTitles[locale],
+          contexts: ["page"],
+        },
+        () => {
+          contextMenuReady = runtime.lastError === undefined;
+        },
+      );
     });
+  };
+  void refreshContextMenu();
+  browser.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.readerPreferences) void refreshContextMenu();
   });
 
   browser.action.onClicked.addListener((tab) => activateTab(tab.id));
+  browser.tabs.onUpdated.addListener((tabId, change, tab) => {
+    if (change.status === "complete") void activateIfAllowed(tabId, tab.url);
+  });
+  browser.tabs.onActivated.addListener(async ({ tabId }) => {
+    const tab = await browser.tabs.get(tabId);
+    void activateIfAllowed(tabId, tab.url);
+  });
   browser.commands.onCommand.addListener((command) => {
     if (command === "activate-reader") void activateCurrentTab();
   });
@@ -51,6 +85,11 @@ export default defineBackground(() => {
     if (message.type === "ACTIVATE_READER") {
       void activateCurrentTab().then(sendResponse);
       return true;
+    }
+    if (message.type === "OPEN_OPTIONS") {
+      void browser.runtime.openOptionsPage();
+      sendResponse(true);
+      return false;
     }
     if (message.type === "GET_CONTEXT_MENU_STATUS") {
       sendResponse(contextMenuReady);

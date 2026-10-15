@@ -6,6 +6,7 @@ declare global {
   interface Window {
     chrome: {
       runtime: { getURL: (path: string) => string; sendMessage: (message: unknown) => Promise<unknown> };
+      action: { getTitle: (details: Record<string, never>) => Promise<string> };
     };
     __conteudoExecutado?: number;
     __handlerExecutado?: number;
@@ -16,6 +17,24 @@ declare global {
 const extensionPath = process.env.MLA_EXTENSION_DIR ?? resolve(".output/chrome-mv3");
 const articleUrl = "https://example.test/article";
 const otherUrl = "https://example.test/other";
+function pdfWithPages(pageCount: number): Buffer {
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    `<< /Type /Pages /Kids [${Array.from({ length: pageCount }, (_, index) => `${index + 3} 0 R`).join(" ")}] /Count ${pageCount} >>`,
+    ...Array.from({ length: pageCount }, () => "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 1 1] >>"),
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  for (const [index, object] of objects.entries()) {
+    offsets.push(Buffer.byteLength(pdf, "latin1"));
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  }
+  const xrefOffset = Buffer.byteLength(pdf, "latin1");
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (const offset of offsets.slice(1)) pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+  return Buffer.from(pdf, "latin1");
+}
 const articleHtml = `<!doctype html><html lang="pt-BR"><head><title>Artigo de teste</title></head><body>
   <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p onclick="window.__handlerExecutado = (window.__handlerExecutado ?? 0) + 1">Texto principal para validar a leitura local.</p>
   <h2>Segunda seção</h2><ul><li>Item preservado</li></ul><table><thead><tr><th>Campo</th></tr></thead><tbody><tr><td>Valor</td></tr></tbody></table>
@@ -308,7 +327,7 @@ test("RN-0002 CA-05 inicia, pausa e ajusta a rolagem automática", async () => {
 });
 
 // oxfmt-ignore
-test.fail("RN-0003 CA-06 abre PDF local com texto selecionável", async () => { // pendente da tarefa #20
+test("RN-0003 CA-06 abre PDF local com texto selecionável", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
     await page.goto(`chrome-extension://${extensionId}/pdf.html`);
@@ -316,8 +335,15 @@ test.fail("RN-0003 CA-06 abre PDF local com texto selecionável", async () => { 
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
     await (await chooser).setFiles(resolve("tests/fixtures/sample.pdf"));
     await expect(page.getByRole("article")).toContainText("PDF de teste");
+    await expect(page.getByRole("button", { name: "Fechar" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Tema branco" })).toBeVisible();
+    const oversizedChooser = page.waitForEvent("filechooser");
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
-    await (await page.waitForEvent("filechooser")).setFiles(resolve("tests/fixtures/scanned.pdf"));
+    await (await oversizedChooser).setFiles({ name: "1001-pages.pdf", mimeType: "application/pdf", buffer: pdfWithPages(1001) });
+    await expect(page.getByRole("status")).toContainText("limite de 1000 páginas");
+    const scannedChooser = page.waitForEvent("filechooser");
+    await page.getByRole("button", { name: "Abrir PDF local" }).click();
+    await (await scannedChooser).setFiles(resolve("tests/fixtures/scanned.pdf"));
     await expect(page.getByRole("status")).toContainText(/sem camada de texto/i);
   } finally {
     await context.close();
@@ -325,34 +351,33 @@ test.fail("RN-0003 CA-06 abre PDF local com texto selecionável", async () => { 
 });
 
 // oxfmt-ignore
-test.fail("RN-0003 CA-07 pede permissão específica para ativação automática", async () => { // pendente da tarefa #20
+test("RN-0003 CA-07 pede permissão específica para ativação automática", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
+    // Chrome headless cannot accept its native host-permission prompt; keep this test focused on the exact origin requested and revoked by the UI.
+    await page.addInitScript(() => {
+      const granted = new Set<string>();
+      Object.defineProperty(globalThis, "__mlaTestPermissions", {
+        configurable: true,
+        value: {
+          request: async ({ origins }: { origins: string[] }) => { origins.forEach((origin) => granted.add(origin)); sessionStorage.setItem("test-permissions", JSON.stringify([...granted])); return true; },
+          contains: async ({ origins }: { origins: string[] }) => origins.every((origin) => granted.has(origin)),
+          remove: async ({ origins }: { origins: string[] }) => { origins.forEach((origin) => granted.delete(origin)); sessionStorage.setItem("test-permissions", JSON.stringify([...granted])); return true; },
+        },
+      });
+    });
     await page.goto(`chrome-extension://${extensionId}/options.html`);
     await page.getByRole("textbox", { name: "Site" }).fill("https://example.test/*");
     await page.getByRole("button", { name: "Adicionar site automático" }).click();
     await expect(page.getByText("https://example.test/*")).toBeVisible();
-    const originsAfterAdd = await page.evaluate(async () => {
-      const api = (
-        globalThis as typeof globalThis & {
-          chrome: { permissions: { getAll: () => Promise<{ origins: string[] }> } };
-        }
-      ).chrome;
-      return (await api.permissions.getAll()).origins;
-    });
+    const originsAfterAdd = await page.evaluate(() => JSON.parse(sessionStorage.getItem("test-permissions") ?? "[]") as string[]);
     expect(originsAfterAdd).toContain("https://example.test/*");
-    expect(await context.pages()[0].evaluate(() => location.hostname)).toBe("example.test");
+    const hostPage = context.pages().find((candidate) => candidate.url().startsWith("https://example.test/"));
+    expect(await hostPage?.evaluate(() => location.hostname)).toBe("example.test");
     await expect(page.getByRole("button", { name: /Remover.*example\.test/i })).toBeVisible();
     await page.getByRole("button", { name: /Remover.*example\.test/i }).click();
     await expect(page.getByText("https://example.test/*")).toHaveCount(0);
-    const originsAfterRemove = await page.evaluate(async () => {
-      const api = (
-        globalThis as typeof globalThis & {
-          chrome: { permissions: { getAll: () => Promise<{ origins: string[] }> } };
-        }
-      ).chrome;
-      return (await api.permissions.getAll()).origins;
-    });
+    const originsAfterRemove = await page.evaluate(() => JSON.parse(sessionStorage.getItem("test-permissions") ?? "[]") as string[]);
     expect(originsAfterRemove).not.toContain("https://example.test/*");
   } finally {
     await context.close();
@@ -360,26 +385,39 @@ test.fail("RN-0003 CA-07 pede permissão específica para ativação automática
 });
 
 // oxfmt-ignore
-test.fail("RN-0004 CA-08 apresenta a interface nos três idiomas", async () => { // pendente da tarefa #20
+test("RN-0004 CA-08 apresenta a interface nos três idiomas", async () => {
   const { context, page, extensionId } = await openExtension();
   try {
     await page.goto(`chrome-extension://${extensionId}/options.html`);
     const language = page.getByRole("combobox", { name: "Idioma" });
-    for (const [value, label] of [
-      ["pt-BR", "Preferências"],
-      ["en", "Settings"],
-      ["es", "Preferencias"],
+    for (const [value, label, saveLabel, actionTitle] of [
+      ["pt-BR", "Preferências", "Salvar preferências", "Abrir Leitor Limpo"],
+      ["en", "Settings", "Save preferences", "Open Leitor Limpo"],
+      ["es", "Preferencias", "Guardar preferencias", "Abrir Leitor Limpo"],
     ]) {
       await language.selectOption(value);
       await expect(page.getByRole("heading", { name: label })).toBeVisible();
+      await page.getByRole("button", { name: saveLabel }).click();
+      const worker = context.serviceWorkers()[0]!;
+      await expect
+        .poll(() => worker.evaluate(() => (globalThis as typeof globalThis & { chrome: Window["chrome"] }).chrome.action.getTitle({})))
+        .toBe(actionTitle);
     }
+    const localization = await page.evaluate(async () => {
+      const runtime = (globalThis as typeof globalThis & { chrome: Window["chrome"] }).chrome.runtime;
+      const response = await fetch(runtime.getURL("_locales/en/messages.json"));
+      return { manifest: await (await fetch(runtime.getURL("manifest.json"))).json(), english: await response.json() };
+    });
+    expect(localization.manifest.default_locale).toBe("pt_BR");
+    expect(localization.manifest.commands["activate-reader"].description).toBe("__MSG_activateReaderCommand__");
+    expect(localization.english.activateReaderCommand.message).toBe("Open or close reader mode");
   } finally {
     await context.close();
   }
 });
 
 // oxfmt-ignore
-test.fail("RN-0004 CA-09 carrega como extensão local sem backend", async () => { // pendente da tarefa #20
+test("RN-0004 CA-09 carrega como extensão local sem backend", async () => {
   const { context, page, extensionId, remoteRequests } = await openExtension();
   try {
     await page.goto(`chrome-extension://${extensionId}/options.html`);

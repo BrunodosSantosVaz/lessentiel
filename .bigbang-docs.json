@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "23d02fc94c1671fa8b45911ede58fb47cdf31300",
-    "commit": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
+    "base": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
+    "commit": "fab03c741a15c1841b75a2a18d9973bd5dc2ec8f",
     "branch": "master",
-    "proposta": "bigbang/proposta-19-controles-leitura"
+    "proposta": "bigbang/proposta-20-leitor-pdf-local"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -64,8 +64,8 @@
     }
   },
   "codigo": {
-    "commit": "37ec74a3db5477be662dd701316569838637a668",
-    "raizes": ["prototype/", "entrypoints/", "src/", "wxt.config.ts", "public/"],
+    "commit": "e791e9d3f1067c6283bf6de6b24a9d7e1c231a90",
+    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
   "funcionalidades": [
@@ -85,9 +85,18 @@
       "requisitos": ["RF-0002"],
       "fontes": [
         "entrypoints/background.ts",
+        "entrypoints/options/index.html",
+        "entrypoints/options/main.ts",
+        "entrypoints/pdf/index.html",
+        "entrypoints/pdf/main.ts",
         "entrypoints/popup/index.html",
         "entrypoints/popup/main.ts",
         "entrypoints/reader.content.ts",
+        "flags.toml",
+        "package.json",
+        "public/_locales/en/messages.json",
+        "public/_locales/es/messages.json",
+        "public/_locales/pt_BR/messages.json",
         "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt",
         "public/fonts/Lexend-OFL.txt",
         "public/fonts/Literata-OFL.txt",
@@ -102,15 +111,27 @@
         "public/icon-32.png",
         "public/icon-48.png",
         "public/icon.svg",
+        "scripts/package-test.mjs",
+        "src/platform/assets.d.ts",
         "src/platform/extract-article.ts",
+        "src/platform/feature-flag.d.ts",
         "src/platform/reader-panel.ts",
         "wxt.config.ts"
       ],
       "hashes": {
-        "entrypoints/background.ts": "a7f96534bec7c038d4dd95ea4810bc70117a66f14e0316771e178c8bd5039f17",
-        "entrypoints/popup/index.html": "c1428d0161b72f679e4a42936f99a0c66c39f948304dd9664ffd5ede938e5b74",
-        "entrypoints/popup/main.ts": "0897835e9ec11791ec397cd293fab13d9123ff4e296970a78c3e7f1f28c21818",
-        "entrypoints/reader.content.ts": "1fac8ab33c69a2b70a279e656f8df5d00b8ff1e6d6bed09fbdd0a439b544caab",
+        "entrypoints/background.ts": "ddbeedd2ee320a9b86525cb7677d2c6d388aafeb255a0c7217e200de7927ac75",
+        "entrypoints/options/index.html": "de33fbe9d91615b025a6e61c1d247f737a85bab4bbbcad07d74dbae13a803d0b",
+        "entrypoints/options/main.ts": "fae170c3067ca0b834041741eae1ab331518cd894ad1ab446ffab4873670e70e",
+        "entrypoints/pdf/index.html": "dde642e6b2649d6565e20241264f00444c97467427f6b8c884822a3b44d46668",
+        "entrypoints/pdf/main.ts": "383e8799a507613d5d714d710659ccc0360e6303b33f40d247004e07f2ec21db",
+        "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
+        "entrypoints/popup/main.ts": "1312d8c1db59c065624621971eea34ab4dc2037a1f5249a1d6b1f28aa91bc99f",
+        "entrypoints/reader.content.ts": "6a22d5dee3889aebd0ba8039d2c780b9363e9a795a1453a0658a0756d2628c89",
+        "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
+        "package.json": "c97824d2c4ee84eb3ab7c98b120290457043a08d25663664d3a632ce73e2d009",
+        "public/_locales/en/messages.json": "d700a5263a3e0cc170b2890776501fa2a3dff924044a9cb2a84c22d7c8ba3b18",
+        "public/_locales/es/messages.json": "227ea2149dac8133a993a3cb6111a1e49fe7dc6ceba6c81928a1ea721755afae",
+        "public/_locales/pt_BR/messages.json": "2c8f10fba0d9a9efe9fa3708b8bd50381cd4bad4f0c18e964725547f5f9720de",
         "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
         "public/fonts/Lexend-OFL.txt": "5da8505887d0fa7fe963445fd58852707fda34adfeb65af25c99d152bab285bd",
         "public/fonts/Literata-OFL.txt": "8742963604cd89dc81437811a850018fc03b2bfad686d7422c8235967c87614e",
@@ -125,16 +146,23 @@
         "public/icon-32.png": "093d1e2d1d033f2887be1d4805f9d462670c49071f2f8c965c09ce233f59263f",
         "public/icon-48.png": "0fbddb62901b95138ad4d3649ccfbf241a6f65d0de85ef77a1abbfe23822bb5b",
         "public/icon.svg": "0c1c45f9fb3ff56c4857ece09d606daba6a7f9a25fe2aea88175ce036640c03d",
+        "scripts/package-test.mjs": "c750b1c5c9458835c43467965f408b652c13d0122321cf13307f5108db9edf08",
+        "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
-        "src/platform/reader-panel.ts": "714855e2ac5774053965d4af1733857fd947d3d55cf2b087ac629adf790d4f1e",
-        "wxt.config.ts": "2760e068ca1a6fb65085a82f95463a6f473d28da210152891961873cf0a48de1"
+        "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
+        "src/platform/reader-panel.ts": "3fe2464d0c2218393f05e33a3646904e9755323823b7225b17f3b803f25fc67f",
+        "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-02",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-03",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-04",
-        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-05"
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-05",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-06",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-07",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-08",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09"
       ]
     }
   ],

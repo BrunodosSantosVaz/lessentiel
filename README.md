@@ -1,17 +1,9 @@
 # Leitor Limpo
 
-Projeto organizado pelo Big Bang. O produto, a stack e as funcionalidades são definidos e documentados na Fundação;
-este README não declara entregas que ainda não ocorreram.
+Extensão local para ler artigos longos de páginas web e PDFs com menos distrações. O processamento e as preferências ficam no dispositivo; não há conta nem backend.
 
-O MVP está em implementação. A extração local de páginas, quatro temas, três fontes WOFF2 licenciadas e offline, índice, progresso e rolagem automática já estão disponíveis no código. PDF, idiomas e pacote de teste seguem nas tarefas do [quadro](https://github.com/users/BrunodosSantosVaz/projects/33). Ainda não há pacote completo para instalação.
+O MVP está pronto para teste local em navegadores Chromium. O ZIP universal pode ser gerado com `npm run package:test`; as instruções de instalação, permissões e limitações estão na [Wiki](https://github.com/BrunodosSantosVaz/mla/wiki/Uso-e-instalacao).
 
-[Documentação oficial](https://github.com/BrunodosSantosVaz/mla/wiki) ·
-[Discussions](https://github.com/BrunodosSantosVaz/mla/discussions) ·
-[Issues](https://github.com/BrunodosSantosVaz/mla/issues) ·
-[Releases](https://github.com/BrunodosSantosVaz/mla/releases)
+[Documentação](https://github.com/BrunodosSantosVaz/mla/wiki) · [Discussions](https://github.com/BrunodosSantosVaz/mla/discussions) · [Issues](https://github.com/BrunodosSantosVaz/mla/issues) · [Painel público #33](https://github.com/users/BrunodosSantosVaz/projects/33)
 
-[Painel público do projeto](https://github.com/users/BrunodosSantosVaz/projects/33). Guias, requisitos, arquitetura,
-design, operação, segurança, histórico e a matriz de cobertura ficam exclusivamente na Wiki. Atualize esta apresentação
-e os links no mesmo ciclo da entrega.
-
-Licença do sistema: [MIT](LICENSE). O framework mantém sua própria licença em `.bigbang/LICENSE`.
+Licença: [MIT](LICENSE). O framework Big Bang mantém licença própria em `.bigbang/LICENSE`.
