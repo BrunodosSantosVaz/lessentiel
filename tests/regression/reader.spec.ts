@@ -187,14 +187,14 @@ test("#30 RN-0002 tema automático acompanha o sistema, persiste e respeita esco
     await page.emulateMedia({ colorScheme: "dark" });
     await activate();
     await readerVisible(page);
-    const automatic = page.getByRole("button", { name: "Tema automático", exact: true });
+    const automatic = page.getByRole("button", { name: "Tema Automático", exact: true });
     const veil = page.locator("[data-leitor-limpo-host='true'] .veil");
     await automatic.click();
     await expect(automatic).toHaveAttribute("aria-pressed", "true");
     await expect(veil).toHaveCSS("background-color", "rgb(30, 31, 34)");
     await page.emulateMedia({ colorScheme: "light" });
     await expect(veil).toHaveCSS("background-color", "rgb(255, 255, 255)");
-    await page.getByRole("button", { name: "Tema preto", exact: true }).click();
+    await page.getByRole("button", { name: "Tema Preto", exact: true }).click();
     await page.emulateMedia({ colorScheme: "dark" });
     await expect(veil).toHaveCSS("background-color", "rgb(0, 0, 0)");
     await expect(automatic).toHaveAttribute("aria-pressed", "false");
