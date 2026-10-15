@@ -4,16 +4,17 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "commit": "5345fb6a1aad8669340578bf90bdbeb96663dbe4",
+    "commit": "591cd2c21ddaa83b6527abae842c03f0257a38ce",
     "branch": "master",
-    "proposta": "bigbang/proposta-7-f2-stack"
+    "proposta": "bigbang/proposta-9-f3-design"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
     "STACK.md": "STACK",
     "docs/decisoes/ADR-0001-stack.md": "docs-decisoes-ADR-0001-stack",
     "docs/pesquisa/f2-stack.md": "docs-pesquisa-f2-stack",
-    "docs/arquitetura/C4.md": "docs-arquitetura-C4"
+    "docs/arquitetura/C4.md": "docs-arquitetura-C4",
+    "DESIGN.md": "DESIGN"
   },
   "categorias": {},
   "codigo": {
