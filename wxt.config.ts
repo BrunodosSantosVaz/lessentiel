@@ -10,6 +10,7 @@ export default defineConfig({
     // Test builds grant the synthetic page host so headless tests can exercise injection without browser UI gestures.
     host_permissions: testMode ? ["http://*/*", "https://*/*"] : [],
     optional_host_permissions: [],
+    web_accessible_resources: [{ resources: ["fonts/*.woff2"], matches: ["http://*/*", "https://*/*"] }],
     action: {
       default_title: "Abrir Leitor Limpo",
       default_popup: "popup.html",

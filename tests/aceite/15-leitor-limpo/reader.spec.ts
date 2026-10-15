@@ -99,6 +99,8 @@ async function startActivationTimer(page: Page) {
 test("RN-0001 CA-01 ativa e preserva a estrutura do artigo", async () => {
   const { context, page } = await openExtension();
   try {
+    const returnFocus = page.getByRole("button", { name: "Ação hostil" });
+    await returnFocus.focus();
     await startActivationTimer(page);
     await activate(page);
     await expect.poll(() => page.evaluate(() => window.__readerActivationMs)).toBeDefined();
@@ -109,6 +111,7 @@ test("RN-0001 CA-01 ativa e preserva a estrutura do artigo", async () => {
     await expect(page.getByRole("article", { name: "Artigo de teste" }).getByText("Publicidade removível")).toHaveCount(0);
     await page.keyboard.press("Escape");
     await expect(page.getByRole("article", { name: "Artigo de teste" })).toHaveCount(0);
+    await expect(returnFocus).toBeFocused();
     expect(
       await page.locator("body").evaluate((body) => ({
         inert: (body as HTMLElement).inert,
@@ -165,17 +168,50 @@ test("RN-0001 CA-02 neutraliza conteúdo hostil", async () => {
 
 // oxfmt-ignore
 test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
-  const { context, page } = await openExtension();
+  const { context, page, extensionId } = await openExtension();
   try {
     await activate(page);
     await page.getByRole("button", { name: "Tema sépia" }).click();
-    await page.getByRole("combobox", { name: "Fonte" }).selectOption("Lexend");
+    await page.getByRole("button", { name: "Tema escuro" }).click();
+    await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(30, 31, 34)");
+    await page.getByRole("button", { name: "Tema preto" }).click();
+    await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(0, 0, 0)");
+    await page.getByRole("button", { name: "Tema branco" }).click();
+    await expect(page.getByRole("article")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await page.getByRole("button", { name: "Tema sépia" }).click();
+    const font = page.getByRole("combobox", { name: "Fonte" });
+    for (const family of ["Literata", "Atkinson Hyperlegible Next", "Lexend"]) {
+      await font.selectOption(family);
+      await expect(page.getByRole("article")).toHaveCSS("font-family", new RegExp(family));
+    }
+    const fontPage = await context.newPage();
+    await fontPage.goto(`chrome-extension://${extensionId}/popup.html`);
+    const fonts = [
+      ["Literata", "fonts/literata-latin.woff2"],
+      ["Atkinson Hyperlegible Next", "fonts/atkinson-hyperlegible-next-latin.woff2"],
+      ["Lexend", "fonts/lexend-latin.woff2"],
+    ];
+    for (const [family, path] of fonts) {
+      const status = await fontPage.evaluate(async ({ family, path }) => {
+        const response = await fetch(path);
+        if (!response.ok) throw new Error(`Font asset unavailable: ${path}`);
+        const face = new FontFace(family, await response.arrayBuffer());
+        await face.load();
+        return face.status;
+      }, { family, path });
+      expect(status).toBe("loaded");
+    }
+    await fontPage.close();
     for (let step = 0; step < 20; step += 1) await page.getByRole("button", { name: "Diminuir fonte" }).click();
     await expect(page.getByRole("article")).toHaveCSS("font-size", "14px");
     for (let step = 0; step < 20; step += 1) await page.getByRole("button", { name: "Aumentar fonte" }).click();
     await expect(page.getByRole("article")).toHaveAttribute("data-theme", "sepia");
     await expect(page.getByRole("article")).toHaveCSS("font-size", "32px");
     await expect(page.getByRole("article")).toHaveCSS("font-family", /Lexend/);
+    await expect.poll(() => page.evaluate(() => document.fonts.check('20px "Lexend"'))).toBe(true);
+    for (const name of ["Largura do texto", "Entrelinha", "Velocidade da rolagem"]) {
+      expect(await page.getByRole("slider", { name }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    }
     const article = page.getByRole("article");
     const initialWidth = await article.evaluate((element) => getComputedStyle(element).maxWidth);
     const width = page.getByRole("slider", { name: "Largura do texto" });
@@ -231,6 +267,9 @@ test("RN-0002 CA-04 navega pelo índice e mostra o tempo restante", async () => 
     await expect(page).toHaveURL(/#ritmo-proprio/);
     expect(Number(await progress.getAttribute("aria-valuenow"))).toBeGreaterThan(0);
     await expect(remaining).not.toHaveText(initialRemaining ?? "");
+    await page.locator("[data-leitor-limpo-host='true'] .veil").evaluate((element) => element.scrollTo(0, element.scrollHeight));
+    await expect(progress).toHaveAttribute("aria-valuenow", "100");
+    await expect(remaining).toHaveText("restam 0 min");
   } finally {
     await context.close();
   }
