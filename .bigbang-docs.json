@@ -4,9 +4,9 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "23d02fc94c1671fa8b45911ede58fb47cdf31300",
-    "commit": "65f47ad341da63e9e2724cdc19078337e3f5e12e",
+    "commit": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
     "branch": "master",
-    "proposta": "bigbang/proposta-18-arquitetura-leitura-web"
+    "proposta": "bigbang/proposta-19-controles-leitura"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -65,7 +65,7 @@
   },
   "codigo": {
     "commit": "37ec74a3db5477be662dd701316569838637a668",
-    "raizes": ["prototype/", "entrypoints/", "src/", "wxt.config.ts"],
+    "raizes": ["prototype/", "entrypoints/", "src/", "wxt.config.ts", "public/"],
     "excluir": []
   },
   "funcionalidades": [
@@ -85,23 +85,57 @@
       "requisitos": ["RF-0002"],
       "fontes": [
         "entrypoints/background.ts",
-        "entrypoints/popup/main.ts",
         "entrypoints/popup/index.html",
+        "entrypoints/popup/main.ts",
         "entrypoints/reader.content.ts",
+        "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt",
+        "public/fonts/Lexend-OFL.txt",
+        "public/fonts/Literata-OFL.txt",
+        "public/fonts/atkinson-hyperlegible-next-latin-ext.woff2",
+        "public/fonts/atkinson-hyperlegible-next-latin.woff2",
+        "public/fonts/lexend-latin-ext.woff2",
+        "public/fonts/lexend-latin.woff2",
+        "public/fonts/literata-latin-ext.woff2",
+        "public/fonts/literata-latin.woff2",
+        "public/icon-128.png",
+        "public/icon-16.png",
+        "public/icon-32.png",
+        "public/icon-48.png",
+        "public/icon.svg",
         "src/platform/extract-article.ts",
         "src/platform/reader-panel.ts",
         "wxt.config.ts"
       ],
       "hashes": {
         "entrypoints/background.ts": "a7f96534bec7c038d4dd95ea4810bc70117a66f14e0316771e178c8bd5039f17",
-        "entrypoints/popup/main.ts": "0897835e9ec11791ec397cd293fab13d9123ff4e296970a78c3e7f1f28c21818",
         "entrypoints/popup/index.html": "c1428d0161b72f679e4a42936f99a0c66c39f948304dd9664ffd5ede938e5b74",
-        "entrypoints/reader.content.ts": "240aa19ae6e6f7212b79e2833c3e40b877013b6af366433f476fdbaa2055a87c",
+        "entrypoints/popup/main.ts": "0897835e9ec11791ec397cd293fab13d9123ff4e296970a78c3e7f1f28c21818",
+        "entrypoints/reader.content.ts": "1fac8ab33c69a2b70a279e656f8df5d00b8ff1e6d6bed09fbdd0a439b544caab",
+        "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
+        "public/fonts/Lexend-OFL.txt": "5da8505887d0fa7fe963445fd58852707fda34adfeb65af25c99d152bab285bd",
+        "public/fonts/Literata-OFL.txt": "8742963604cd89dc81437811a850018fc03b2bfad686d7422c8235967c87614e",
+        "public/fonts/atkinson-hyperlegible-next-latin-ext.woff2": "7dae0c6c66af1aec82e096186aeb1f0e6fa36ab8061ed65422f2b7daf4dd93f3",
+        "public/fonts/atkinson-hyperlegible-next-latin.woff2": "18b2a1a39a2fa298b0ba5390aca68462669826c90925656f1c1f6796e0e1bbaf",
+        "public/fonts/lexend-latin-ext.woff2": "b5d815d42066da25e5894bdfe47a415e1f79ef436486e3f843b475806d2e613c",
+        "public/fonts/lexend-latin.woff2": "b7e7538f59bff1812841d7627f8e49e70fe86438f9f7b397a028c0d05301c874",
+        "public/fonts/literata-latin-ext.woff2": "334990a82ce173e5169f5f0946c679f7d8c1ee8608eb29b56f85284802c712c9",
+        "public/fonts/literata-latin.woff2": "7478e1920209e51dcc235d151d2056a0a6e3c54b4436f7030d256f231fe09b58",
+        "public/icon-128.png": "4901bd5f98b5eb9ba797ccc7aaec61d43e21b50f0523ef6e83a23afc29236ad5",
+        "public/icon-16.png": "62f37974458896d9b227d396cf76f8e2904edc41a355df5eeb15e08bde4c3e4e",
+        "public/icon-32.png": "093d1e2d1d033f2887be1d4805f9d462670c49071f2f8c965c09ce233f59263f",
+        "public/icon-48.png": "0fbddb62901b95138ad4d3649ccfbf241a6f65d0de85ef77a1abbfe23822bb5b",
+        "public/icon.svg": "0c1c45f9fb3ff56c4857ece09d606daba6a7f9a25fe2aea88175ce036640c03d",
         "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
-        "src/platform/reader-panel.ts": "e84ff5d9f19d0c283d607e44fa058e04f710ed11d3218ff1f02a61c1e0c1a0a6",
-        "wxt.config.ts": "3dc6e8ac2325b7061ab60140dc4cfe6d3640ce5699d1ceb3819034049839c057"
+        "src/platform/reader-panel.ts": "714855e2ac5774053965d4af1733857fd947d3d55cf2b087ac629adf790d4f1e",
+        "wxt.config.ts": "2760e068ca1a6fb65085a82f95463a6f473d28da210152891961873cf0a48de1"
       },
-      "testes": ["tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01", "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-02"]
+      "testes": [
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-02",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-03",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-04",
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-05"
+      ]
     }
   ],
   "arquivos_funcionais": [],

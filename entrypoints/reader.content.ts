@@ -5,13 +5,13 @@ import { defineContentScript } from "wxt/utils/define-content-script";
 export default defineContentScript({
   matches: [],
   registration: "runtime",
-  main() {
+  async main() {
     const article = extractArticle(document);
     if (!article) {
       showUnavailableMessage();
       return false;
     }
-    toggleReader(article);
+    await toggleReader(article);
     return true;
   },
 });
