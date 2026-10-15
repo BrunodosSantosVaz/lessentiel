@@ -14,6 +14,7 @@ const articleUrl = 'https://example.test/article';
 const articleHtml = `<!doctype html><html lang="pt-BR"><head><title>Artigo de teste</title></head><body>
   <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p>Texto principal para validar a leitura local.</p>
   <h2>Segunda seção</h2><ul><li>Item preservado</li></ul><table><thead><tr><th>Campo</th></tr></thead><tbody><tr><td>Valor</td></tr></tbody></table>
+  ${Array.from({ length: 24 }, (_, index) => `<p>Parágrafo longo ${index + 1}: conteúdo sintético para validar posição, estimativa e progresso da leitura.</p>`).join('')}
   <script>window.__conteudoExecutado = (window.__conteudoExecutado ?? 0) + 1</script>
   <button onclick="window.__handlerExecutado = (window.__handlerExecutado ?? 0) + 1">Ação hostil</button>
   <a href="javascript:window.__linkExecutado=true">Link hostil</a></article></main>
@@ -45,13 +46,21 @@ async function activate(page: Page) {
 }
 
 test.fail('RN-0001 CA-01 ativa e preserva a estrutura do artigo #18', async () => { // pendente da tarefa #18
-  const { context, page, extensionId } = await openExtension();
+  const { context, page } = await openExtension();
   try {
+    const startedAt = await page.evaluate(() => performance.now());
     await activate(page);
+    const activationMs = await page.evaluate(start => performance.now() - start, startedAt);
+    expect(activationMs).toBeLessThan(300);
     await expect(page.getByRole('heading', { name: 'Leitura de teste' })).toBeVisible();
     await expect(page.getByRole('listitem', { name: 'Item preservado' })).toBeVisible();
     await expect(page.getByRole('table')).toContainText('Valor');
     await expect(page.getByText('Publicidade removível')).toHaveCount(0);
+    await page.keyboard.press('Alt+Shift+R');
+    const popup = await context.newPage();
+    await popup.goto(`chrome-extension://${new URL(context.serviceWorkers()[0].url()).host}/popup.html`);
+    await popup.getByRole('button', { name: 'Ativar modo de leitura' }).click();
+    await expect(page.getByRole('article')).toBeVisible();
   } finally { await context.close(); }
 });
 
@@ -75,38 +84,74 @@ test.fail('RN-0001 CA-02 neutraliza conteúdo hostil #18', async () => { // pend
 });
 
 test.fail('RN-0002 CA-03 aplica e persiste controles locais #19', async () => { // pendente da tarefa #19
-  const { context, page, extensionId } = await openExtension();
+  const { context, page } = await openExtension();
   try {
     await activate(page);
     await page.getByRole('button', { name: 'Tema sépia' }).click();
-    await page.getByRole('button', { name: 'Aumentar fonte' }).click();
+    await page.getByRole('combobox', { name: 'Fonte' }).selectOption('Lexend');
+    for (let step = 0; step < 20; step += 1) await page.getByRole('button', { name: 'Diminuir fonte' }).click();
+    await expect(page.getByRole('article')).toHaveCSS('font-size', '14px');
+    for (let step = 0; step < 20; step += 1) await page.getByRole('button', { name: 'Aumentar fonte' }).click();
     await expect(page.getByRole('article')).toHaveAttribute('data-theme', 'sepia');
-    await expect(page.getByRole('article')).toHaveCSS('font-size', '21px');
+    await expect(page.getByRole('article')).toHaveCSS('font-size', '32px');
+    await expect(page.getByRole('article')).toHaveCSS('font-family', /Lexend/);
+    const width = page.getByRole('slider', { name: 'Largura do texto' });
+    await width.focus();
+    await width.press('End');
+    const lineHeight = page.getByRole('slider', { name: 'Entrelinha' });
+    await lineHeight.focus();
+    await lineHeight.press('End');
+    await page.getByRole('combobox', { name: 'Alinhamento do texto' }).selectOption('justify');
+    await expect(page.getByRole('article')).toHaveCSS('text-align', 'justify');
+    await page.evaluate(() => window.scrollTo(0, 500));
+    const scrollPosition = await page.evaluate(() => window.scrollY);
+    await page.getByRole('button', { name: 'Aumentar fonte' }).click();
+    expect(Math.abs((await page.evaluate(() => window.scrollY)) - scrollPosition)).toBeLessThanOrEqual(2);
     await page.reload();
     await activate(page);
     await expect(page.getByRole('article')).toHaveAttribute('data-theme', 'sepia');
+    await expect(page.getByRole('combobox', { name: 'Fonte' })).toHaveValue('Lexend');
+    await expect(page.getByRole('article')).toHaveCSS('font-size', '32px');
   } finally { await context.close(); }
 });
 
 test.fail('RN-0002 CA-04 navega pelo índice e mostra o tempo restante #19', async () => { // pendente da tarefa #19
-  const { context, page, extensionId } = await openExtension();
+  const { context, page } = await openExtension();
   try {
     await activate(page);
     await page.getByRole('button', { name: 'Índice' }).click();
     await page.getByRole('link', { name: 'Segunda seção' }).click();
     await expect(page).toHaveURL(/#segunda-secao/);
     await expect(page.getByText(/min de leitura/)).toBeVisible();
+    const progress = page.getByRole('progressbar', { name: 'Progresso da leitura' });
+    await expect(progress).toBeVisible();
+    await expect(page.getByText(/restam? \d+ min/i)).toBeVisible();
+    const initialRemaining = await page.getByText(/restam? \d+ min/i).textContent();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await expect(progress).toHaveAttribute('aria-valuenow', '100');
+    await expect(page.getByText(/restam? \d+ min/i)).not.toHaveText(initialRemaining ?? '');
   } finally { await context.close(); }
 });
 
 test.fail('RN-0002 CA-05 inicia, pausa e ajusta a rolagem automática #19', async () => { // pendente da tarefa #19
-  const { context, page, extensionId } = await openExtension();
+  const { context, page } = await openExtension();
   try {
     await activate(page);
     await page.getByRole('button', { name: 'Iniciar rolagem' }).click();
     await expect(page.getByRole('button', { name: 'Pausar rolagem' })).toHaveAttribute('aria-pressed', 'true');
+    const speed = page.getByRole('slider', { name: 'Velocidade da rolagem' });
+    const initialSpeed = await speed.getAttribute('aria-valuenow');
+    await speed.focus();
+    await speed.press('End');
+    expect(await speed.getAttribute('aria-valuenow')).not.toBe(initialSpeed);
     await page.getByRole('button', { name: 'Pausar rolagem' }).click();
     await expect(page.getByRole('button', { name: 'Iniciar rolagem' })).toHaveAttribute('aria-pressed', 'false');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const beforeReducedMotionStart = await page.evaluate(() => window.scrollY);
+    await page.getByRole('button', { name: 'Iniciar rolagem' }).click();
+    await page.waitForTimeout(250);
+    await expect(page.getByRole('button', { name: 'Iniciar rolagem' })).toHaveAttribute('aria-pressed', 'false');
+    expect(await page.evaluate(() => window.scrollY)).toBe(beforeReducedMotionStart);
   } finally { await context.close(); }
 });
 
@@ -118,6 +163,9 @@ test.fail('RN-0003 CA-06 abre PDF local com texto selecionável #20', async () =
     await page.getByRole('button', { name: 'Abrir PDF local' }).click();
     await (await chooser).setFiles(resolve('tests/fixtures/sample.pdf'));
     await expect(page.getByRole('article')).toContainText('PDF de teste');
+    await page.getByRole('button', { name: 'Abrir PDF local' }).click();
+    await (await page.waitForEvent('filechooser')).setFiles(resolve('tests/fixtures/scanned.pdf'));
+    await expect(page.getByRole('status')).toContainText(/sem camada de texto/i);
   } finally { await context.close(); }
 });
 
@@ -128,7 +176,20 @@ test.fail('RN-0003 CA-07 pede permissão específica para ativação automática
     await page.getByRole('textbox', { name: 'Site' }).fill('https://example.test/*');
     await page.getByRole('button', { name: 'Adicionar site automático' }).click();
     await expect(page.getByText('https://example.test/*')).toBeVisible();
+    const originsAfterAdd = await page.evaluate(async () => {
+      const api = (globalThis as typeof globalThis & { chrome: { permissions: { getAll: () => Promise<{ origins: string[] }> } } }).chrome;
+      return (await api.permissions.getAll()).origins;
+    });
+    expect(originsAfterAdd).toContain('https://example.test/*');
     expect(await context.pages()[0].evaluate(() => location.hostname)).toBe('example.test');
+    await expect(page.getByRole('button', { name: /Remover.*example\.test/i })).toBeVisible();
+    await page.getByRole('button', { name: /Remover.*example\.test/i }).click();
+    await expect(page.getByText('https://example.test/*')).toHaveCount(0);
+    const originsAfterRemove = await page.evaluate(async () => {
+      const api = (globalThis as typeof globalThis & { chrome: { permissions: { getAll: () => Promise<{ origins: string[] }> } } }).chrome;
+      return (await api.permissions.getAll()).origins;
+    });
+    expect(originsAfterRemove).not.toContain('https://example.test/*');
   } finally { await context.close(); }
 });
 

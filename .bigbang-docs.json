@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "commit": "ced40c31054748c5df06b620b7700aafff7c153d",
+    "base": "ced40c31054748c5df06b620b7700aafff7c153d",
+    "commit": "c2be93f9a42e95cd11184b1f7aad7ff7be713649",
     "branch": "master",
-    "proposta": "bigbang/proposta-13-f5-docs"
+    "proposta": "bigbang/proposta-16-lint-typescript"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
