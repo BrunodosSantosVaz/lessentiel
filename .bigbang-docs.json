@@ -4,9 +4,9 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
-    "commit": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
+    "commit": "3cf8cf992f0193f698e6cfee283e4a3bac6e673d",
     "branch": "master",
-    "proposta": "bigbang/proposta-19-controles-leitura"
+    "proposta": "bigbang/proposta-20-leitor-pdf-local"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -65,7 +65,7 @@
   },
   "codigo": {
     "commit": "d0299c35e8b7022f92016b7893436a82ee94ca5a",
-    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/", "src/", "wxt.config.ts"],
+    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
   "funcionalidades": [
