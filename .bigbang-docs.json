@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "c264d0a63a6cf8d956696b312f05ab351816ba12",
-    "commit": "2ae24b927ef91d3fb6af4dca9c0519f217aa76b5",
+    "base": "2ae24b927ef91d3fb6af4dca9c0519f217aa76b5",
+    "commit": "c44b7af4631ce42f0cdbe8b54bc232b9ba8c09de",
     "branch": "master",
-    "proposta": "bigbang/proposta-21-documentacao-consolidada"
+    "proposta": "bigbang/proposta-32-layout-leitura"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -33,7 +33,8 @@
     "CHANGELOG.md": "CHANGELOG",
     "docs/dados/inventario.md": "Inventario-de-dados",
     "docs/glossario.md": "Glossario",
-    "docs/aceite-mvp.md": "Aceite-do-MVP"
+    "docs/aceite-mvp.md": "Aceite-do-MVP",
+    "docs/decisoes/ADR-0003-layout-leitura.md": "docs-decisoes-ADR-0003-layout-leitura"
   },
   "categorias": {
     "produto": {
@@ -71,7 +72,7 @@
     }
   },
   "codigo": {
-    "commit": "a5a9041f12ca82305edbcb0f3abeb14c87f60515",
+    "commit": "30a5f0e58521e1aa4a3d48c38a2189b84c555eb8",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -158,8 +159,8 @@
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "a54b466a58043ce997cda982fecdf00e64e7aa1c3ea2c8a0238d777392e6c840",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
-        "src/platform/reader-panel.ts": "0fa740b29d1e9aaa11f71c85f89851a797416ade74b8ce2d2262010eddebaea8",
-        "src/platform/reader-style.ts": "8c99e8c00a020911b059d54f72e2267a27253e9826464932e87a2f844ee18438",
+        "src/platform/reader-panel.ts": "0deddc82461af2969c6736139dd71888243011c51b6ad1f41f13a7d6aa49cabb",
+        "src/platform/reader-style.ts": "cc5532cd514c53b5ff6a088f85f0c2dacb16f5596cda0308b62e607445f948f7",
         "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967"
       },
       "testes": [
@@ -174,7 +175,8 @@
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09",
         "tests/regression/reader.spec.ts:#26",
         "tests/regression/reader.spec.ts:#30",
-        "tests/regression/reader.spec.ts:#30 RN-0002"
+        "tests/regression/reader.spec.ts:#30 RN-0002",
+        "tests/regression/layout.spec.ts:#32 RN-0002"
       ]
     }
   ],
