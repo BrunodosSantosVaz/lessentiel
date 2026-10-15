@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "dceb197354bc6bbc96f4e686e1e654e3028d386d",
-    "commit": "d0641f57722faf91ad1c99503bd9a2719d914200",
+    "base": "c264d0a63a6cf8d956696b312f05ab351816ba12",
+    "commit": "ac6304311d436f779dd2663bb3c2051c94a91745",
     "branch": "master",
-    "proposta": "bigbang/proposta-21-documentacao-final"
+    "proposta": "bigbang/proposta-21-documentacao-consolidada"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -72,41 +72,24 @@
   },
   "codigo": {
     "commit": "a5a9041f12ca82305edbcb0f3abeb14c87f60515",
-    "raizes": [
-      "entrypoints/",
-      "flags.toml",
-      "package.json",
-      "prototype/",
-      "public/",
-      "scripts/package-test.mjs",
-      "src/",
-      "wxt.config.ts"
-    ],
+    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
   "funcionalidades": [
     {
       "id": "RF-0001",
       "pagina": "Funcionalidades",
-      "requisitos": [
-        "RF-0001"
-      ],
-      "fontes": [
-        "prototype/index.html"
-      ],
+      "requisitos": ["RF-0001"],
+      "fontes": ["prototype/index.html"],
       "hashes": {
         "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
       },
-      "testes": [
-        "tests/prototype.spec.ts:smoke"
-      ]
+      "testes": ["tests/prototype.spec.ts:smoke"]
     },
     {
       "id": "RF-0002",
       "pagina": "Funcionalidades",
-      "requisitos": [
-        "RF-0002"
-      ],
+      "requisitos": ["RF-0002"],
       "fontes": [
         "entrypoints/background.ts",
         "entrypoints/options/index.html",
@@ -190,7 +173,8 @@
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-08",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09",
         "tests/regression/reader.spec.ts:#26",
-        "tests/regression/reader.spec.ts:#30"
+        "tests/regression/reader.spec.ts:#30",
+        "tests/regression/reader.spec.ts:#30 RN-0002"
       ]
     }
   ],
