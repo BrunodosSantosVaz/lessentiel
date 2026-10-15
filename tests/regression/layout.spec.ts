@@ -56,7 +56,7 @@ test("#32 RN-0002 índice fica à esquerda do artigo e permanece lateral ao rola
     const text = (await article.boundingBox())!;
     expect(box.x + box.width).toBeLessThanOrEqual(text.x);
     expect((await toolbar.boundingBox())!.height).toBe(before);
-    await page.locator(".veil").evaluate((node) => node.scrollTo(0, 800));
+    await page.evaluate(() => window.scrollTo(0, 800));
     await expect(index).toBeInViewport();
     expect((await index.boundingBox())!.y).toBeGreaterThanOrEqual(before - 1);
     await index.getByRole("link", { name: "Segunda parte", exact: true }).click();

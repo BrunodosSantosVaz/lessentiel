@@ -1,4 +1,5 @@
 import { browser } from "wxt/browser";
+import { loadReaderFonts, readerFontFamily } from "./reader-fonts";
 import { readerStyle } from "./reader-style";
 import { createReaderToolbar, type ReaderPreferences } from "./reader-toolbar";
 import type { ExtractedArticle } from "./extract-article";
@@ -65,7 +66,7 @@ async function loadPreferences(): Promise<Preferences> {
   }
 }
 
-export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close: () => void) => void): Promise<void> {
+export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close: () => void) => void, onClose?: () => void): Promise<void> {
   if (closeActiveReader()) return;
 
   const preferences = await loadPreferences();
@@ -185,29 +186,29 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   }[preferences.language];
   const host = document.createElement("div") as ReaderHost;
   const sourceBody = document.body;
+  const root = document.documentElement;
+  const previousRootStyle = root.getAttribute("style");
+  const previousBodyStyle = sourceBody.getAttribute("style");
+  const previousPosition = { left: window.scrollX, top: window.scrollY };
   const previousInert = sourceBody.inert;
   const previousAriaHidden = sourceBody.getAttribute("aria-hidden");
   const restorePage = () => {
+    if (previousRootStyle === null) root.removeAttribute("style");
+    else root.setAttribute("style", previousRootStyle);
+    if (previousBodyStyle === null) sourceBody.removeAttribute("style");
+    else sourceBody.setAttribute("style", previousBodyStyle);
     sourceBody.inert = previousInert;
     if (previousAriaHidden === null) sourceBody.removeAttribute("aria-hidden");
     else sourceBody.setAttribute("aria-hidden", previousAriaHidden);
   };
   host.restorePage = restorePage;
   host.dataset.leitorLimpoHost = "true";
+  host.style.cssText = "all: initial; display: block;";
   host.setAttribute("aria-label", "Leitor Limpo");
   const shadow = host.attachShadow({ mode: "open" });
   const style = document.createElement("style");
-  const runtime = browser.runtime as typeof browser.runtime & { getURL: (path: string) => string };
-  const fontUrl = (file: string) => runtime.getURL(`fonts/${file}`);
-  style.textContent = `
-    @font-face { font-family: Literata; font-style: normal; font-weight: 400 700; src: url("${fontUrl("literata-latin.woff2")}") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-    @font-face { font-family: Literata; font-style: normal; font-weight: 400 700; src: url("${fontUrl("literata-latin-ext.woff2")}") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-    @font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400 700; src: url("${fontUrl("atkinson-hyperlegible-next-latin.woff2")}") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-    @font-face { font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400 700; src: url("${fontUrl("atkinson-hyperlegible-next-latin-ext.woff2")}") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-    @font-face { font-family: Lexend; font-style: normal; font-weight: 400 700; src: url("${fontUrl("lexend-latin.woff2")}") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-    @font-face { font-family: Lexend; font-style: normal; font-weight: 400 700; src: url("${fontUrl("lexend-latin-ext.woff2")}") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-    ${readerStyle}
-  `;
+  style.textContent = readerStyle;
+  const fonts = loadReaderFonts();
   const veil = document.createElement("div");
   veil.className = "veil";
   veil.innerHTML = `<div class="reader-layout"><nav id="reader-index" class="index" hidden><div class="index-heading"><strong class="index-title"></strong><button class="close-index" type="button">×</button></div><ol></ol></nav><main class="reading-content"><article role="article"></article></main></div>`;
@@ -271,11 +272,12 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     ...(onOpenPdf ? { openPdf: () => onOpenPdf(closeReader) } : {}),
   });
   veil.prepend(toolbar.element);
+  veil.querySelector(".reading-content")!.prepend(toolbar.readingInfo);
   const wordCount = (articleElement.textContent ?? "").trim().split(/\s+/).filter(Boolean).length;
   const totalMinutes = Math.ceil(wordCount / 200);
   const updateProgress = () => {
-    const maxScroll = veil.scrollHeight - veil.clientHeight;
-    const value = maxScroll > 0 ? Math.round((veil.scrollTop / maxScroll) * 100) : 0;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const value = maxScroll > 0 ? Math.round((window.scrollY / maxScroll) * 100) : 0;
     toolbar.progress.value = value;
     toolbar.progress.setAttribute("aria-valuenow", String(value));
     toolbar.remaining.textContent = ui.remaining(Math.ceil(Math.ceil((wordCount * (100 - value)) / 100) / 200));
@@ -295,10 +297,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     const theme = preferences.theme === "auto" ? (colorScheme.matches ? "dark" : "light") : preferences.theme;
     veil.dataset.theme = theme;
     articleElement.dataset.theme = theme;
-    articleElement.style.setProperty(
-      "--fonte-leitura",
-      `"${preferences.font}", ${["Literata", "Georgia"].includes(preferences.font) ? "Georgia, serif" : "sans-serif"}`,
-    );
+    articleElement.style.setProperty("--fonte-leitura", readerFontFamily(preferences.font));
     articleElement.style.fontSize = `${preferences.fontSize}px`;
     articleElement.style.maxWidth = `${preferences.widthPercent || defaults.widthPercent}%`;
     articleElement.style.lineHeight = String(preferences.lineHeight);
@@ -316,7 +315,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     if (!isScrolling) return;
     const now = performance.now();
     if (now - lastFrame >= 32) {
-      veil.scrollTop += preferences.speed / 4;
+      window.scrollBy(0, preferences.speed / 4);
       lastFrame = now;
       updateProgress();
     }
@@ -350,6 +349,8 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     stopAutoScroll();
     host.restorePage?.();
     host.remove();
+    window.scrollTo(previousPosition);
+    onClose?.();
     if (previousActiveElement?.isConnected && !previousActiveElement.hasAttribute("disabled")) previousActiveElement.focus({ preventScroll: true });
   };
   host.closeReader = closeReader;
@@ -369,7 +370,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   };
   window.addEventListener("keydown", onKeydown);
   colorScheme.addEventListener("change", onSystemTheme);
-  veil.addEventListener("scroll", updateProgress, { passive: true });
+  window.addEventListener("scroll", updateProgress, { passive: true });
   const toolbarObserver = new ResizeObserver(() => {
     veil.style.setProperty("--toolbar-height", `${toolbar.element.getBoundingClientRect().height}px`);
     updateProgress();
@@ -403,7 +404,6 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   window.addEventListener("afterprint", afterPrint);
   printMedia.addEventListener("change", onPrintMedia);
   host.restorePage = () => {
-    restorePage();
     stopAutoScroll();
     toolbar.destroy();
     toolbarObserver.disconnect();
@@ -413,12 +413,31 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     window.removeEventListener("afterprint", afterPrint);
     printMedia.removeEventListener("change", onPrintMedia);
     afterPrint();
+    fonts.dispose();
+    window.removeEventListener("scroll", updateProgress);
+    restorePage();
   };
   toolbar.readingTime.textContent = ui.time(totalMinutes);
   shadow.append(style, veil);
   sourceBody.inert = true;
   sourceBody.setAttribute("aria-hidden", "true");
+  for (const [property, value] of Object.entries({
+    overflow: "auto",
+    height: "auto",
+    "max-height": "none",
+    margin: "0",
+    padding: "0",
+    "scroll-behavior": "auto",
+  }))
+    root.style.setProperty(property, value, "important");
+  sourceBody.style.setProperty("display", "none", "important");
   document.documentElement.append(host);
+  window.scrollTo(0, 0);
+  void fonts.ready.then((loaded) => {
+    if (!host.isConnected) return;
+    host.dataset.fonts = loaded ? "ready" : "unavailable";
+    toolbar.fit(true);
+  });
   applyPreferences();
   toolbar.fit();
   toolbar.closeButton.focus({ preventScroll: true });

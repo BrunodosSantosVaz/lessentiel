@@ -6,10 +6,26 @@ const readerScript = "content-scripts/reader.js";
 
 export default defineBackground(() => {
   let contextMenuReady = false;
-  const activateTab = async (tabId: number | undefined) => {
+  const openLocalPdf = async (tabId: number, url: string) => {
+    if (!(await browser.extension.isAllowedFileSchemeAccess())) return false;
+    const target = new URL((browser.runtime as typeof browser.runtime & { getURL: (path: string) => string }).getURL("/pdf.html"));
+    target.searchParams.set("source", url);
+    await browser.tabs.update(tabId, { url: target.href });
+    return true;
+  };
+  const isLocalPdf = (url: string) => {
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === "file:" && /\.pdf$/i.test(parsed.pathname);
+    } catch {
+      return false;
+    }
+  };
+  const activateTab = async (tabId: number | undefined, url?: string) => {
     if (!__READER_ENABLED__) return false;
     if (tabId === undefined) return false;
     try {
+      if (url && isLocalPdf(url)) return await openLocalPdf(tabId, url);
       await browser.scripting.executeScript({ target: { tabId }, files: [readerScript] });
       return true;
     } catch {
@@ -27,8 +43,8 @@ export default defineBackground(() => {
 
   const activateCurrentTab = async () => {
     const tabs = await browser.tabs.query({ currentWindow: true, active: true });
-    const tab = tabs.find(({ url }) => url?.startsWith("http://") || url?.startsWith("https://"));
-    return activateTab(tab?.id);
+    const tab = tabs.find(({ url }) => url && /^(https?|file):/.test(url));
+    return activateTab(tab?.id, tab?.url);
   };
 
   const menuTitles = { "pt-BR": "Abrir no Leitor Limpo", en: "Open in Leitor Limpo", es: "Abrir en Leitor Limpo" };
@@ -61,9 +77,24 @@ export default defineBackground(() => {
     if (area === "local" && changes.readerPreferences) void refreshContextMenu();
   });
 
-  browser.action.onClicked.addListener((tab) => activateTab(tab.id));
+  browser.action.onClicked.addListener((tab) => activateTab(tab.id, tab.url));
   browser.tabs.onUpdated.addListener((tabId, change, tab) => {
-    if (change.status === "complete") void activateIfAllowed(tabId, tab.url);
+    if (change.status !== "complete") return;
+    if (tab.url?.startsWith("file:")) {
+      void (async () => {
+        const key = `pdf-return-${tabId}`;
+        const bypass = (await browser.storage.session.get(key))[key];
+        if (bypass === tab.url) {
+          await browser.storage.session.remove(key);
+          return;
+        }
+        const { automaticLocalFiles = true } = await browser.storage.local.get("automaticLocalFiles");
+        if (automaticLocalFiles && (await browser.extension.isAllowedFileSchemeAccess())) await activateTab(tabId, tab.url);
+      })();
+    } else void activateIfAllowed(tabId, tab.url);
+  });
+  browser.tabs.onRemoved.addListener((tabId) => {
+    void browser.storage.session.remove(`pdf-return-${tabId}`);
   });
   browser.tabs.onActivated.addListener(async ({ tabId }) => {
     const tab = await browser.tabs.get(tabId);
@@ -73,15 +104,32 @@ export default defineBackground(() => {
     if (command === "activate-reader") void activateCurrentTab();
   });
   browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === contextMenuId) void activateTab(tab?.id);
+    if (info.menuItemId === contextMenuId) void activateTab(tab?.id, tab?.url);
   });
   const runtimeMessaging = browser.runtime as unknown as {
     onMessage: {
-      addListener: (listener: (message: unknown, sender: unknown, sendResponse: (response: unknown) => void) => boolean) => void;
+      addListener: (
+        listener: (message: unknown, sender: { tab?: { id?: number }; url?: string }, sendResponse: (response: unknown) => void) => boolean,
+      ) => void;
     };
   };
-  runtimeMessaging.onMessage.addListener((message, _sender, sendResponse) => {
+  runtimeMessaging.onMessage.addListener((message, sender, sendResponse) => {
     if (!message || typeof message !== "object" || !("type" in message)) return false;
+    if (message.type === "RETURN_TO_PDF" && "url" in message && typeof message.url === "string") {
+      const url = message.url;
+      const tabId = sender.tab?.id;
+      if (
+        tabId === undefined ||
+        !sender.url?.startsWith((browser.runtime as typeof browser.runtime & { getURL: (path: string) => string }).getURL("/pdf.html")) ||
+        !isLocalPdf(url)
+      )
+        return false;
+      void browser.storage.session
+        .set({ [`pdf-return-${tabId}`]: url })
+        .then(() => browser.tabs.update(tabId, { url }))
+        .then(() => sendResponse(true));
+      return true;
+    }
     if (message.type === "ACTIVATE_READER") {
       void activateCurrentTab().then(sendResponse);
       return true;

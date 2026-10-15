@@ -49,8 +49,68 @@ const language = document.querySelector<HTMLSelectElement>("#language")!;
 const siteInput = document.querySelector<HTMLInputElement>("#site")!;
 const siteList = document.querySelector<HTMLUListElement>("#sites")!;
 const status = document.querySelector<HTMLElement>("#status")!;
+const localToggle = document.querySelector<HTMLInputElement>("#automatic-local")!;
 const automaticSettings = document.querySelector<HTMLElement>("#automatic-settings")!;
 automaticSettings.hidden = !__READER_ENABLED__;
+const extraTranslations = {
+  "pt-BR": {
+    "settings-tagline": "Leitura no seu ritmo",
+    "settings-intro": "Escolha como o leitor se abre. Seus ajustes ficam neste dispositivo.",
+    "language-heading": "Sua interface",
+    "language-help": "A fonte, o tema e o tamanho podem ser ajustados durante a leitura.",
+    "local-heading": "Documentos locais",
+    "local-label": "Abrir arquivos locais automaticamente",
+    "file-help": "Para HTML e PDF, ative “Permitir acesso a URLs de arquivo” nos detalhes da extensão.",
+    "configure-files": "Configurar acesso a arquivos",
+    "empty-sites": "Nenhum site adicionado. Você pode abrir outras páginas pelo ícone da extensão.",
+  },
+  en: {
+    "settings-tagline": "Reading at your pace",
+    "settings-intro": "Choose how the reader opens. Your settings stay on this device.",
+    "language-heading": "Your interface",
+    "language-help": "Adjust font, theme and size while reading.",
+    "local-heading": "Local documents",
+    "local-label": "Open local files automatically",
+    "file-help": "For HTML and PDF, enable “Allow access to file URLs” in extension details.",
+    "configure-files": "Configure file access",
+    "empty-sites": "No sites added. Open other pages using the extension icon.",
+  },
+  es: {
+    "settings-tagline": "Lectura a tu ritmo",
+    "settings-intro": "Elige cómo se abre el lector. Tus ajustes quedan en este dispositivo.",
+    "language-heading": "Tu interfaz",
+    "language-help": "Ajusta la fuente, el tema y el tamaño durante la lectura.",
+    "local-heading": "Documentos locales",
+    "local-label": "Abrir archivos locales automáticamente",
+    "file-help": "Para HTML y PDF, activa el acceso a URL de archivo en los detalles de la extensión.",
+    "configure-files": "Configurar acceso a archivos",
+    "empty-sites": "No hay sitios añadidos. Abre otras páginas con el icono de la extensión.",
+  },
+};
+async function refreshFileAccess() {
+  const allowed = await browser.extension.isAllowedFileSchemeAccess();
+  const locale = language.value;
+  document.querySelector("#file-access-status")!.textContent =
+    locale === "en"
+      ? allowed
+        ? "File access enabled"
+        : "File access is disabled in the browser"
+      : locale === "es"
+        ? allowed
+          ? "Acceso a archivos habilitado"
+          : "El acceso a archivos está desactivado en el navegador"
+        : allowed
+          ? "Acesso a arquivos habilitado"
+          : "Acesso a arquivos desativado no navegador";
+  document.querySelector("#file-help")!.toggleAttribute("hidden", allowed);
+}
+document.querySelector("#configure-files")!.addEventListener("click", () => {
+  const scheme = navigator.userAgent.includes("Edg/") ? "edge" : "chrome";
+  void browser.tabs.create({ url: `${scheme}://extensions/?id=${browser.runtime.id}` });
+});
+window.addEventListener("focus", () => {
+  void refreshFileAccess();
+});
 let sites: string[] = [];
 type PermissionCalls = Pick<typeof browser.permissions, "request" | "contains" | "remove">;
 const testPermissions = __MLA_TEST_MODE__ ? (window as Window & { __mlaTestPermissions?: PermissionCalls }).__mlaTestPermissions : undefined;
@@ -66,19 +126,29 @@ function renderLanguage() {
   document.querySelector<HTMLButtonElement>("#add-site")!.textContent = t.add;
   document.querySelector<HTMLButtonElement>("#save")!.textContent = t.save;
   document.querySelector("#language-label")!.textContent = t.language;
-  document.querySelector<HTMLAnchorElement>("#pdf-link")!.textContent = t.pdf;
-  document.querySelector<HTMLAnchorElement>("#pdf-link")!.hidden = !__READER_ENABLED__;
+  const extra = extraTranslations[language.value as keyof typeof extraTranslations];
+  for (const [id, value] of Object.entries(extra)) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  }
+  localToggle.setAttribute("aria-label", extra["local-label"]);
+  document.querySelector("#local-settings")!.toggleAttribute("hidden", !__READER_ENABLED__);
+  void refreshFileAccess();
   renderSites();
 }
 
 function renderSites() {
   const removeLabel = translations[language.value as keyof typeof translations].remove;
+  document.querySelector("#empty-sites")!.toggleAttribute("hidden", sites.length > 0);
   siteList.replaceChildren(
     ...sites.map((site) => {
       const item = document.createElement("li");
-      item.append(document.createTextNode(site));
+      const label = document.createElement("span");
+      label.textContent = new URL(site.slice(0, -1)).origin;
+      item.append(label);
       const button = document.createElement("button");
       button.type = "button";
+      button.className = "secondary";
       button.textContent = `${removeLabel} ${new URL(site.slice(0, -1)).hostname}`;
       button.addEventListener("click", () => void removeSite(site));
       item.append(button);
@@ -106,7 +176,7 @@ document.querySelector<HTMLButtonElement>("#add-site")!.addEventListener("click"
     status.textContent = t.invalid;
     return;
   }
-  if (!/^https?:$/.test(url.protocol) || url.username || url.password || value !== `${url.origin}/*`) {
+  if (!/^https?:$/.test(url.protocol) || url.username || url.password) {
     status.textContent = t.invalid;
     return;
   }
@@ -125,12 +195,19 @@ document.querySelector<HTMLButtonElement>("#add-site")!.addEventListener("click"
 document.querySelector<HTMLButtonElement>("#save")!.addEventListener("click", async () => {
   const stored = await browser.storage.local.get("readerPreferences");
   const preferences = stored.readerPreferences && typeof stored.readerPreferences === "object" ? (stored.readerPreferences as Record<string, unknown>) : {};
-  await browser.storage.local.set({ readerPreferences: { ...preferences, language: language.value } });
+  await browser.storage.local.set({
+    readerPreferences: { ...preferences, language: language.value },
+    ...(__READER_ENABLED__ ? { automaticLocalFiles: localToggle.checked } : {}),
+  });
   status.textContent = translations[language.value as keyof typeof translations].saved;
 });
 language.addEventListener("change", renderLanguage);
-void browser.storage.local.get(["readerPreferences", "automaticSites"]).then(({ readerPreferences, automaticSites }) => {
-  language.value = (readerPreferences as { language?: string } | undefined)?.language ?? "pt-BR";
-  sites = Array.isArray(automaticSites) ? (automaticSites as string[]) : [];
-  renderLanguage();
-});
+void browser.storage.local
+  .get(["readerPreferences", "automaticSites", "automaticLocalFiles"])
+  .then(({ readerPreferences, automaticSites, automaticLocalFiles }) => {
+    const locale = (readerPreferences as { language?: string } | undefined)?.language;
+    language.value = locale === "en" || locale === "es" ? locale : "pt-BR";
+    localToggle.checked = automaticLocalFiles !== false;
+    sites = Array.isArray(automaticSites) ? (automaticSites as string[]) : [];
+    renderLanguage();
+  });

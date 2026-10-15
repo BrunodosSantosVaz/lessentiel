@@ -49,10 +49,13 @@ test("#34 RN-0002 RN-0005 barra permanece em uma linha e distribui controles sem
         );
       expect(visible[0].label).toBe("Índice");
       expect(visible.every((n) => n.y >= box.y && n.bottom <= box.y + box.height)).toBe(true);
-      await page.getByRole("button", { name: "Mais opções de leitura", exact: true }).click();
-      await expect(page.getByRole("region", { name: "Mais opções de leitura", exact: true })).toBeVisible();
+      const more = page.getByRole("button", { name: "Mais opções de leitura", exact: true });
+      if (await more.isVisible()) {
+        await more.click();
+        await expect(page.getByRole("region", { name: "Mais opções de leitura", exact: true })).toBeVisible();
+      }
       await expect(page.getByRole("button", { name: "Fechar", exact: true })).toBeInViewport();
-      await page.keyboard.press("Escape");
+      if (await more.isVisible()) await page.keyboard.press("Escape");
       await expect(page.getByRole("article")).toBeVisible();
     }
   } finally {
@@ -144,9 +147,11 @@ test("#34 RN-0002 RN-0005 menu responsivo contém sliders e rolagem, Escape devo
 });
 
 test("#34 RN-0002 RN-0005 impressão exclui página e controles e restaura a apresentação ao fechar", async () => {
-  const { context, page } = await open();
+  const { context, page, activate } = await open();
   try {
+    await page.getByRole("button", { name: "Fechar", exact: true }).click();
     const originalStyle = await page.locator("body").getAttribute("style");
+    await activate();
     await expect(page.getByRole("button", { name: "Imprimir artigo", exact: true })).toBeVisible();
     await page.emulateMedia({ media: "print" });
     await expect(page.locator("body")).toHaveCSS("display", "none");

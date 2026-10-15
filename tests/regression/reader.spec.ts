@@ -158,7 +158,7 @@ test("#26 RN-0002 barra compacta e tema aplicado à tela inteira", async () => {
     const toolbar = page.locator("[data-leitor-limpo-host='true'] .toolbar");
     expect((await toolbar.boundingBox())!.height).toBeLessThanOrEqual(140);
     await chooseReaderTheme(page, "Escuro");
-    await expect(page.locator("[data-leitor-limpo-host='true'] .veil")).toHaveCSS("background-color", "rgb(30, 31, 34)");
+    await expect(page.locator("[data-leitor-limpo-host='true'] .veil")).toHaveCSS("background-color", "rgb(41, 42, 45)");
     await expect(page.locator('[data-control="theme"] [data-choice="dark"]')).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator('[data-control="theme"] [data-choice="light"]')).toHaveAttribute("aria-pressed", "false");
   } finally {
@@ -176,7 +176,7 @@ test("#26 RN-0002 controles e texto continuam acessíveis em 360 px", async () =
     expect((await page.locator("[data-leitor-limpo-host='true'] .toolbar").boundingBox())!.height).toBeLessThanOrEqual(360);
     await expect(page.getByRole("button", { name: "Fechar", exact: true })).toBeInViewport();
     await chooseReaderTheme(page, "Sépia");
-    await expect(veil).toHaveCSS("background-color", "rgb(244, 236, 216)");
+    await expect(veil).toHaveCSS("background-color", "rgb(250, 247, 240)");
   } finally {
     await context.close();
   }
@@ -192,7 +192,7 @@ test("#30 RN-0002 tema automático acompanha o sistema, persiste e respeita esco
     const veil = page.locator("[data-leitor-limpo-host='true'] .veil");
     await chooseReaderTheme(page, "Automático");
     await expect(automatic).toHaveAttribute("aria-pressed", "true");
-    await expect(veil).toHaveCSS("background-color", "rgb(30, 31, 34)");
+    await expect(veil).toHaveCSS("background-color", "rgb(41, 42, 45)");
     await page.emulateMedia({ colorScheme: "light" });
     await expect(veil).toHaveCSS("background-color", "rgb(255, 255, 255)");
     await chooseReaderTheme(page, "Preto");
@@ -208,7 +208,7 @@ test("#30 RN-0002 tema automático acompanha o sistema, persiste e respeita esco
     await page.reload();
     await activate();
     await expect(automatic).toHaveAttribute("aria-pressed", "true");
-    await expect(veil).toHaveCSS("background-color", "rgb(30, 31, 34)");
+    await expect(veil).toHaveCSS("background-color", "rgb(41, 42, 45)");
     expect(await veil.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   } finally {
     await context.close();
