@@ -19,6 +19,7 @@ const otherUrl = "https://example.test/other";
 const articleHtml = `<!doctype html><html lang="pt-BR"><head><title>Artigo de teste</title></head><body>
   <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p onclick="window.__handlerExecutado = (window.__handlerExecutado ?? 0) + 1">Texto principal para validar a leitura local.</p>
   <h2>Segunda seção</h2><ul><li>Item preservado</li></ul><table><thead><tr><th>Campo</th></tr></thead><tbody><tr><td>Valor</td></tr></tbody></table>
+  ${Array.from({ length: 24 }, (_, index) => `<p>Trecho entre seções ${index + 1}: um exemplo claro ajuda a manter a atenção, relacionar os argumentos e acompanhar a leitura com tranquilidade.</p>`).join("")}
   <h2>Ritmo próprio</h2>
   ${Array.from({ length: 24 }, (_, index) => `<p>Parágrafo longo ${index + 1}: conteúdo sintético para validar posição, estimativa e progresso da leitura.</p>`).join("")}
   <script>window.__conteudoExecutado = (window.__conteudoExecutado ?? 0) + 1</script>
@@ -43,8 +44,9 @@ async function openExtension(): Promise<{
   const remoteRequests: string[] = [];
   await context.route(/^https?:\/\//, (route) => {
     const url = route.request().url();
-    if (url === articleUrl) return route.fulfill({ status: 200, contentType: "text/html", body: articleHtml });
-    if (url === otherUrl) return route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><article><h1>Outra aba</h1></article>" });
+    if (url === articleUrl) return route.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: articleHtml });
+    if (url === otherUrl)
+      return route.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: "<!doctype html><article><h1>Outra aba</h1></article>" });
     remoteRequests.push(url);
     return route.abort();
   });
@@ -162,7 +164,7 @@ test("RN-0001 CA-02 neutraliza conteúdo hostil", async () => {
 });
 
 // oxfmt-ignore
-test.fail("RN-0002 CA-03 aplica e persiste controles locais", async () => { // pendente da tarefa #19
+test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
   const { context, page } = await openExtension();
   try {
     await activate(page);
@@ -212,7 +214,7 @@ test.fail("RN-0002 CA-03 aplica e persiste controles locais", async () => { // p
 });
 
 // oxfmt-ignore
-test.fail("RN-0002 CA-04 navega pelo índice e mostra o tempo restante", async () => { // pendente da tarefa #19
+test("RN-0002 CA-04 navega pelo índice e mostra o tempo restante", async () => {
   const { context, page } = await openExtension();
   try {
     await activate(page);
@@ -235,7 +237,7 @@ test.fail("RN-0002 CA-04 navega pelo índice e mostra o tempo restante", async (
 });
 
 // oxfmt-ignore
-test.fail("RN-0002 CA-05 inicia, pausa e ajusta a rolagem automática", async () => { // pendente da tarefa #19
+test("RN-0002 CA-05 inicia, pausa e ajusta a rolagem automática", async () => {
   const { context, page } = await openExtension();
   try {
     await activate(page);
