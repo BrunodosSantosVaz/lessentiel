@@ -4,24 +4,94 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "commit": "591cd2c21ddaa83b6527abae842c03f0257a38ce",
+    "commit": "ced40c31054748c5df06b620b7700aafff7c153d",
     "branch": "master",
-    "proposta": "bigbang/proposta-9-f3-design"
+    "proposta": "bigbang/proposta-13-f5-docs"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
     "STACK.md": "STACK",
+    "DESIGN.md": "DESIGN",
     "docs/decisoes/ADR-0001-stack.md": "docs-decisoes-ADR-0001-stack",
     "docs/pesquisa/f2-stack.md": "docs-pesquisa-f2-stack",
     "docs/arquitetura/C4.md": "docs-arquitetura-C4",
-    "DESIGN.md": "DESIGN"
+    "docs/negocio/regras/RN-0001-extracao.md": "RN-0001-Extracao",
+    "docs/negocio/regras/RN-0002-controles.md": "RN-0002-Controles",
+    "docs/negocio/regras/RN-0003-pdf-preferencias.md": "RN-0003-PDF-e-preferencias",
+    "docs/negocio/regras/RN-0004-idiomas-pacote.md": "RN-0004-Idiomas-e-pacote",
+    "docs/negocio/regras/RN-0099-prototipo.md": "RN-0099-Prototipo",
+    "docs/negocio/requisitos.md": "Requisitos",
+    "docs/negocio/funcionalidades.md": "Funcionalidades",
+    "docs/uso-e-instalacao.md": "Uso-e-instalacao",
+    "docs/referencias.md": "Referencias",
+    "docs/seguranca.md": "Seguranca-e-privacidade",
+    "docs/operacao.md": "Operacao",
+    "docs/historico.md": "Historico"
   },
-  "categorias": {},
+  "categorias": {
+    "produto": {
+      "pagina": "PRODUTO"
+    },
+    "tecnologia": {
+      "pagina": "STACK"
+    },
+    "arquitetura": {
+      "pagina": "docs-arquitetura-C4"
+    },
+    "design": {
+      "pagina": "DESIGN"
+    },
+    "requisitos": {
+      "pagina": "Requisitos"
+    },
+    "funcionalidades": {
+      "pagina": "Funcionalidades"
+    },
+    "uso": {
+      "pagina": "Uso-e-instalacao"
+    },
+    "referencia": {
+      "pagina": "Referencias"
+    },
+    "seguranca": {
+      "pagina": "Seguranca-e-privacidade"
+    },
+    "operacao": {
+      "pagina": "Operacao"
+    },
+    "historico": {
+      "pagina": "Historico"
+    }
+  },
   "codigo": {
-    "commit": "2fc070d6d4ef285a77709c5e39c0eac0ed160b44",
-    "raizes": [],
+    "commit": "37ec74a3db5477be662dd701316569838637a668",
+    "raizes": [
+      "prototype/"
+    ],
     "excluir": []
   },
-  "funcionalidades": [],
-  "arquivos_funcionais": []
+  "funcionalidades": [
+    {
+      "id": "RF-0001",
+      "pagina": "Funcionalidades",
+      "requisitos": [
+        "RF-0001"
+      ],
+      "fontes": [
+        "prototype/index.html"
+      ],
+      "hashes": {
+        "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
+      },
+      "testes": [
+        "tests/prototype.spec.ts:smoke"
+      ]
+    }
+  ],
+  "arquivos_funcionais": [],
+  "requisitos": {
+    "RF-0001": {
+      "pagina": "Funcionalidades"
+    }
+  }
 }

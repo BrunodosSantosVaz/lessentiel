@@ -8,8 +8,8 @@ este README não declara entregas que ainda não ocorreram.
 [Issues](https://github.com/BrunodosSantosVaz/mla/issues) ·
 [Releases](https://github.com/BrunodosSantosVaz/mla/releases)
 
-Os três painéis públicos serão ligados aqui ao concluir F4. Guias, requisitos, arquitetura, design, operação,
-segurança, histórico e a matriz de cobertura ficam exclusivamente na Wiki. Atualize esta apresentação e os links
-no mesmo ciclo da entrega.
+[Painel público do projeto](https://github.com/users/BrunodosSantosVaz/projects/33). Guias, requisitos, arquitetura,
+design, operação, segurança, histórico e a matriz de cobertura ficam exclusivamente na Wiki. Atualize esta apresentação
+e os links no mesmo ciclo da entrega.
 
 Licença do sistema: [MIT](LICENSE). O framework mantém sua própria licença em `.bigbang/LICENSE`.
