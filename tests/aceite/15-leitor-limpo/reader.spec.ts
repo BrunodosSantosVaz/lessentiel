@@ -29,11 +29,12 @@ async function openExtension(): Promise<{ context: BrowserContext; page: Page; e
   const extensionId = new URL(worker.url()).host;
   const page = await context.newPage();
   const remoteRequests: string[] = [];
-  context.on('request', request => {
-    const url = request.url();
-    if (!url.startsWith('chrome-extension://') && !url.startsWith('https://example.test/')) remoteRequests.push(url);
+  await context.route(/^https?:\/\//, route => {
+    const url = route.request().url();
+    if (url === articleUrl) return route.fulfill({ status: 200, contentType: 'text/html', body: articleHtml });
+    remoteRequests.push(url);
+    return route.abort();
   });
-  await page.route(articleUrl, route => route.fulfill({ status: 200, contentType: 'text/html', body: articleHtml }));
   await page.goto(articleUrl);
   return { context, page, extensionId, remoteRequests };
 }
