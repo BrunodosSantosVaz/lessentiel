@@ -1,5 +1,5 @@
 import { extractArticle } from "../src/platform/extract-article";
-import { toggleReader } from "../src/platform/reader-panel";
+import { closeActiveReader, toggleReader } from "../src/platform/reader-panel";
 import { browser } from "wxt/browser";
 import { defineContentScript } from "wxt/utils/define-content-script";
 
@@ -7,6 +7,7 @@ export default defineContentScript({
   matches: [],
   registration: "runtime",
   async main() {
+    if (closeActiveReader()) return true;
     const article = extractArticle(document);
     if (!article) {
       await showUnavailableMessage();

@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "d96e5c57eb85fe7a36831f861da4fd1f58fd3316",
-    "commit": "fab03c741a15c1841b75a2a18d9973bd5dc2ec8f",
+    "base": "fab03c741a15c1841b75a2a18d9973bd5dc2ec8f",
+    "commit": "dceb197354bc6bbc96f4e686e1e654e3028d386d",
     "branch": "master",
-    "proposta": "bigbang/proposta-20-leitor-pdf-local"
+    "proposta": "bigbang/proposta-26-leitura-componentes"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -26,7 +26,10 @@
     "docs/referencias.md": "Referencias",
     "docs/seguranca.md": "Seguranca-e-privacidade",
     "docs/operacao.md": "Operacao",
-    "docs/historico.md": "Historico"
+    "docs/historico.md": "Historico",
+    "docs/decisoes/ADR-0002-leitura-componentes.md": "docs-decisoes-ADR-0002-leitura-componentes",
+    "docs/correcao-26.md": "Correcao-26",
+    "docs/memoria.md": "Memoria"
   },
   "categorias": {
     "produto": {
@@ -64,7 +67,7 @@
     }
   },
   "codigo": {
-    "commit": "e791e9d3f1067c6283bf6de6b24a9d7e1c231a90",
+    "commit": "f8b588a4adb8ae515973cd123bb349e6363d69b5",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -116,6 +119,7 @@
         "src/platform/extract-article.ts",
         "src/platform/feature-flag.d.ts",
         "src/platform/reader-panel.ts",
+        "src/platform/reader-style.ts",
         "wxt.config.ts"
       ],
       "hashes": {
@@ -126,9 +130,9 @@
         "entrypoints/pdf/main.ts": "383e8799a507613d5d714d710659ccc0360e6303b33f40d247004e07f2ec21db",
         "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
         "entrypoints/popup/main.ts": "1312d8c1db59c065624621971eea34ab4dc2037a1f5249a1d6b1f28aa91bc99f",
-        "entrypoints/reader.content.ts": "6a22d5dee3889aebd0ba8039d2c780b9363e9a795a1453a0658a0756d2628c89",
+        "entrypoints/reader.content.ts": "5e33f0782873d0c29f7660ad20f60caa3a547a532bc92375ed792041377e3c22",
         "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
-        "package.json": "c97824d2c4ee84eb3ab7c98b120290457043a08d25663664d3a632ce73e2d009",
+        "package.json": "c264d5c7db55c65f4c8d2162260c8548465320d890351b2d7926a1d941d2569c",
         "public/_locales/en/messages.json": "d700a5263a3e0cc170b2890776501fa2a3dff924044a9cb2a84c22d7c8ba3b18",
         "public/_locales/es/messages.json": "227ea2149dac8133a993a3cb6111a1e49fe7dc6ceba6c81928a1ea721755afae",
         "public/_locales/pt_BR/messages.json": "2c8f10fba0d9a9efe9fa3708b8bd50381cd4bad4f0c18e964725547f5f9720de",
@@ -148,9 +152,10 @@
         "public/icon.svg": "0c1c45f9fb3ff56c4857ece09d606daba6a7f9a25fe2aea88175ce036640c03d",
         "scripts/package-test.mjs": "c750b1c5c9458835c43467965f408b652c13d0122321cf13307f5108db9edf08",
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
-        "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
+        "src/platform/extract-article.ts": "a54b466a58043ce997cda982fecdf00e64e7aa1c3ea2c8a0238d777392e6c840",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
-        "src/platform/reader-panel.ts": "3fe2464d0c2218393f05e33a3646904e9755323823b7225b17f3b803f25fc67f",
+        "src/platform/reader-panel.ts": "623d6af930c0140b50492a82d87e06b4a6b148991f6476851705e87184c2fd1f",
+        "src/platform/reader-style.ts": "fa4103006dcaa7b32d787786476d1c02c2cd05fe4e943b8fd005e2700d38bc82",
         "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967"
       },
       "testes": [
@@ -162,7 +167,8 @@
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-06",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-07",
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-08",
-        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09"
+        "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-09",
+        "tests/regression/reader.spec.ts:#26"
       ]
     }
   ],
