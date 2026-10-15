@@ -208,10 +208,17 @@ test("RN-0002 CA-03 aplica e persiste controles locais", async () => {
     await expect(page.getByRole("article")).toHaveAttribute("data-theme", "sepia");
     await expect(page.getByRole("article")).toHaveCSS("font-size", "32px");
     await expect(page.getByRole("article")).toHaveCSS("font-family", /Lexend/);
+    await expect(page.getByRole("button", { name: "Tema sépia" })).toHaveCSS("border-radius", "14px");
+    await expect(page.getByRole("combobox", { name: "Fonte" })).toHaveCSS("font-family", /system-ui/);
     await expect.poll(() => page.evaluate(() => document.fonts.check('20px "Lexend"'))).toBe(true);
     for (const name of ["Largura do texto", "Entrelinha", "Velocidade da rolagem"]) {
       expect(await page.getByRole("slider", { name }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
     }
+    await page.getByRole("button", { name: "Índice" }).click();
+    for (const name of ["Leitura de teste", "Segunda seção", "Ritmo próprio"]) {
+      expect(await page.getByRole("link", { name }).evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    }
+    await page.getByRole("button", { name: "Índice" }).click();
     const article = page.getByRole("article");
     const initialWidth = await article.evaluate((element) => getComputedStyle(element).maxWidth);
     const width = page.getByRole("slider", { name: "Largura do texto" });

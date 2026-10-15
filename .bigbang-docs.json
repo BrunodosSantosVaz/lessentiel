@@ -126,7 +126,7 @@
         "public/icon-48.png": "0fbddb62901b95138ad4d3649ccfbf241a6f65d0de85ef77a1abbfe23822bb5b",
         "public/icon.svg": "0c1c45f9fb3ff56c4857ece09d606daba6a7f9a25fe2aea88175ce036640c03d",
         "src/platform/extract-article.ts": "03204f434626fa20325da3e168dd560f8a29aa69a592b4f0d2ce824266c9a60d",
-        "src/platform/reader-panel.ts": "f66f6e991fa87bff466979ff25907da2ccf0c760818c8fd6620e84ee97131fe4",
+        "src/platform/reader-panel.ts": "714855e2ac5774053965d4af1733857fd947d3d55cf2b087ac629adf790d4f1e",
         "wxt.config.ts": "2760e068ca1a6fb65085a82f95463a6f473d28da210152891961873cf0a48de1"
       },
       "testes": [
