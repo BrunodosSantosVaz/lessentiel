@@ -4,7 +4,7 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "fe3deb1270836a8fe8dbba0c0c5a0c4f6ce314d1",
-    "commit": "556846fb1c2fd28641c6459beaf21481a1a7cacc",
+    "commit": "ced40c31054748c5df06b620b7700aafff7c153d",
     "branch": "master",
     "proposta": "bigbang/proposta-13-f5-docs"
   },
@@ -75,7 +75,7 @@
       "id": "RF-0001",
       "pagina": "Funcionalidades",
       "requisitos": [
-        "RN-0099"
+        "RF-0001"
       ],
       "fontes": [
         "prototype/index.html"
@@ -84,14 +84,14 @@
         "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
       },
       "testes": [
-        "tests/prototype.spec.ts:RN-0099"
+        "tests/prototype.spec.ts:smoke"
       ]
     }
   ],
   "arquivos_funcionais": [],
   "requisitos": {
-    "RN-0099": {
-      "pagina": "Requisitos"
+    "RF-0001": {
+      "pagina": "Funcionalidades"
     }
   }
 }
