@@ -15,6 +15,7 @@ const articleUrl = "https://example.test/article";
 const articleHtml = `<!doctype html><html lang="pt-BR"><head><title>Artigo de teste</title></head><body>
   <nav>Menu removível</nav><main><article><h1>Leitura de teste</h1><p>Texto principal para validar a leitura local.</p>
   <h2>Segunda seção</h2><ul><li>Item preservado</li></ul><table><thead><tr><th>Campo</th></tr></thead><tbody><tr><td>Valor</td></tr></tbody></table>
+  <h2>Ritmo próprio</h2>
   ${Array.from({ length: 24 }, (_, index) => `<p>Parágrafo longo ${index + 1}: conteúdo sintético para validar posição, estimativa e progresso da leitura.</p>`).join("")}
   <script>window.__conteudoExecutado = (window.__conteudoExecutado ?? 0) + 1</script>
   <button onclick="window.__handlerExecutado = (window.__handlerExecutado ?? 0) + 1">Ação hostil</button>
@@ -141,18 +142,24 @@ test.fail("RN-0002 CA-03 aplica e persiste controles locais", async () => { // p
     await expect(page.getByRole("article")).toHaveAttribute("data-theme", "sepia");
     await expect(page.getByRole("article")).toHaveCSS("font-size", "32px");
     await expect(page.getByRole("article")).toHaveCSS("font-family", /Lexend/);
+    const article = page.getByRole("article");
+    const initialWidth = await article.evaluate((element) => getComputedStyle(element).maxWidth);
     const width = page.getByRole("slider", { name: "Largura do texto" });
     await width.focus();
     await width.press("End");
+    const appliedWidth = await article.evaluate((element) => getComputedStyle(element).maxWidth);
+    expect(appliedWidth).not.toBe(initialWidth);
+    const initialLineHeight = await article.evaluate((element) => getComputedStyle(element).lineHeight);
     const lineHeight = page.getByRole("slider", { name: "Entrelinha" });
     await lineHeight.focus();
     await lineHeight.press("End");
+    const appliedLineHeight = await article.evaluate((element) => getComputedStyle(element).lineHeight);
+    expect(appliedLineHeight).not.toBe(initialLineHeight);
     const alignment = page.getByRole("combobox", { name: "Alinhamento do texto" });
     await alignment.selectOption("justify");
     await expect(page.getByRole("article")).toHaveCSS("text-align", "justify");
     const widthValue = await width.inputValue();
     const lineHeightValue = await lineHeight.inputValue();
-    const article = page.getByRole("article");
     await article.evaluate((element) => element.scrollIntoView({ block: "center" }));
     const articlePosition = await article.evaluate((element) => element.getBoundingClientRect().top);
     await page.getByRole("button", { name: "Aumentar fonte" }).click();
@@ -162,6 +169,8 @@ test.fail("RN-0002 CA-03 aplica e persiste controles locais", async () => { // p
     await expect(page.getByRole("article")).toHaveAttribute("data-theme", "sepia");
     await expect(page.getByRole("combobox", { name: "Fonte" })).toHaveValue("Lexend");
     await expect(page.getByRole("article")).toHaveCSS("font-size", "32px");
+    await expect(page.getByRole("article")).toHaveCSS("max-width", appliedWidth);
+    await expect(page.getByRole("article")).toHaveCSS("line-height", appliedLineHeight);
     await expect(page.getByRole("slider", { name: "Largura do texto" })).toHaveValue(widthValue);
     await expect(page.getByRole("slider", { name: "Entrelinha" })).toHaveValue(lineHeightValue);
     await expect(page.getByRole("combobox", { name: "Alinhamento do texto" })).toHaveValue("justify");
