@@ -180,3 +180,36 @@ test("#26 RN-0002 controles e texto continuam acessíveis em 360 px", async () =
     await context.close();
   }
 });
+
+test("#30 RN-0002 tema automático acompanha o sistema, persiste e respeita escolha manual", async () => {
+  const { context, page, activate } = await open(`<!doctype html><title>Leitura tranquila</title>${article}`, 360);
+  try {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await activate();
+    await readerVisible(page);
+    const automatic = page.getByRole("button", { name: "Tema automático", exact: true });
+    const veil = page.locator("[data-leitor-limpo-host='true'] .veil");
+    await automatic.click();
+    await expect(automatic).toHaveAttribute("aria-pressed", "true");
+    await expect(veil).toHaveCSS("background-color", "rgb(30, 31, 34)");
+    await page.emulateMedia({ colorScheme: "light" });
+    await expect(veil).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await page.getByRole("button", { name: "Tema preto", exact: true }).click();
+    await page.emulateMedia({ colorScheme: "dark" });
+    await expect(veil).toHaveCSS("background-color", "rgb(0, 0, 0)");
+    await expect(automatic).toHaveAttribute("aria-pressed", "false");
+    await automatic.click();
+    await expect
+      .poll(() =>
+        context.serviceWorkers()[0]!.evaluate(async () => (await (globalThis as any).chrome.storage.local.get("readerPreferences")).readerPreferences.theme),
+      )
+      .toBe("auto");
+    await page.reload();
+    await activate();
+    await expect(automatic).toHaveAttribute("aria-pressed", "true");
+    await expect(veil).toHaveCSS("background-color", "rgb(30, 31, 34)");
+    expect(await veil.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
+  } finally {
+    await context.close();
+  }
+});
