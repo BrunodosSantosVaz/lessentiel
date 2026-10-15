@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "c44b7af4631ce42f0cdbe8b54bc232b9ba8c09de",
-    "commit": "47565683719bb14ed4340aec8a46a542494b12ec",
+    "base": "47565683719bb14ed4340aec8a46a542494b12ec",
+    "commit": "7915868ebdecb7fee46523b0a88beba340e947c8",
     "branch": "master",
-    "proposta": "bigbang/proposta-34-barra-adaptativa"
+    "proposta": "bigbang/proposta-36-leitura-local"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -37,7 +37,9 @@
     "docs/decisoes/ADR-0003-layout-leitura.md": "docs-decisoes-ADR-0003-layout-leitura",
     "docs/design/barra-adaptativa.md": "Barra-adaptativa-UI-UX",
     "docs/decisoes/ADR-0004-barra-adaptativa.md": "docs-decisoes-ADR-0004-barra-adaptativa",
-    "docs/negocio/regras/RN-0005-barra-adaptativa.md": "RN-0005-Barra-adaptativa"
+    "docs/negocio/regras/RN-0005-barra-adaptativa.md": "RN-0005-Barra-adaptativa",
+    "docs/design/leitura-local.md": "Leitura-local-e-acabamento",
+    "docs/decisoes/ADR-0005-leitura-local.md": "docs-decisoes-ADR-0005-leitura-local"
   },
   "categorias": {
     "produto": {
@@ -75,7 +77,7 @@
     }
   },
   "codigo": {
-    "commit": "5c7c4dd3e0150f293cee735fbe83e34429c71fb1",
+    "commit": "a0c21ddff4ddca4f2b43ffc31c7af620c54678af",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -103,6 +105,7 @@
         "entrypoints/popup/index.html",
         "entrypoints/popup/main.ts",
         "entrypoints/reader.content.ts",
+        "entrypoints/ui.css",
         "flags.toml",
         "package.json",
         "public/_locales/en/messages.json",
@@ -126,19 +129,20 @@
         "src/platform/assets.d.ts",
         "src/platform/extract-article.ts",
         "src/platform/feature-flag.d.ts",
+        "src/platform/reader-fonts.ts",
         "src/platform/reader-panel.ts",
         "src/platform/reader-style.ts",
         "src/platform/reader-toolbar.ts",
         "wxt.config.ts"
       ],
       "hashes": {
-        "entrypoints/background.ts": "ddbeedd2ee320a9b86525cb7677d2c6d388aafeb255a0c7217e200de7927ac75",
-        "entrypoints/options/index.html": "de33fbe9d91615b025a6e61c1d247f737a85bab4bbbcad07d74dbae13a803d0b",
-        "entrypoints/options/main.ts": "fae170c3067ca0b834041741eae1ab331518cd894ad1ab446ffab4873670e70e",
-        "entrypoints/pdf/index.html": "dde642e6b2649d6565e20241264f00444c97467427f6b8c884822a3b44d46668",
-        "entrypoints/pdf/main.ts": "383e8799a507613d5d714d710659ccc0360e6303b33f40d247004e07f2ec21db",
-        "entrypoints/popup/index.html": "94e89afaea211fea469ce269732fd29f104277d863baabed8e858bc4f132c522",
-        "entrypoints/popup/main.ts": "1312d8c1db59c065624621971eea34ab4dc2037a1f5249a1d6b1f28aa91bc99f",
+        "entrypoints/background.ts": "aa322794b7cc2dd2d89950018ec7d7ae8aa60eb51b3cb6c5be26e36302cb754f",
+        "entrypoints/options/index.html": "25f71a65fa179b44a0c911fc9cb4835db37239a060f87b6bfce240eb003ed35f",
+        "entrypoints/options/main.ts": "bcee1737d54d1e04e0d6923a5f8ac6a2b455b9b9176fe803eb2096460acb5340",
+        "entrypoints/pdf/index.html": "c5d3abf594844cf1300c0886820e26360284a0009ac1038a109189468a900788",
+        "entrypoints/pdf/main.ts": "b9bf6d163c557cff1e80e0db0c28fd3fc0f48c18dbead255b15da58365316f61",
+        "entrypoints/popup/index.html": "431a23d5b4522e19f8b64e9500b54c518b181c617f44c9c74d5b9cafd9ea3dc3",
+        "entrypoints/popup/main.ts": "4852d8846c204587ae03dd219d16ffe6c3b1012a6e2edb9cb081ecd745bc8eba",
         "entrypoints/reader.content.ts": "5e33f0782873d0c29f7660ad20f60caa3a547a532bc92375ed792041377e3c22",
         "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
         "package.json": "c264d5c7db55c65f4c8d2162260c8548465320d890351b2d7926a1d941d2569c",
@@ -163,10 +167,12 @@
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "a54b466a58043ce997cda982fecdf00e64e7aa1c3ea2c8a0238d777392e6c840",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
-        "src/platform/reader-panel.ts": "f440b7c80c873db6c3a4c9c78ae56f2ce3ac68bb92dece716a823f9c98b381d9",
-        "src/platform/reader-style.ts": "83406ede612d87c00ad51863440a6cd9d650f34b1ac9172a745e653ee3a48284",
-        "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967",
-        "src/platform/reader-toolbar.ts": "57c56291c77547b0676fe5a61788e5596c5e1c89b510110cbe202e75652c62e2"
+        "src/platform/reader-panel.ts": "4332dc9d92e0157ad68eb85e9624f39802649de6e4528d3c6bfa1a19f1602580",
+        "src/platform/reader-style.ts": "ecccf587ac0efd80ca97ce1ece4f2de4de179d8e2cfb458beb3d9b6b8e27f3b5",
+        "wxt.config.ts": "1083773621f52b616bbc19ed0d8881dc5805b5adf55b96607dec9f1789e44112",
+        "src/platform/reader-toolbar.ts": "c458915902ea00589d908dd09febff7b2db5697a7fa113dea2576137f269d4f7",
+        "entrypoints/ui.css": "6ced80705ac7eb62d03e3a0980d7c01adf458c197de6862461ca428d97840504",
+        "src/platform/reader-fonts.ts": "88989e16aeecd4c169d581ddb4a464e6c32d2d519eecb26ff1eacbfe11059601"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
@@ -182,7 +188,8 @@
         "tests/regression/reader.spec.ts:#30",
         "tests/regression/reader.spec.ts:#30 RN-0002",
         "tests/regression/layout.spec.ts:#32 RN-0002",
-        "tests/regression/responsive-toolbar.spec.ts:#34 RN-0002"
+        "tests/regression/responsive-toolbar.spec.ts:#34 RN-0002",
+        "tests/regression/polished-reader.spec.ts:#36"
       ]
     }
   ],
