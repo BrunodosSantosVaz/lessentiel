@@ -11,3 +11,5 @@ O tema **Auto** acompanha o modo claro/escuro do sistema e mantém a escolha nes
 Licença: [MIT](LICENSE). O framework Big Bang mantém licença própria em `.bigbang/LICENSE`.
 
 [Releases](https://github.com/BrunodosSantosVaz/mla/releases) · [Critérios e evidências](https://github.com/BrunodosSantosVaz/mla/wiki/Aceite-do-MVP) · [Segurança](SECURITY.md) · [Contribuindo](CONTRIBUTING.md)
+
+A barra adaptativa #34 mantém uma linha: amostras de tema, fontes Aa e ícones dão lugar a listas e ao menu **Mais opções** quando falta espaço. Largura usa apenas porcentagem e a impressão prepara somente o artigo. [Análise e interações](https://github.com/BrunodosSantosVaz/mla/wiki/Barra-adaptativa-UI-UX).

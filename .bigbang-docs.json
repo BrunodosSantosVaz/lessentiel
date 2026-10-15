@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/mla",
   "visibilidade": "publico",
   "wiki": {
-    "base": "2ae24b927ef91d3fb6af4dca9c0519f217aa76b5",
-    "commit": "c44b7af4631ce42f0cdbe8b54bc232b9ba8c09de",
+    "base": "c44b7af4631ce42f0cdbe8b54bc232b9ba8c09de",
+    "commit": "e42b981aed42219715d5762b21195207d042ff89",
     "branch": "master",
-    "proposta": "bigbang/proposta-32-layout-leitura"
+    "proposta": "bigbang/proposta-34-barra-adaptativa"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -34,7 +34,10 @@
     "docs/dados/inventario.md": "Inventario-de-dados",
     "docs/glossario.md": "Glossario",
     "docs/aceite-mvp.md": "Aceite-do-MVP",
-    "docs/decisoes/ADR-0003-layout-leitura.md": "docs-decisoes-ADR-0003-layout-leitura"
+    "docs/decisoes/ADR-0003-layout-leitura.md": "docs-decisoes-ADR-0003-layout-leitura",
+    "docs/design/barra-adaptativa.md": "Barra-adaptativa-UI-UX",
+    "docs/decisoes/ADR-0004-barra-adaptativa.md": "docs-decisoes-ADR-0004-barra-adaptativa",
+    "docs/negocio/regras/RN-0005-barra-adaptativa.md": "RN-0005-Barra-adaptativa"
   },
   "categorias": {
     "produto": {
@@ -72,7 +75,7 @@
     }
   },
   "codigo": {
-    "commit": "30a5f0e58521e1aa4a3d48c38a2189b84c555eb8",
+    "commit": "2f22d8dbbf3b9443f4b52dfc61830ff43a377ada",
     "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
     "excluir": []
   },
@@ -125,6 +128,7 @@
         "src/platform/feature-flag.d.ts",
         "src/platform/reader-panel.ts",
         "src/platform/reader-style.ts",
+        "src/platform/reader-toolbar.ts",
         "wxt.config.ts"
       ],
       "hashes": {
@@ -159,9 +163,10 @@
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "a54b466a58043ce997cda982fecdf00e64e7aa1c3ea2c8a0238d777392e6c840",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
-        "src/platform/reader-panel.ts": "0deddc82461af2969c6736139dd71888243011c51b6ad1f41f13a7d6aa49cabb",
-        "src/platform/reader-style.ts": "cc5532cd514c53b5ff6a088f85f0c2dacb16f5596cda0308b62e607445f948f7",
-        "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967"
+        "src/platform/reader-panel.ts": "f440b7c80c873db6c3a4c9c78ae56f2ce3ac68bb92dece716a823f9c98b381d9",
+        "src/platform/reader-style.ts": "83406ede612d87c00ad51863440a6cd9d650f34b1ac9172a745e653ee3a48284",
+        "wxt.config.ts": "07ad7914fdfd6eccce1558ee45ba3bce311ac83203989b1158e7b09636f2f967",
+        "src/platform/reader-toolbar.ts": "854d5811454cc11366b177a3e529aac0d801d15eb6af1e3ccf337df0251f927c"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
@@ -176,7 +181,8 @@
         "tests/regression/reader.spec.ts:#26",
         "tests/regression/reader.spec.ts:#30",
         "tests/regression/reader.spec.ts:#30 RN-0002",
-        "tests/regression/layout.spec.ts:#32 RN-0002"
+        "tests/regression/layout.spec.ts:#32 RN-0002",
+        "tests/regression/responsive-toolbar.spec.ts:#34 RN-0002"
       ]
     }
   ],
