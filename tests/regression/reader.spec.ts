@@ -34,6 +34,26 @@ async function readerVisible(page: Page) {
   await expect(page.locator("[data-leitor-limpo-host='true'] article")).toBeVisible();
 }
 
+test("#47 RN-0001 preserva parágrafos irmãos de um article de cabeçalho vazio", async () => {
+  const html = `<!doctype html><title>Notícia de demonstração</title><main class="mc-article-body">
+    <article class="content-head"><h1>Notícia de demonstração</h1></article>
+    ${Array.from({ length: 6 }, (_, index) => `<p class="content-text__container">Parágrafo ${index + 1}. ${paragraph.repeat(5)}</p>`).join("")}
+    </main>`;
+  const { context, page, activate } = await open(html);
+  try {
+    await activate();
+    const reader = page.locator("[data-leitor-limpo-host='true'] article");
+    await expect(reader).toContainText("Parágrafo 1.");
+    await expect(reader).toContainText("Parágrafo 6.");
+    await expect(reader.locator("p")).toHaveCount(6);
+    await expect(reader.locator("article")).toHaveCount(0);
+    await page.getByRole("button", { name: "Fechar", exact: true }).click();
+    await expect(page.locator("main > p")).toHaveCount(6);
+  } finally {
+    await context.close();
+  }
+});
+
 test("#26 RN-0001 extrai artigo em Shadow DOM aninhado, preserva slots e restaura a página", async () => {
   const html = `<!doctype html><title>Artigo em componente</title><article>; ; ; <button>Continuar lendo</button></article><news-shell></news-shell>
     <script>
