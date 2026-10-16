@@ -61,8 +61,9 @@ const extraTranslations = {
     "language-heading": "Sua interface",
     "language-help": "A fonte, o tema e o tamanho podem ser ajustados durante a leitura.",
     "local-heading": "Documentos locais",
-    "local-label": "Abrir arquivos locais automaticamente",
-    "file-help": "Para HTML e PDF, ative “Permitir acesso a URLs de arquivo” nos detalhes da extensão.",
+    "local-label": "Abrir HTML local automaticamente",
+    "file-help":
+      "PDFs abrem no navegador; ative o leitor pelo ícone da extensão. Para arquivos locais, permita o acesso a URLs de arquivo nos detalhes da extensão.",
     "configure-files": "Configurar acesso a arquivos",
     "empty-sites": "Nenhum site adicionado. Você pode abrir outras páginas pelo ícone da extensão.",
     "about-heading": "Sobre o sistema",
@@ -84,8 +85,9 @@ const extraTranslations = {
     "language-heading": "Your interface",
     "language-help": "Adjust font, theme and size while reading.",
     "local-heading": "Local documents",
-    "local-label": "Open local files automatically",
-    "file-help": "For HTML and PDF, enable “Allow access to file URLs” in extension details.",
+    "local-label": "Open local HTML automatically",
+    "file-help":
+      "PDFs open in the browser; activate the reader using the extension icon. For local files, enable “Allow access to file URLs” in extension details.",
     "configure-files": "Configure file access",
     "empty-sites": "No sites added. Open other pages using the extension icon.",
     "about-heading": "About the system",
@@ -107,8 +109,9 @@ const extraTranslations = {
     "language-heading": "Tu interfaz",
     "language-help": "Ajusta la fuente, el tema y el tamaño durante la lectura.",
     "local-heading": "Documentos locales",
-    "local-label": "Abrir archivos locales automáticamente",
-    "file-help": "Para HTML y PDF, activa el acceso a URL de archivo en los detalles de la extensión.",
+    "local-label": "Abrir HTML local automáticamente",
+    "file-help":
+      "Los PDF se abren en el navegador; activa el lector con el icono de la extensión. Para archivos locales, permite el acceso a URL de archivo en los detalles.",
     "configure-files": "Configurar acceso a archivos",
     "empty-sites": "No hay sitios añadidos. Abre otras páginas con el icono de la extensión.",
     "about-heading": "Acerca del sistema",
@@ -140,7 +143,6 @@ async function refreshFileAccess() {
         : allowed
           ? "Acesso a arquivos habilitado"
           : "Acesso a arquivos desativado no navegador";
-  document.querySelector("#file-help")!.toggleAttribute("hidden", allowed);
 }
 document.querySelector("#configure-files")!.addEventListener("click", () => {
   const scheme = navigator.userAgent.includes("Edg/") ? "edge" : "chrome";
