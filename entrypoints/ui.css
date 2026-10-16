@@ -1,4 +1,4 @@
-:root { color-scheme: light dark; --surface:#fff; --canvas:#f5f5f7; --text:#2c2e3c; --muted:#626470; --line:#e3e6e2; --accent:#2c2e3c; --focus:#174ea6; font:15px/1.55 "Segoe UI",system-ui,sans-serif; background:var(--canvas); color:var(--text); }
+:root { color-scheme: light dark; --surface:#fff; --canvas:#f5f5f7; --text:#2c2e3c; --muted:#626470; --line:#e3e6e2; --accent:#2c2e3c; --focus:#174ea6; --brand-font:Georgia,"Times New Roman",serif; font:15px/1.55 "Segoe UI",system-ui,sans-serif; background:var(--canvas); color:var(--text); }
 * { box-sizing:border-box; }
 body { margin:0; }
 button,input,select { font:inherit; }
@@ -25,11 +25,11 @@ p,.help { color:var(--muted); } p { margin-bottom:16px; }
 @media(max-width:359px) { .popup-window { width:320px; } .popup { padding:16px; } }
 
 .brand picture { display:flex; flex-shrink:0; }
-.brand strong,.brand .brand-name { font-family:Georgia,"Times New Roman",serif; font-size:22px; line-height:1.2; letter-spacing:-.45px; }
+.brand strong,.brand .brand-name { font-family:var(--brand-font); font-size:22px; line-height:1.2; letter-spacing:-.45px; }
 .about-card { margin-top:32px; }
 .about-brand { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
 .about-brand img { display:block; width:64px; height:64px; }
-.about-brand h2 { font:600 24px/1.2 Georgia,"Times New Roman",serif; letter-spacing:-.4px; margin:0 0 6px; }
+.about-brand h2 { font:600 24px/1.2 var(--brand-font); letter-spacing:-.4px; margin:0 0 6px; }
 .about-brand p { margin:0; font-size:13px; }
 .app-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:24px 0; padding:20px 0; border-block:1px solid var(--line); }
 .app-facts dt { font-size:12px; color:var(--muted); margin-bottom:4px; }

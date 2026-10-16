@@ -4,13 +4,13 @@
 
 ## Versões com suporte
 
-Só a versão mais recente em produção ([Releases](https://github.com/BrunodosSantosVaz/mla/releases/latest))
+Só a versão mais recente em produção ([Releases](https://github.com/BrunodosSantosVaz/lessentiel/releases/latest))
 recebe correções de segurança.
 
 ## Como relatar uma vulnerabilidade
 
 **Não abra uma issue pública com os detalhes.** Use o
-[relato privado de vulnerabilidade](https://github.com/BrunodosSantosVaz/mla/security/advisories/new) do GitHub
+[relato privado de vulnerabilidade](https://github.com/BrunodosSantosVaz/lessentiel/security/advisories/new) do GitHub
 (aba *Security* → *Report a vulnerability*). Se ele não estiver disponível, abra uma issue só pedindo contato, sem
 detalhes exploráveis.
 
