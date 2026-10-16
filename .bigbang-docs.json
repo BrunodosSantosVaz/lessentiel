@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "cf903dcbbb8347aa663080c6d8c93801565fedec",
-    "commit": "9e287b768df40e593fcf05a96b5c413610695d18",
+    "base": "9e287b768df40e593fcf05a96b5c413610695d18",
+    "commit": "86815354a1ada560d21e9b05370cabf51a3aa27d",
     "branch": "master",
-    "proposta": "bigbang/proposta-40-identidade-lessentiel"
+    "proposta": "bigbang/proposta-42-release-lessentiel"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
