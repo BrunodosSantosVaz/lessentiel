@@ -45,7 +45,7 @@ test("#40 RN-0004 informações e links acessíveis sem alterar preferências de
       (globalThis as any).chrome.storage.local.set({ readerPreferences: { language: "pt-BR", theme: "sepia", fontSize: 22, showImages: true } }),
     );
     await page.goto(`${base}/options.html`);
-    const about = page.getByRole("region", { name: "Sobre o L’Essentiel", exact: true });
+    const about = page.getByRole("region", { name: "Sobre o sistema", exact: true });
     await expect(about).toBeVisible();
     await expect(about.locator("#app-version")).toContainText("0.1.0");
     await expect(about).toContainText("MIT");
@@ -59,7 +59,7 @@ test("#40 RN-0004 informações e links acessíveis sem alterar preferências de
       "https://github.com/BrunodosSantosVaz/lessentiel/issues",
     );
     await page.getByRole("combobox", { name: "Idioma", exact: true }).selectOption("en");
-    await expect(page.getByRole("heading", { name: "About L’Essentiel", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "About the system", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Save preferences", exact: true }).click();
     await expect(page.getByRole("status").filter({ hasText: "Preferences saved" })).toBeVisible();
     expect(await worker.evaluate(async () => (await (globalThis as any).chrome.storage.local.get("readerPreferences")).readerPreferences)).toEqual({

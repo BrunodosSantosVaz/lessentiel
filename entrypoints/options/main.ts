@@ -65,7 +65,7 @@ const extraTranslations = {
     "file-help": "Para HTML e PDF, ative “Permitir acesso a URLs de arquivo” nos detalhes da extensão.",
     "configure-files": "Configurar acesso a arquivos",
     "empty-sites": "Nenhum site adicionado. Você pode abrir outras páginas pelo ícone da extensão.",
-    "about-heading": "Sobre o L’Essentiel",
+    "about-heading": "Sobre o sistema",
     "about-tagline": "Menos ruído. Mais leitura.",
     "about-description":
       "Um espaço tranquilo para ler páginas web e PDFs locais. Seus textos e preferências são processados neste dispositivo, sem conta ou sincronização.",
@@ -88,7 +88,7 @@ const extraTranslations = {
     "file-help": "For HTML and PDF, enable “Allow access to file URLs” in extension details.",
     "configure-files": "Configure file access",
     "empty-sites": "No sites added. Open other pages using the extension icon.",
-    "about-heading": "About L’Essentiel",
+    "about-heading": "About the system",
     "about-tagline": "Less noise. More reading.",
     "about-description":
       "A quiet space to read web pages and local PDFs. Your text and preferences are processed on this device, without an account or synchronization.",
@@ -111,7 +111,7 @@ const extraTranslations = {
     "file-help": "Para HTML y PDF, activa el acceso a URL de archivo en los detalles de la extensión.",
     "configure-files": "Configurar acceso a archivos",
     "empty-sites": "No hay sitios añadidos. Abre otras páginas con el icono de la extensión.",
-    "about-heading": "Acerca de L’Essentiel",
+    "about-heading": "Acerca del sistema",
     "about-tagline": "Menos ruido. Más lectura.",
     "about-description":
       "Un espacio tranquilo para leer páginas web y PDF locales. Tus textos y preferencias se procesan en este dispositivo, sin cuenta ni sincronización.",
