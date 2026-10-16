@@ -140,12 +140,13 @@ export function extractArticle(source: Document): ExtractedArticle | null {
   template.innerHTML = sanitized;
   // Readability can accept a control-only fragment such as "; ; ; Continuar lendo".
   if ((template.content.textContent?.match(/[\p{L}\p{N}]/gu)?.length ?? 0) < 80) return null;
-  const contentRoot = template.content.querySelector("article");
+  // The reader supplies its own article. Unwrap containers without dropping sibling paragraphs.
+  template.content.querySelectorAll("article").forEach((article) => article.replaceWith(...article.childNodes));
 
   return {
     title: parsed.title || source.title || "Artigo",
     byline: parsed.byline ?? null,
-    content: contentRoot?.innerHTML ?? template.innerHTML,
+    content: template.innerHTML,
     images,
   };
 }

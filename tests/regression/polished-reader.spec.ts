@@ -140,7 +140,7 @@ test("#36 RN-0004 popup e preferências têm fluxo único e estado de arquivos l
     await expect(popup.getByRole("link", { name: "Abrir PDF local", exact: true })).toHaveCount(0);
     await expect(popup.getByRole("link", { name: "Preferências", exact: true })).toBeVisible();
     await popup.goto(`chrome-extension://${id}/options.html`);
-    await expect(popup.getByRole("checkbox", { name: "Abrir arquivos locais automaticamente", exact: true })).toBeVisible();
+    await expect(popup.getByRole("checkbox", { name: "Abrir HTML local automaticamente", exact: true })).toBeVisible();
     await expect(popup.locator("#file-access-status")).not.toHaveText("");
     await popup.setViewportSize({ width: 360, height: 900 });
     expect(await popup.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
