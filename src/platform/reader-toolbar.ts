@@ -11,6 +11,7 @@ export type ReaderPreferences = {
   lineHeight: number;
   alignment: "left" | "center" | "right" | "justify";
   speed: number;
+  showImages: boolean;
 };
 export type ToolbarLabels = {
   toolbar: string;
@@ -36,6 +37,7 @@ export type ToolbarLabels = {
   size: string;
   more: string;
   print: string;
+  images: string;
   chooseTheme: string;
   chooseFont: string;
   chooseAlignment: string;
@@ -52,6 +54,7 @@ const paths = {
   play: '<path d="m8 5 11 7-11 7Z"/>',
   pause: '<path d="M8 5v14M16 5v14"/>',
   print: '<path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7Z"/><path d="M17 11h.01"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><path d="m21 15-5-5L5 21"/>',
   left: '<path d="M3 5h18M3 10h12M3 15h18M3 20h12"/>',
   center: '<path d="M3 5h18M6 10h12M3 15h18M6 20h12"/>',
   right: '<path d="M3 5h18M9 10h12M3 15h18M9 20h12"/>',
@@ -198,7 +201,8 @@ export function createReaderToolbar(
       const rect = trigger.getBoundingClientRect();
       const bounds = menu.getBoundingClientRect();
       menu.style.left = `${Math.max(8, Math.min(window.innerWidth - bounds.width - 8, rect.left))}px`;
-      menu.style.top = `${Math.max(8, Math.min(window.innerHeight - bounds.height - 8, rect.bottom + 8))}px`;
+      menu.style.top = `${rect.bottom + 8}px`;
+      menu.style.maxHeight = `${Math.max(0, window.innerHeight - rect.bottom - 16)}px`;
       (menu.querySelector<HTMLButtonElement>('[aria-checked="true"]') ?? menu.querySelector<HTMLButtonElement>("button"))?.focus({ preventScroll: true });
     });
     trigger.className = "choice-trigger";
@@ -262,14 +266,19 @@ export function createReaderToolbar(
     fonts.map((value) => ({ value, label: value, accessible: `${ui.font} ${value}`, preview: "Aa", family: value })),
   );
   const size = addGroup("size");
-  size.element.innerHTML = '<span class="size-heading"><span class="size-label"></span> <output class="font-size"></output></span>';
-  size.element.querySelector(".size-label")!.textContent = ui.size;
+  size.element.setAttribute("role", "group");
+  size.element.setAttribute("aria-label", ui.size);
+  const sizeValue = document.createElement("span");
+  sizeValue.className = "size-heading";
+  sizeValue.innerHTML = '<span aria-hidden="true">Aa</span><output class="font-size"></output>';
+  sizeValue.querySelector("output")!.setAttribute("aria-label", ui.size);
   size.element.append(
-    button(ui.decrease, "A−", () => {
+    button(ui.decrease, "−", () => {
       preferences.fontSize = Math.max(14, preferences.fontSize - 2);
       callbacks.change();
     }),
-    button(ui.increase, "A+", () => {
+    sizeValue,
+    button(ui.increase, "+", () => {
       preferences.fontSize = Math.min(32, preferences.fontSize + 2);
       callbacks.change();
     }),
@@ -312,6 +321,13 @@ export function createReaderToolbar(
     { value: "right", label: ui.right, accessible: ui.alignRight, preview: icon("right") },
     { value: "justify", label: ui.justify, accessible: ui.alignJustify, preview: icon("justify") },
   ]);
+  const images = button(ui.images, `${icon("image")}<span class="overflow-label"></span>`, () => {
+    preferences.showImages = !preferences.showImages;
+    callbacks.change();
+  });
+  images.querySelector(".overflow-label")!.textContent = ui.images;
+  addGroup("images").element.append(images);
+  updates.push(() => images.setAttribute("aria-pressed", String(preferences.showImages)));
   const scroll = addGroup("scroll");
   const scrollButton = button(ui.start, `${icon("play")}<span class="overflow-label"></span>`, callbacks.scroll);
   scroll.element.append(scrollButton);
@@ -364,7 +380,7 @@ export function createReaderToolbar(
       if (required() <= main.clientWidth) break;
       groups.find((g) => g.key === key)!.element.classList.add("compact");
     }
-    for (const key of ["print", "size", "alignment", "font", "theme"]) {
+    for (const key of ["print", "images", "size", "alignment", "font", "theme"]) {
       if (required() <= main.clientWidth) break;
       move(key);
     }
@@ -464,7 +480,7 @@ export function createReaderToolbar(
   document.addEventListener("pointerdown", outside);
   const update = () => {
     updates.forEach((fn) => fn());
-    element.querySelector(".font-size")!.textContent = String(preferences.fontSize);
+    element.querySelector(".font-size")!.textContent = `${Math.round((preferences.fontSize / 20) * 100)}%`;
     labelButton(scrollButton, scrolling ? ui.pause : ui.start);
     scrollButton.setAttribute("aria-pressed", String(scrolling));
     scrollButton.querySelector("svg")!.outerHTML = icon(scrolling ? "pause" : "play");

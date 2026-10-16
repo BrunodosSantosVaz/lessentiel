@@ -28,7 +28,7 @@ async function open() {
       <figure><img src="/editorial.jpg" alt="Paisagem da reportagem" width="800" height="400" onerror="window.unsafeImage=true"/><figcaption>Legenda editorial</figcaption></figure>
       <div data-ad-slot="banner"><img src="/advertisement.jpg" alt="Publicidade" width="800" height="400"/></div>
       <img src="https://doubleclick.net/tracking.jpg" alt="Rastreamento" width="1" height="1"/>
-      <p>${paragraph}</p><ul><li>Primeiro item</li><li>Segundo item</li></ul>
+      <img data-reader-image="0" alt="Identificador forjado"/><img src="https://user:pass@outside.test/private.jpg" alt="URL com credenciais"/><img src="data:image/svg+xml,invalid" alt="SVG embutido"/><p>${paragraph}</p><ul><li>Primeiro item</li><li>Segundo item</li></ul>
       <table><caption>Dados da reportagem</caption><thead><tr><th>Período</th><th>Leitores</th></tr></thead><tbody><tr><td>Hoje</td><td>100</td></tr></tbody></table>
       <pre><code>const reading = true;</code></pre><p>${paragraph}</p></article>`,
     });
@@ -121,6 +121,7 @@ test("#38 RN-0001 imagens editoriais só carregam ao ativar e publicidade contin
     await expect.poll(() => imageRequests).toEqual(["https://reading.test/editorial.jpg"]);
     await expect(article.getByAltText("Publicidade")).toHaveCount(0);
     await expect(article.getByAltText("Rastreamento")).toHaveCount(0);
+    for (const alt of ["Identificador forjado", "URL com credenciais", "SVG embutido"]) await expect(article.getByAltText(alt)).toHaveCount(0);
     await expect
       .poll(() => worker.evaluate(async () => (await (globalThis as any).chrome.storage.local.get("readerPreferences")).readerPreferences.showImages))
       .toBe(true);
@@ -154,24 +155,65 @@ test("#38 RN-0001 citações e HTML editorial preservam semântica, ritmo e uma 
 });
 
 test("#38 RN-0004 popup nativo mantém largura e botões inteiros", async () => {
-  const { context, worker } = await open();
+  const { context, worker, page } = await open();
   try {
-    const popupPromise = context.waitForEvent("page");
+    const cdp = await context.newCDPSession(page);
     await worker.evaluate(() => (globalThis as any).chrome.action.openPopup());
-    const popup = await popupPromise;
-    await popup.waitForLoadState("domcontentloaded");
-    await expect(popup.getByRole("button", { name: "Ativar modo de leitura", exact: true })).toBeInViewport();
-    await expect(popup.getByRole("link", { name: "Preferências", exact: true })).toBeInViewport();
-    const dimensions = await popup.evaluate(() => ({
-      width: innerWidth,
-      scroll: document.documentElement.scrollWidth,
-      height: innerHeight,
-      total: document.documentElement.scrollHeight,
-    }));
+    let targetId = "";
+    await expect
+      .poll(async () => {
+        const { targetInfos } = await cdp.send("Target.getTargets");
+        targetId = targetInfos.find((target) => target.url.endsWith("/popup.html"))?.targetId ?? "";
+        return targetId;
+      })
+      .not.toBe("");
+    const { sessionId } = await cdp.send("Target.attachToTarget", { targetId, flatten: false });
+    let sequence = 0;
+    const inspect = () =>
+      new Promise<any>((resolve, reject) => {
+        const id = ++sequence;
+        const receive = (event: { sessionId: string; message: string }) => {
+          const message = JSON.parse(event.message);
+          if (event.sessionId !== sessionId || message.id !== id) return;
+          cdp.off("Target.receivedMessageFromTarget", receive);
+          if (message.error || message.result?.exceptionDetails) reject(new Error(JSON.stringify(message)));
+          else resolve(message.result.result.value);
+        };
+        cdp.on("Target.receivedMessageFromTarget", receive);
+        void cdp
+          .send("Target.sendMessageToTarget", {
+            sessionId,
+            message: JSON.stringify({
+              id,
+              method: "Runtime.evaluate",
+              params: {
+                returnByValue: true,
+                expression: `document.readyState !== "complete" ? null : ({ width: innerWidth, scroll: document.documentElement.scrollWidth, height: innerHeight, total: document.documentElement.scrollHeight,
+          actions: [...document.querySelectorAll("button, a")].map(node => { const box = node.getBoundingClientRect(); return { label: node.textContent, x: box.x, right: box.right, y: box.y, bottom: box.bottom, width: box.width, height: box.height }; }) })`,
+              },
+            }),
+          })
+          .catch(reject);
+      });
+    let dimensions: any;
+    await expect
+      .poll(async () => {
+        dimensions = await inspect();
+        return !!dimensions;
+      })
+      .toBe(true);
     expect(dimensions.width).toBeGreaterThanOrEqual(320);
     expect(dimensions.scroll).toBeLessThanOrEqual(dimensions.width);
     expect(dimensions.total).toBeLessThanOrEqual(dimensions.height);
-    await popup.screenshot({ path: "test-results/popup-native.png" });
+    expect(dimensions.actions).toHaveLength(2);
+    for (const action of dimensions.actions) {
+      expect(action.width).toBeGreaterThanOrEqual(44);
+      expect(action.height).toBeGreaterThanOrEqual(44);
+      expect(action.x).toBeGreaterThanOrEqual(0);
+      expect(action.y).toBeGreaterThanOrEqual(0);
+      expect(action.right).toBeLessThanOrEqual(dimensions.width);
+      expect(action.bottom).toBeLessThanOrEqual(dimensions.height);
+    }
   } finally {
     await context.close();
   }

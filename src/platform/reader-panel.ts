@@ -32,6 +32,7 @@ const defaults: Preferences = {
   lineHeight: 1.65,
   alignment: "left",
   speed: 3,
+  showImages: false,
 };
 
 async function loadPreferences(): Promise<Preferences> {
@@ -60,6 +61,7 @@ async function loadPreferences(): Promise<Preferences> {
               : defaults.widthPercent,
       alignment: ["center", "right", "justify"].includes(stored?.alignment ?? "") ? stored!.alignment! : "left",
       speed: limit(stored?.speed, defaults.speed, 1, 10, 1),
+      showImages: stored?.showImages === true,
     };
   } catch {
     return { ...defaults };
@@ -77,6 +79,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       size: "Tamanho",
       more: "Mais opções de leitura",
       print: "Imprimir artigo",
+      images: "Exibir imagens",
       chooseTheme: "Escolher tema",
       chooseFont: "Escolher fonte",
       chooseAlignment: "Escolher alinhamento",
@@ -114,6 +117,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       size: "Size",
       more: "More reading options",
       print: "Print article",
+      images: "Show images",
       chooseTheme: "Choose theme",
       chooseFont: "Choose font",
       chooseAlignment: "Choose alignment",
@@ -151,6 +155,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       size: "Tamaño",
       more: "Más opciones de lectura",
       print: "Imprimir artículo",
+      images: "Mostrar imágenes",
       chooseTheme: "Elegir tema",
       chooseFont: "Elegir fuente",
       chooseAlignment: "Elegir alineación",
@@ -224,6 +229,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   const headings = [...articleElement.querySelectorAll<HTMLElement>("h1, h2, h3, h4, h5, h6")];
   const index = veil.querySelector<HTMLElement>(".index");
   const indexList = index?.querySelector("ol");
+  const outline: { level: number; item: HTMLLIElement }[] = [];
   headings.forEach((heading, position) => {
     const label = heading.textContent?.trim();
     if (!label || !indexList) return;
@@ -249,7 +255,13 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
       updateProgress();
     });
     item.append(link);
-    indexList.append(item);
+    const level = Number(heading.tagName.slice(1));
+    while (outline.length && outline[outline.length - 1]!.level >= level) outline.pop();
+    const parent = outline[outline.length - 1]?.item;
+    let list = indexList;
+    if (parent) list = parent.querySelector(":scope > ol") ?? parent.appendChild(document.createElement("ol"));
+    list.append(item);
+    outline.push({ level, item });
   });
 
   const previousActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -302,6 +314,18 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
     articleElement.style.maxWidth = `${preferences.widthPercent || defaults.widthPercent}%`;
     articleElement.style.lineHeight = String(preferences.lineHeight);
     articleElement.style.textAlign = preferences.alignment;
+    veil.dataset.images = String(preferences.showImages);
+    articleElement.querySelectorAll<HTMLImageElement>("img").forEach((image) => {
+      const source = article.images?.[image.dataset.readerImage ?? ""];
+      image.hidden = !preferences.showImages || !source;
+      if (image.hidden) image.removeAttribute("src");
+      else if (image.getAttribute("src") !== source) {
+        image.referrerPolicy = "no-referrer";
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.src = source!;
+      }
+    });
     toolbar.update();
     updateProgress();
   };
