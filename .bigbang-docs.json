@@ -4,9 +4,9 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "9e287b768df40e593fcf05a96b5c413610695d18",
-    "commit": "339ad6d27a4e981194bd39df7616abf025333827",
+    "commit": "86815354a1ada560d21e9b05370cabf51a3aa27d",
     "branch": "master",
-    "proposta": "bigbang/proposta-release-0.1.0"
+    "proposta": "bigbang/proposta-42-release-lessentiel"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
