@@ -5,7 +5,27 @@ export type ExtractedArticle = {
   title: string;
   byline: string | null;
   content: string;
+  images?: Record<string, string>;
 };
+
+const advertisement =
+  'ins.adsbygoogle, [data-ad], [data-ad-slot], [data-ad-client], [data-advertisement], [aria-label="Advertisement" i], [aria-label="Publicidade" i], .advertisement, .ads, .sponsored, [id^="google_ads_"]';
+const advertisingHost = /(^|\.)(doubleclick\.net|googlesyndication\.com|googleadservices\.com|adnxs\.com|amazon-adsystem\.com)$/i;
+
+function imageSource(image: Element, base: string): string | null {
+  const source = image.getAttribute("src") || image.getAttribute("data-src") || image.getAttribute("data-original");
+  if (!source || source.length > 10000) return null;
+  const width = Number(image.getAttribute("width")),
+    height = Number(image.getAttribute("height"));
+  if ((width > 0 && width <= 2) || (height > 0 && height <= 2)) return null;
+  try {
+    const url = new URL(source, base);
+    if (url.username || url.password || advertisingHost.test(url.hostname)) return null;
+    return ["http:", "https:"].includes(url.protocol) ? url.href : null;
+  } catch {
+    return null;
+  }
+}
 
 // Build an inert copy of the composed tree: cloneNode alone omits open shadow roots.
 function readableSnapshot(source: Document): Document | null {
@@ -27,6 +47,7 @@ function readableSnapshot(source: Document): Document | null {
       return snapshot.createTextNode(node.textContent ?? "");
     }
     if (!(node instanceof Element)) return null;
+    if (node.matches(advertisement)) return null;
     if (node.matches("script, style, noscript, template, link, iframe, object, embed, [data-leitor-limpo-host]")) return null;
     if (node instanceof HTMLSlotElement) {
       const fragment = snapshot.createDocumentFragment();
@@ -95,7 +116,22 @@ export function extractArticle(source: Document): ExtractedArticle | null {
   if (!parsed) return null;
 
   const purifier = createDOMPurify(globalThis);
-  const sanitized = purifier.sanitize(parsed.content ?? "", {
+  const inertContent = document.createElement("template");
+  inertContent.innerHTML = parsed.content ?? "";
+  inertContent.content.querySelectorAll("[data-reader-image]").forEach((node) => node.removeAttribute("data-reader-image"));
+  const images: Record<string, string> = {};
+  let imageIndex = 0;
+  inertContent.content.querySelectorAll("img").forEach((image) => {
+    const imageUrl = imageSource(image, source.baseURI);
+    if (!imageUrl) {
+      image.remove();
+      return;
+    }
+    const key = String(imageIndex++);
+    images[key] = imageUrl;
+    image.setAttribute("data-reader-image", key);
+  });
+  const sanitized = purifier.sanitize(inertContent.innerHTML, {
     FORBID_ATTR: ["style", "src", "srcset", "poster", "background", "action", "formaction"],
     FORBID_TAGS: ["base", "embed", "form", "iframe", "object", "script", "style"],
     RETURN_TRUSTED_TYPE: false,
@@ -110,5 +146,6 @@ export function extractArticle(source: Document): ExtractedArticle | null {
     title: parsed.title || source.title || "Artigo",
     byline: parsed.byline ?? null,
     content: contentRoot?.innerHTML ?? template.innerHTML,
+    images,
   };
 }

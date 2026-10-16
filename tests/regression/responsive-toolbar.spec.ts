@@ -70,6 +70,7 @@ test("#34 RN-0002 RN-0005 amostras visuais têm nomes e expansão por teclado co
     const dark = page.getByRole("button", { name: "Tema Escuro", exact: true });
     await dark.hover();
     await expect(page.getByRole("tooltip")).toHaveText("Escuro");
+    await page.setViewportSize({ width: 680, height: 900 });
     const trigger = page.getByRole("button", { name: "Escolher tema", exact: true });
     await trigger.focus();
     await trigger.press("Space");
@@ -78,6 +79,7 @@ test("#34 RN-0002 RN-0005 amostras visuais têm nomes e expansão por teclado co
     await menu.getByRole("menuitemradio", { name: "Preto", exact: true }).click();
     await expect(page.locator(".veil")).toHaveAttribute("data-theme", "black");
     await expect(trigger).toBeFocused();
+    await page.setViewportSize({ width: 1920, height: 900 });
     for (const font of ["Georgia", "Literata", "Atkinson Hyperlegible Next", "Lexend"]) {
       const preview = page.getByRole("button", { name: `Fonte ${font}`, exact: true });
       await expect(preview).toHaveText("Aa");
@@ -96,10 +98,10 @@ test("#34 RN-0002 RN-0005 amostras visuais têm nomes e expansão por teclado co
 test("#34 RN-0002 RN-0005 tamanho junto ao rótulo e largura apenas percentual persistem", async () => {
   const { context, page, activate, worker } = await open();
   try {
-    await expect(page.locator(".size-heading")).toHaveText(/Tamanho\s*20/);
+    await expect(page.locator(".size-heading")).toHaveText(/Aa\s*100%/);
     await expect(page.getByRole("button", { name: "Aumentar fonte", exact: true })).toHaveCSS("border-top-width", "0px");
     await page.getByRole("button", { name: "Aumentar fonte", exact: true }).click();
-    await expect(page.locator(".size-heading")).toHaveText(/Tamanho\s*22/);
+    await expect(page.locator(".size-heading")).toHaveText(/Aa\s*110%/);
     const width = page.getByRole("slider", { name: "Largura do texto", exact: true });
     await width.focus();
     await width.press("Home");

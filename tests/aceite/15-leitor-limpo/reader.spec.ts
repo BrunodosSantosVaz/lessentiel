@@ -345,7 +345,8 @@ test("RN-0003 CA-06 abre PDF local com texto selecionável", async () => {
     await (await chooser).setFiles(resolve("tests/fixtures/sample.pdf"));
     await expect(page.getByRole("article")).toContainText("PDF de teste");
     await expect(page.getByRole("button", { name: "Fechar" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Escolher tema", exact: true })).toBeVisible();
+    await chooseReaderTheme(page, "Sépia");
+    await expect(page.locator(".veil")).toHaveAttribute("data-theme", "sepia");
     const oversizedChooser = page.waitForEvent("filechooser");
     await revealReaderControl(page, page.getByRole("button", { name: "Abrir PDF local" }));
     await page.getByRole("button", { name: "Abrir PDF local" }).click();
