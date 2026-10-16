@@ -4,7 +4,7 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "cf903dcbbb8347aa663080c6d8c93801565fedec",
-    "commit": "39265a9eec7cd9f62b9a8a5bf9698e213ab4d8a3",
+    "commit": "9e287b768df40e593fcf05a96b5c413610695d18",
     "branch": "master",
     "proposta": "bigbang/proposta-40-identidade-lessentiel"
   },
@@ -81,7 +81,7 @@
     }
   },
   "codigo": {
-    "commit": "509b469539bc17901b2f217a6fc1efb37647e8dd",
+    "commit": "257662223520a7b7d79f5f0caef7c0cfec714a32",
     "raizes": [
       "entrypoints/",
       "flags.toml",
@@ -184,7 +184,7 @@
         "entrypoints/popup/index.html": "49b183edc4c1efaa6887c76d545cd1dedc2084a540a619c1f87f52fe20592717",
         "entrypoints/popup/main.ts": "c585e76f5f9b366aaa307e4a8d44f6f9fd260973e3117301a1216215e8bdbfe0",
         "entrypoints/reader.content.ts": "5e33f0782873d0c29f7660ad20f60caa3a547a532bc92375ed792041377e3c22",
-        "entrypoints/ui.css": "8ee0bd07940f85a8f829cd52f4b8aae3813c1a12ee79685be7ca969ad65c059f",
+        "entrypoints/ui.css": "a657d18ba33b314e1d942017bb69fb8d52bba22e37b0726df53889c16e847e73",
         "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
         "package.json": "64a8227704a7948a906f0e4d7855ad9ff0850af248101f3c697d036c9627de67",
         "public/_locales/en/messages.json": "82954de5a21885a63e2d0f33616a8a34e78b4f1477d12279e159ca7171e7ede8",
