@@ -14,7 +14,8 @@ test("RN-0006 CA-10 PDF local permanece nativo até ação explícita e retorna 
     const controls = await context.newPage();
     await controls.goto(`chrome://extensions/?id=${id}`);
     const access = controls.locator("#allow-file-access").locator("cr-toggle");
-    if ((await access.getAttribute("checked")) === null) await access.click();
+    if ((await access.count()) && (await access.getAttribute("checked")) === null) await access.click();
+    expect(await worker.evaluate(() => (globalThis as any).chrome.extension.isAllowedFileSchemeAccess())).toBe(true);
     const page = await context.newPage();
     const file = new URL(`file://${resolve("tests/fixtures/sample.pdf")}`).href;
     await page.goto(file);
