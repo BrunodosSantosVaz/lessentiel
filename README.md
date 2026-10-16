@@ -6,7 +6,7 @@ O pacote experimental está em validação no Edge antes da primeira release. A 
 
 O tema **Auto** acompanha o modo claro/escuro do sistema e mantém a escolha neste dispositivo. Os quatro temas manuais continuam disponíveis. A revisão #32 aproxima a barra da referência visual solicitada, mantém o índice na lateral e acrescenta texto centralizado e largura até 100% da área disponível. Georgia do sistema é a fonte inicial; as fontes offline continuam no seletor.
 
-[Documentação](https://github.com/BrunodosSantosVaz/mla/wiki) · [Discussions](https://github.com/BrunodosSantosVaz/mla/discussions) · [Issues](https://github.com/BrunodosSantosVaz/mla/issues) · [Painel público #33](https://github.com/users/BrunodosSantosVaz/projects/33)
+[Controles e leitura editorial](https://github.com/BrunodosSantosVaz/mla/wiki/Leitura-editorial-e-controles) · [Documentação](https://github.com/BrunodosSantosVaz/mla/wiki) · [Discussions](https://github.com/BrunodosSantosVaz/mla/discussions) · [Issues](https://github.com/BrunodosSantosVaz/mla/issues) · [Painel público #33](https://github.com/users/BrunodosSantosVaz/projects/33)
 
 Licença: [MIT](LICENSE). O framework Big Bang mantém licença própria em `.bigbang/LICENSE`.
 
