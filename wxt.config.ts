@@ -1,12 +1,15 @@
 import { defineConfig } from "wxt";
+import { readFileSync } from "node:fs";
 
 const testMode = process.env.MLA_TEST_MODE === "true";
 const readerEnabled = process.env.MLA_FEATURE_READER === "true" || testMode;
+const packageVersion = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version as string;
 
 export default defineConfig({
   manifest: {
-    name: "Leitor Limpo",
-    description: "Leitura local e sem distrações para páginas web.",
+    name: "L’Essentiel",
+    version_name: `${packageVersion}${process.env.BB_RC ? `-rc.${process.env.BB_RC}` : ""}`,
+    description: "O essencial da sua leitura. Páginas web e PDFs locais, sem distrações.",
     default_locale: "pt_BR",
     permissions: ["activeTab", "scripting", "contextMenus", "storage"],
     // Test builds grant the synthetic page host so headless tests can exercise injection without browser UI gestures.
@@ -17,18 +20,18 @@ export default defineConfig({
       default_title: "__MSG_actionTitle__",
       default_popup: "popup.html",
       default_icon: {
-        16: "icon-16.png",
-        32: "icon-32.png",
-        48: "icon-48.png",
-        128: "icon-128.png",
+        16: "icons/light/icon-16.png",
+        19: "icons/light/icon-19.png",
+        32: "icons/light/icon-32.png",
+        38: "icons/light/icon-38.png",
       },
     },
     options_ui: { page: "options.html", open_in_tab: true },
     icons: {
-      16: "icon-16.png",
-      32: "icon-32.png",
-      48: "icon-48.png",
-      128: "icon-128.png",
+      16: "icons/light/icon-16.png",
+      32: "icons/light/icon-32.png",
+      48: "icons/light/icon-48.png",
+      128: "icons/light/icon-128.png",
     },
     commands: {
       "activate-reader": {
