@@ -47,8 +47,8 @@ export default defineBackground(() => {
     return activateTab(tab?.id, tab?.url);
   };
 
-  const menuTitles = { "pt-BR": "Abrir no Leitor Limpo", en: "Open in Leitor Limpo", es: "Abrir en Leitor Limpo" };
-  const actionTitles = { "pt-BR": "Abrir Leitor Limpo", en: "Open Leitor Limpo", es: "Abrir Leitor Limpo" };
+  const menuTitles = { "pt-BR": "Abrir no L’Essentiel", en: "Open in L’Essentiel", es: "Abrir en L’Essentiel" };
+  const actionTitles = { "pt-BR": "Abrir L’Essentiel", en: "Open L’Essentiel", es: "Abrir L’Essentiel" };
   const menus = browser.contextMenus as unknown as {
     removeAll: (callback: () => void) => void;
     create: (properties: { id: string; title: string; contexts: ["page"] }, callback: () => void) => void;

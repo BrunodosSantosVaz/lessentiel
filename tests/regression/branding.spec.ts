@@ -68,7 +68,9 @@ test("#40 RN-0004 informações e links acessíveis sem alterar preferências de
       fontSize: 22,
       showImages: true,
     });
-    const links = await about.locator("a").evaluateAll((nodes) => nodes.map((node) => ({ height: node.getBoundingClientRect().height, rel: node.rel })));
+    const links = await page
+      .locator(".about-card a")
+      .evaluateAll((nodes) => nodes.map((node) => ({ height: node.getBoundingClientRect().height, rel: node.getAttribute("rel") ?? "" })));
     expect(links.every((link) => link.height >= 44 && link.rel.includes("noopener"))).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   } finally {

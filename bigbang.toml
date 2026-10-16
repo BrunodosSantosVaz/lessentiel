@@ -6,10 +6,10 @@ origin = "BrunodosSantosVaz/big-bang"
 
 [project]
 mode = "autonomous"
-name = "Leitor Limpo"
-slug = "mla"
+name = "L’Essentiel"
+slug = "lessentiel"
 owner = "BrunodosSantosVaz"
-repository = "BrunodosSantosVaz/mla"
+repository = "BrunodosSantosVaz/lessentiel"
 visibility = "public"
 license = "MIT"
 
@@ -22,7 +22,7 @@ ecosystems = ["npm"]
 
 [compiled]
 systems = ["universal"]
-build_universal = "npm run package && cp .output/*.zip \"$BB_SAIDA/mla-v${BB_VERSAO}-${BB_SISTEMA}.zip\""
+build_universal = "npm run package:test && cp .output/*.zip \"$BB_SAIDA/lessentiel-v${BB_VERSAO}-${BB_SISTEMA}.zip\""
 
 [commands]
 affected_tests = ""
