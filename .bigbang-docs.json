@@ -4,7 +4,7 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "cf903dcbbb8347aa663080c6d8c93801565fedec",
-    "commit": "bc40f001b3f3641ce26656dc53eb0af1f32f5149",
+    "commit": "39265a9eec7cd9f62b9a8a5bf9698e213ab4d8a3",
     "branch": "master",
     "proposta": "bigbang/proposta-40-identidade-lessentiel"
   },
@@ -100,17 +100,25 @@
     {
       "id": "RF-0001",
       "pagina": "Funcionalidades",
-      "requisitos": ["RF-0001"],
-      "fontes": ["prototype/index.html"],
+      "requisitos": [
+        "RF-0001"
+      ],
+      "fontes": [
+        "prototype/index.html"
+      ],
       "hashes": {
         "prototype/index.html": "9e0dec01487adec3ed49082d7408e74e7eabf36dfecb63ff1fb4aaf0e2f954ee"
       },
-      "testes": ["tests/prototype.spec.ts:smoke"]
+      "testes": [
+        "tests/prototype.spec.ts:smoke"
+      ]
     },
     {
       "id": "RF-0002",
       "pagina": "Funcionalidades",
-      "requisitos": ["RF-0002"],
+      "requisitos": [
+        "RF-0002"
+      ],
       "fontes": [
         "assets/brand/banner-dark.svg",
         "assets/brand/banner.svg",
