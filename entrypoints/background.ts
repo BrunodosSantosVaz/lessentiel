@@ -127,7 +127,10 @@ export default defineBackground(() => {
     if (message.type === "RETURN_TO_PDF" && "url" in message && typeof message.url === "string") {
       const url = message.url;
       const tabId = sender.tab?.id;
-      if (tabId === undefined || !sender.url || originalPdf(sender.url) !== url) return false;
+      if (tabId === undefined || !sender.url || originalPdf(sender.url) !== url) {
+        sendResponse(false);
+        return false;
+      }
       void browser.tabs.update(tabId, { url }).then(() => sendResponse(true));
       return true;
     }

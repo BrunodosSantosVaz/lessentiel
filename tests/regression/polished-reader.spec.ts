@@ -193,6 +193,14 @@ test("#47 RN-0006 PDF abre no visualizador nativo e alterna manualmente sem cicl
     };
     expect(await toggle()).toBe(true);
     await expect(page.getByRole("article")).toContainText("PDF de teste");
+    const readerUrl = page.url();
+    for (const url of ["file:///different.pdf", "https://reading.test/private.pdf"]) {
+      expect(await page.evaluate((url) => (globalThis as any).chrome.runtime.sendMessage({ type: "RETURN_TO_PDF", url }), url)).toBe(false);
+      await expect(page).toHaveURL(readerUrl);
+    }
+    const source = new URL(readerUrl).searchParams.get("source")!;
+    expect(await controls.evaluate((url) => (globalThis as any).chrome.runtime.sendMessage({ type: "RETURN_TO_PDF", url }), source)).toBe(false);
+    await expect(page).toHaveURL(readerUrl);
     expect(await toggle()).toBe(true);
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(/file:.*sample\.pdf$/);

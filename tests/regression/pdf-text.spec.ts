@@ -42,3 +42,15 @@ test("#47 RN-0003 detecta duas colunas mesmo com palavras em fragmentos e ignora
     Array(3).fill("Texto da coluna direita.").join(" "),
   ]);
 });
+
+test("#47 RN-0003 mantém a ordem de colunas com linhas em alturas diferentes", () => {
+  const items: TextItem[] = [];
+  for (let index = 0; index < 3; index += 1) {
+    items.push(item(`Linha ${index + 1} da coluna esquerda.`, 50, 700 - index * 16, 180));
+    items.push(item(`Linha ${index + 1} da coluna direita.`, 330, 692 - index * 16, 180));
+  }
+  expect(pdfParagraphs(content(items), viewport)).toEqual([
+    "Linha 1 da coluna esquerda. Linha 2 da coluna esquerda. Linha 3 da coluna esquerda.",
+    "Linha 1 da coluna direita. Linha 2 da coluna direita. Linha 3 da coluna direita.",
+  ]);
+});
