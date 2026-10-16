@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "9e287b768df40e593fcf05a96b5c413610695d18",
-    "commit": "86815354a1ada560d21e9b05370cabf51a3aa27d",
+    "base": "86815354a1ada560d21e9b05370cabf51a3aa27d",
+    "commit": "c4b785e537e2afe4b4d56cf1d643873c88f05383",
     "branch": "master",
-    "proposta": "bigbang/proposta-42-release-lessentiel"
+    "proposta": "bigbang/proposta-47-leitura-documentos"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -43,7 +43,9 @@
     "docs/design/leitura-editorial.md": "Leitura-editorial-e-controles",
     "docs/decisoes/ADR-0006-leitura-editorial.md": "docs-decisoes-ADR-0006-leitura-editorial",
     "docs/design/identidade-lessentiel.md": "Identidade-L-Essentiel",
-    "docs/decisoes/ADR-0007-identidade-lessentiel.md": "docs-decisoes-ADR-0007-identidade-lessentiel"
+    "docs/decisoes/ADR-0007-identidade-lessentiel.md": "docs-decisoes-ADR-0007-identidade-lessentiel",
+    "docs/negocio/regras/RN-0006-pdf-manual.md": "RN-0006-PDF-manual",
+    "docs/decisoes/ADR-0008-pdf-manual.md": "docs-decisoes-ADR-0008-pdf-manual"
   },
   "categorias": {
     "produto": {
@@ -81,7 +83,7 @@
     }
   },
   "codigo": {
-    "commit": "257662223520a7b7d79f5f0caef7c0cfec714a32",
+    "commit": "f350118757e65e925ad9729b64828b3630afe5b1",
     "raizes": [
       "entrypoints/",
       "flags.toml",
@@ -162,6 +164,7 @@
         "src/platform/assets.d.ts",
         "src/platform/extract-article.ts",
         "src/platform/feature-flag.d.ts",
+        "src/platform/pdf-text.ts",
         "src/platform/reader-fonts.ts",
         "src/platform/reader-panel.ts",
         "src/platform/reader-style.ts",
@@ -176,11 +179,11 @@
         "assets/brand/logo-dark.svg": "d2eba3e5b775f510da1efa633be2f8c7a0960495f3ef7da2eb6f921d7a05bd0f",
         "assets/brand/logo.svg": "c9a9ccfd32902f66355cf369df5790524eda0b95e4e88f1375d702e7066adb70",
         "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd",
-        "entrypoints/background.ts": "62b9e41bd94427db7c95304a240d4ff1e82dde8673409198a027a0861d6f7966",
-        "entrypoints/options/index.html": "4a4981c4b66bbc14ab3c99ba45911338b6d1d9f0018f70b088d31267ffcf1fc3",
-        "entrypoints/options/main.ts": "bf200dbe494392d969c2dafdad7d906acfdf8f82149fa46d9cebb88563f30243",
+        "entrypoints/background.ts": "793a2655c9f9971c7d544ae92e1d9e4f4d4bb0ea901245aa626d16261dcb14b1",
+        "entrypoints/options/index.html": "59b19877e45b674378360ed88e89bc2395eb64781f511fc45c801dee552db86a",
+        "entrypoints/options/main.ts": "5f71f739d6f643ad32342b59f1d4918a37e485eb871f01c90f844815a2f7c4c5",
         "entrypoints/pdf/index.html": "d18ee259916012e97d47995f757f3119e690bb4d461f7e8236eadd884b5ec6fd",
-        "entrypoints/pdf/main.ts": "b9bf6d163c557cff1e80e0db0c28fd3fc0f48c18dbead255b15da58365316f61",
+        "entrypoints/pdf/main.ts": "97be10f4914040965e80c166cc060cf8cd2cda58da9ca9997619b2215bfaf2c0",
         "entrypoints/popup/index.html": "49b183edc4c1efaa6887c76d545cd1dedc2084a540a619c1f87f52fe20592717",
         "entrypoints/popup/main.ts": "c585e76f5f9b366aaa307e4a8d44f6f9fd260973e3117301a1216215e8bdbfe0",
         "entrypoints/reader.content.ts": "5e33f0782873d0c29f7660ad20f60caa3a547a532bc92375ed792041377e3c22",
@@ -217,13 +220,14 @@
         "public/icons/light/icon.svg": "e857f1c20026aa8fdd2e8f80ab36e08f29c235903332a8681f9a979614f5b15a",
         "scripts/package-test.mjs": "c750b1c5c9458835c43467965f408b652c13d0122321cf13307f5108db9edf08",
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
-        "src/platform/extract-article.ts": "08770f0132cb637f1f4f3cd3934a4765fb9f5782a3f95fff52024d58c36737fe",
+        "src/platform/extract-article.ts": "47206d2a17c80af6d107b01d2f3b0de1b71d156aa119f0c8ac1ef15ab9e7a682",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
         "src/platform/reader-fonts.ts": "88989e16aeecd4c169d581ddb4a464e6c32d2d519eecb26ff1eacbfe11059601",
         "src/platform/reader-panel.ts": "d1dd5337bb17ce7b0ceaa26606239782777ae934e6866317bee7d3ee7c2376f5",
         "src/platform/reader-style.ts": "d39168bf79dae149fbb387ee1dbb465e61a365660747fd41996dc18cf183cdf1",
         "src/platform/reader-toolbar.ts": "3504face87eb94afdbcc343d7ae3cfac457c1cef4107005208dd4666b2ca2196",
-        "wxt.config.ts": "8c302fe2e76038590ef524a1098c10aae1d902e5bae92cbfba69f73ceb5f3a38"
+        "wxt.config.ts": "8c302fe2e76038590ef524a1098c10aae1d902e5bae92cbfba69f73ceb5f3a38",
+        "src/platform/pdf-text.ts": "8406f617b3525b27e90ebed69103060f2538c973652f1e86502482175648ac93"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
@@ -242,7 +246,10 @@
         "tests/regression/responsive-toolbar.spec.ts:#34 RN-0002",
         "tests/regression/polished-reader.spec.ts:#36",
         "tests/regression/editorial-controls.spec.ts:#38",
-        "tests/regression/branding.spec.ts:#40"
+        "tests/regression/branding.spec.ts:#40",
+        "tests/regression/reader.spec.ts:#47",
+        "tests/regression/polished-reader.spec.ts:#47",
+        "tests/regression/pdf-text.spec.ts:#47"
       ]
     }
   ],

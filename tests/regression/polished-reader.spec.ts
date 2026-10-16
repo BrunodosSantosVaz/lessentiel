@@ -175,7 +175,7 @@ test("#36 RN-0001 HTML local entra no leitor sem ativação manual", async () =>
     await context.close();
   }
 });
-test("#47 RN-0003 PDF abre no visualizador nativo e alterna manualmente sem ciclo", async () => {
+test("#47 RN-0006 PDF abre no visualizador nativo e alterna manualmente sem ciclo", async () => {
   const { context, page, worker } = await openLocal("tests/fixtures/sample.pdf");
   try {
     await page.waitForLoadState("networkidle");
