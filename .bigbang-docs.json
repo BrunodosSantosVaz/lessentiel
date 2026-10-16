@@ -4,7 +4,7 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "86815354a1ada560d21e9b05370cabf51a3aa27d",
-    "commit": "c4b785e537e2afe4b4d56cf1d643873c88f05383",
+    "commit": "b1e6d4641b685fc4d7ec2a2f62458be957f522a9",
     "branch": "master",
     "proposta": "bigbang/proposta-47-leitura-documentos"
   },
@@ -83,7 +83,7 @@
     }
   },
   "codigo": {
-    "commit": "f350118757e65e925ad9729b64828b3630afe5b1",
+    "commit": "1c363e691c63d45ee2a999591df46d611321896e",
     "raizes": [
       "entrypoints/",
       "flags.toml",
@@ -179,7 +179,7 @@
         "assets/brand/logo-dark.svg": "d2eba3e5b775f510da1efa633be2f8c7a0960495f3ef7da2eb6f921d7a05bd0f",
         "assets/brand/logo.svg": "c9a9ccfd32902f66355cf369df5790524eda0b95e4e88f1375d702e7066adb70",
         "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd",
-        "entrypoints/background.ts": "793a2655c9f9971c7d544ae92e1d9e4f4d4bb0ea901245aa626d16261dcb14b1",
+        "entrypoints/background.ts": "d923508d59d6d03c942169e8c3753d7f76cb1fa633e778145679dde8461f9b96",
         "entrypoints/options/index.html": "59b19877e45b674378360ed88e89bc2395eb64781f511fc45c801dee552db86a",
         "entrypoints/options/main.ts": "5f71f739d6f643ad32342b59f1d4918a37e485eb871f01c90f844815a2f7c4c5",
         "entrypoints/pdf/index.html": "d18ee259916012e97d47995f757f3119e690bb4d461f7e8236eadd884b5ec6fd",
@@ -227,7 +227,7 @@
         "src/platform/reader-style.ts": "d39168bf79dae149fbb387ee1dbb465e61a365660747fd41996dc18cf183cdf1",
         "src/platform/reader-toolbar.ts": "3504face87eb94afdbcc343d7ae3cfac457c1cef4107005208dd4666b2ca2196",
         "wxt.config.ts": "8c302fe2e76038590ef524a1098c10aae1d902e5bae92cbfba69f73ceb5f3a38",
-        "src/platform/pdf-text.ts": "8406f617b3525b27e90ebed69103060f2538c973652f1e86502482175648ac93"
+        "src/platform/pdf-text.ts": "0959b3807242fbd38868321974a6a5bea55dd623b09d9c3c77cd067dd5640378"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
@@ -249,7 +249,8 @@
         "tests/regression/branding.spec.ts:#40",
         "tests/regression/reader.spec.ts:#47",
         "tests/regression/polished-reader.spec.ts:#47",
-        "tests/regression/pdf-text.spec.ts:#47"
+        "tests/regression/pdf-text.spec.ts:#47",
+        "tests/aceite/47-pdf-manual/reader.spec.ts:CA-10"
       ]
     }
   ],
