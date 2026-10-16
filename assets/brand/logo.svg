@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" role="img" aria-labelledby="t">
-  <title id="t">Leitor Limpo</title>
-  <g transform="translate(8 8)">
-    <rect width="48" height="48" rx="12" fill="#075e54"/>
-    <path d="M9 13.5c5-1.1 10.2.1 15 3.8v19c-4.6-3.7-9.6-4.9-15-3.8zm30 0c-5-1.1-10.2.1-15 3.8v19c4.6-3.7 9.6-4.9 15-3.8z" fill="#fff"/>
-    <path d="M15 21h5m13 0h-5M15 26h5m13 0h-5" fill="none" stroke="#075e54" stroke-linecap="round" stroke-width="1.8"/>
-    <path d="M24 7v5m-7-3 3 4m11-4-3 4" fill="none" stroke="#f3c76a" stroke-linecap="round" stroke-width="2"/>
-  </g>
-  <text x="72" y="43" fill="#17332e" font-family="system-ui, sans-serif" font-size="28" font-weight="700">Leitor Limpo</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="128" viewBox="0 0 540 128" role="img" aria-label="L’Essentiel"><rect xmlns="http://www.w3.org/2000/svg" width="128" height="128" rx="28" fill="#f1f1f4" /><g xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#2c2e3c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><path d="M64 44C54 37 40 36 28 40V92C40 88 54 89 64 96C74 89 88 88 100 92V40C88 36 74 37 64 44Z" /><path d="M64 44V96" /></g><text x="152" y="83" fill="#2C2E3C" font-family="Georgia,serif" font-size="56" letter-spacing="-2">L’Essentiel</text></svg>

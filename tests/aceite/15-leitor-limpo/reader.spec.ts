@@ -403,9 +403,9 @@ test("RN-0004 CA-08 apresenta a interface nos três idiomas", async () => {
     await page.goto(`chrome-extension://${extensionId}/options.html`);
     const language = page.getByRole("combobox", { name: "Idioma" });
     for (const [value, label, saveLabel, actionTitle] of [
-      ["pt-BR", "Preferências", "Salvar preferências", "Abrir Leitor Limpo"],
-      ["en", "Settings", "Save preferences", "Open Leitor Limpo"],
-      ["es", "Preferencias", "Guardar preferencias", "Abrir Leitor Limpo"],
+      ["pt-BR", "Preferências", "Salvar preferências", "Abrir L’Essentiel"],
+      ["en", "Settings", "Save preferences", "Open L’Essentiel"],
+      ["es", "Preferencias", "Guardar preferencias", "Abrir L’Essentiel"],
     ]) {
       await language.selectOption(value);
       await expect(page.getByRole("heading", { name: label })).toBeVisible();
@@ -433,7 +433,7 @@ test("RN-0004 CA-09 carrega como extensão local sem backend", async () => {
   const { context, page, extensionId, remoteRequests } = await openExtension();
   try {
     await page.goto(`chrome-extension://${extensionId}/options.html`);
-    await expect(page.getByRole("heading", { name: "Leitor Limpo" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "L’Essentiel" })).toBeVisible();
     await page.getByRole("button", { name: "Salvar preferências" }).click();
     expect(remoteRequests).toEqual([]);
   } finally {

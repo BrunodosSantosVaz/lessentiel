@@ -50,6 +50,8 @@ const siteInput = document.querySelector<HTMLInputElement>("#site")!;
 const siteList = document.querySelector<HTMLUListElement>("#sites")!;
 const status = document.querySelector<HTMLElement>("#status")!;
 const localToggle = document.querySelector<HTMLInputElement>("#automatic-local")!;
+const manifest = browser.runtime.getManifest();
+document.querySelector("#app-version")!.textContent = manifest.version_name ?? manifest.version;
 const automaticSettings = document.querySelector<HTMLElement>("#automatic-settings")!;
 automaticSettings.hidden = !__READER_ENABLED__;
 const extraTranslations = {
@@ -63,6 +65,18 @@ const extraTranslations = {
     "file-help": "Para HTML e PDF, ative “Permitir acesso a URLs de arquivo” nos detalhes da extensão.",
     "configure-files": "Configurar acesso a arquivos",
     "empty-sites": "Nenhum site adicionado. Você pode abrir outras páginas pelo ícone da extensão.",
+    "about-heading": "Sobre o sistema",
+    "about-tagline": "Menos ruído. Mais leitura.",
+    "about-description":
+      "Um espaço tranquilo para ler páginas web e PDFs locais. Seus textos e preferências são processados neste dispositivo, sem conta ou sincronização.",
+    "version-label": "Versão",
+    "license-label": "Licença",
+    "privacy-heading": "Seus dados",
+    "privacy-value": "Neste dispositivo",
+    "author-label": "Projeto",
+    "docs-link": "Documentação",
+    "issues-link": "Relatar problema",
+    "releases-link": "Notas de versão",
   },
   en: {
     "settings-tagline": "Reading at your pace",
@@ -74,6 +88,18 @@ const extraTranslations = {
     "file-help": "For HTML and PDF, enable “Allow access to file URLs” in extension details.",
     "configure-files": "Configure file access",
     "empty-sites": "No sites added. Open other pages using the extension icon.",
+    "about-heading": "About the system",
+    "about-tagline": "Less noise. More reading.",
+    "about-description":
+      "A quiet space to read web pages and local PDFs. Your text and preferences are processed on this device, without an account or synchronization.",
+    "version-label": "Version",
+    "license-label": "License",
+    "privacy-heading": "Your data",
+    "privacy-value": "On this device",
+    "author-label": "Project",
+    "docs-link": "Documentation",
+    "issues-link": "Report an issue",
+    "releases-link": "Release notes",
   },
   es: {
     "settings-tagline": "Lectura a tu ritmo",
@@ -85,6 +111,18 @@ const extraTranslations = {
     "file-help": "Para HTML y PDF, activa el acceso a URL de archivo en los detalles de la extensión.",
     "configure-files": "Configurar acceso a archivos",
     "empty-sites": "No hay sitios añadidos. Abre otras páginas con el icono de la extensión.",
+    "about-heading": "Acerca del sistema",
+    "about-tagline": "Menos ruido. Más lectura.",
+    "about-description":
+      "Un espacio tranquilo para leer páginas web y PDF locales. Tus textos y preferencias se procesan en este dispositivo, sin cuenta ni sincronización.",
+    "version-label": "Versión",
+    "license-label": "Licencia",
+    "privacy-heading": "Tus datos",
+    "privacy-value": "En este dispositivo",
+    "author-label": "Proyecto",
+    "docs-link": "Documentación",
+    "issues-link": "Informar un problema",
+    "releases-link": "Notas de versión",
   },
 };
 async function refreshFileAccess() {
@@ -119,6 +157,10 @@ const permissions: PermissionCalls = testPermissions ?? browser.permissions;
 function renderLanguage() {
   const t = translations[language.value as keyof typeof translations];
   document.documentElement.lang = language.value;
+  document.title = `L’Essentiel — ${t.heading}`;
+  document
+    .querySelector("#project-links")!
+    .setAttribute("aria-label", language.value === "en" ? "Project links" : language.value === "es" ? "Enlaces del proyecto" : "Links do projeto");
   document.querySelector("#heading")!.textContent = t.heading;
   document.querySelector("#sites-heading")!.textContent = t.sites;
   document.querySelector("#site-help")!.textContent = t.help;

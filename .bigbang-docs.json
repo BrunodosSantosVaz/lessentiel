@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "repositorio": "BrunodosSantosVaz/mla",
+  "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "325cd8d3b0c423778994f5a900d2cadef3ed4e3d",
-    "commit": "cf903dcbbb8347aa663080c6d8c93801565fedec",
+    "base": "cf903dcbbb8347aa663080c6d8c93801565fedec",
+    "commit": "9e287b768df40e593fcf05a96b5c413610695d18",
     "branch": "master",
-    "proposta": "bigbang/proposta-38-leitura-editorial"
+    "proposta": "bigbang/proposta-40-identidade-lessentiel"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -41,7 +41,9 @@
     "docs/design/leitura-local.md": "Leitura-local-e-acabamento",
     "docs/decisoes/ADR-0005-leitura-local.md": "docs-decisoes-ADR-0005-leitura-local",
     "docs/design/leitura-editorial.md": "Leitura-editorial-e-controles",
-    "docs/decisoes/ADR-0006-leitura-editorial.md": "docs-decisoes-ADR-0006-leitura-editorial"
+    "docs/decisoes/ADR-0006-leitura-editorial.md": "docs-decisoes-ADR-0006-leitura-editorial",
+    "docs/design/identidade-lessentiel.md": "Identidade-L-Essentiel",
+    "docs/decisoes/ADR-0007-identidade-lessentiel.md": "docs-decisoes-ADR-0007-identidade-lessentiel"
   },
   "categorias": {
     "produto": {
@@ -79,8 +81,19 @@
     }
   },
   "codigo": {
-    "commit": "bc7cc677bbae49b33ad280f43f6a3a8b4579a49c",
-    "raizes": ["entrypoints/", "flags.toml", "package.json", "prototype/", "public/", "scripts/package-test.mjs", "src/", "wxt.config.ts"],
+    "commit": "257662223520a7b7d79f5f0caef7c0cfec714a32",
+    "raizes": [
+      "entrypoints/",
+      "flags.toml",
+      "package.json",
+      "prototype/",
+      "public/",
+      "scripts/package-test.mjs",
+      "src/",
+      "wxt.config.ts",
+      "assets/brand/",
+      "bigbang.toml"
+    ],
     "excluir": []
   },
   "funcionalidades": [
@@ -90,7 +103,7 @@
       "requisitos": ["RF-0001"],
       "fontes": ["prototype/index.html"],
       "hashes": {
-        "prototype/index.html": "70d64cf2b5432bb7cbea78b56145fc4cd7e46ec84bed15ce721e65cc13dc0253"
+        "prototype/index.html": "9e0dec01487adec3ed49082d7408e74e7eabf36dfecb63ff1fb4aaf0e2f954ee"
       },
       "testes": ["tests/prototype.spec.ts:smoke"]
     },
@@ -99,6 +112,13 @@
       "pagina": "Funcionalidades",
       "requisitos": ["RF-0002"],
       "fontes": [
+        "assets/brand/banner-dark.svg",
+        "assets/brand/banner.svg",
+        "assets/brand/icon-dark.svg",
+        "assets/brand/icon.svg",
+        "assets/brand/logo-dark.svg",
+        "assets/brand/logo.svg",
+        "bigbang.toml",
         "entrypoints/background.ts",
         "entrypoints/options/index.html",
         "entrypoints/options/main.ts",
@@ -122,11 +142,22 @@
         "public/fonts/lexend-latin.woff2",
         "public/fonts/literata-latin-ext.woff2",
         "public/fonts/literata-latin.woff2",
-        "public/icon-128.png",
-        "public/icon-16.png",
-        "public/icon-32.png",
-        "public/icon-48.png",
-        "public/icon.svg",
+        "public/icons/dark/icon-128.png",
+        "public/icons/dark/icon-16.png",
+        "public/icons/dark/icon-19.png",
+        "public/icons/dark/icon-32.png",
+        "public/icons/dark/icon-38.png",
+        "public/icons/dark/icon-48.png",
+        "public/icons/dark/icon-96.png",
+        "public/icons/dark/icon.svg",
+        "public/icons/light/icon-128.png",
+        "public/icons/light/icon-16.png",
+        "public/icons/light/icon-19.png",
+        "public/icons/light/icon-32.png",
+        "public/icons/light/icon-38.png",
+        "public/icons/light/icon-48.png",
+        "public/icons/light/icon-96.png",
+        "public/icons/light/icon.svg",
         "scripts/package-test.mjs",
         "src/platform/assets.d.ts",
         "src/platform/extract-article.ts",
@@ -138,19 +169,27 @@
         "wxt.config.ts"
       ],
       "hashes": {
-        "entrypoints/background.ts": "aa322794b7cc2dd2d89950018ec7d7ae8aa60eb51b3cb6c5be26e36302cb754f",
-        "entrypoints/options/index.html": "25f71a65fa179b44a0c911fc9cb4835db37239a060f87b6bfce240eb003ed35f",
-        "entrypoints/options/main.ts": "bcee1737d54d1e04e0d6923a5f8ac6a2b455b9b9176fe803eb2096460acb5340",
-        "entrypoints/pdf/index.html": "c5d3abf594844cf1300c0886820e26360284a0009ac1038a109189468a900788",
+        "assets/brand/banner-dark.svg": "557bcbc29b03da0b7958d332e5580aacadc6a135494d2f37342916c5a58fd3e7",
+        "assets/brand/banner.svg": "f881e8110c7bc7319326c8732cf314aa694896cdd83aa04a362d81b1f17e2d97",
+        "assets/brand/icon-dark.svg": "9b538c5105fa0811b26831f17777496fe16b74c802c38a4879d39f5487c7a092",
+        "assets/brand/icon.svg": "e857f1c20026aa8fdd2e8f80ab36e08f29c235903332a8681f9a979614f5b15a",
+        "assets/brand/logo-dark.svg": "d2eba3e5b775f510da1efa633be2f8c7a0960495f3ef7da2eb6f921d7a05bd0f",
+        "assets/brand/logo.svg": "c9a9ccfd32902f66355cf369df5790524eda0b95e4e88f1375d702e7066adb70",
+        "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd",
+        "entrypoints/background.ts": "62b9e41bd94427db7c95304a240d4ff1e82dde8673409198a027a0861d6f7966",
+        "entrypoints/options/index.html": "4a4981c4b66bbc14ab3c99ba45911338b6d1d9f0018f70b088d31267ffcf1fc3",
+        "entrypoints/options/main.ts": "bf200dbe494392d969c2dafdad7d906acfdf8f82149fa46d9cebb88563f30243",
+        "entrypoints/pdf/index.html": "d18ee259916012e97d47995f757f3119e690bb4d461f7e8236eadd884b5ec6fd",
         "entrypoints/pdf/main.ts": "b9bf6d163c557cff1e80e0db0c28fd3fc0f48c18dbead255b15da58365316f61",
-        "entrypoints/popup/index.html": "1d2d702643d48ea159fe464aa8293e0f266eb341c5b1f5f0a4924d6b91125774",
-        "entrypoints/popup/main.ts": "4852d8846c204587ae03dd219d16ffe6c3b1012a6e2edb9cb081ecd745bc8eba",
+        "entrypoints/popup/index.html": "49b183edc4c1efaa6887c76d545cd1dedc2084a540a619c1f87f52fe20592717",
+        "entrypoints/popup/main.ts": "c585e76f5f9b366aaa307e4a8d44f6f9fd260973e3117301a1216215e8bdbfe0",
         "entrypoints/reader.content.ts": "5e33f0782873d0c29f7660ad20f60caa3a547a532bc92375ed792041377e3c22",
+        "entrypoints/ui.css": "a657d18ba33b314e1d942017bb69fb8d52bba22e37b0726df53889c16e847e73",
         "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
-        "package.json": "c264d5c7db55c65f4c8d2162260c8548465320d890351b2d7926a1d941d2569c",
-        "public/_locales/en/messages.json": "d700a5263a3e0cc170b2890776501fa2a3dff924044a9cb2a84c22d7c8ba3b18",
-        "public/_locales/es/messages.json": "227ea2149dac8133a993a3cb6111a1e49fe7dc6ceba6c81928a1ea721755afae",
-        "public/_locales/pt_BR/messages.json": "2c8f10fba0d9a9efe9fa3708b8bd50381cd4bad4f0c18e964725547f5f9720de",
+        "package.json": "64a8227704a7948a906f0e4d7855ad9ff0850af248101f3c697d036c9627de67",
+        "public/_locales/en/messages.json": "82954de5a21885a63e2d0f33616a8a34e78b4f1477d12279e159ca7171e7ede8",
+        "public/_locales/es/messages.json": "77159880d37aa1c10468cfee801f5aeb6442be42edd5993f085ed6880a159ee5",
+        "public/_locales/pt_BR/messages.json": "1f1aa0907f466c1a133b5e90d7e5b37505338d29aeb1d0f229aba1e1b89c74e3",
         "public/fonts/Atkinson-Hyperlegible-Next-OFL.txt": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
         "public/fonts/Lexend-OFL.txt": "5da8505887d0fa7fe963445fd58852707fda34adfeb65af25c99d152bab285bd",
         "public/fonts/Literata-OFL.txt": "8742963604cd89dc81437811a850018fc03b2bfad686d7422c8235967c87614e",
@@ -160,21 +199,31 @@
         "public/fonts/lexend-latin.woff2": "b7e7538f59bff1812841d7627f8e49e70fe86438f9f7b397a028c0d05301c874",
         "public/fonts/literata-latin-ext.woff2": "334990a82ce173e5169f5f0946c679f7d8c1ee8608eb29b56f85284802c712c9",
         "public/fonts/literata-latin.woff2": "7478e1920209e51dcc235d151d2056a0a6e3c54b4436f7030d256f231fe09b58",
-        "public/icon-128.png": "4901bd5f98b5eb9ba797ccc7aaec61d43e21b50f0523ef6e83a23afc29236ad5",
-        "public/icon-16.png": "62f37974458896d9b227d396cf76f8e2904edc41a355df5eeb15e08bde4c3e4e",
-        "public/icon-32.png": "093d1e2d1d033f2887be1d4805f9d462670c49071f2f8c965c09ce233f59263f",
-        "public/icon-48.png": "0fbddb62901b95138ad4d3649ccfbf241a6f65d0de85ef77a1abbfe23822bb5b",
-        "public/icon.svg": "0c1c45f9fb3ff56c4857ece09d606daba6a7f9a25fe2aea88175ce036640c03d",
+        "public/icons/dark/icon-128.png": "c9ed60202292bc496a30a7caecf6cb75f658fc97aae988b09309954c5351ec98",
+        "public/icons/dark/icon-16.png": "756636d81853c2148b3efdae4b1414b6710a24aaefa049200efe322cd5313d73",
+        "public/icons/dark/icon-19.png": "8c8424e4dd33e9d3d76ac7aa4ba5cecba28607d3b11ce9f4042afbce403fc20f",
+        "public/icons/dark/icon-32.png": "21a08d57804106559f1f043a34a9ee86609c4e80d4bd120751b3797d482d0508",
+        "public/icons/dark/icon-38.png": "fd5255bfa36bba63a7bbb07fb9b1b0dc13f7f5c3170d2cdb15ca0d03d51340c0",
+        "public/icons/dark/icon-48.png": "9d3914d5c0c829dcf5c2022d3f2702d1dd2e916b49e745013d85eef35f31ebb9",
+        "public/icons/dark/icon-96.png": "4e66e36d044c14ea67fc55e837e6badb5c11331bf5020443813adb05958882b4",
+        "public/icons/dark/icon.svg": "9b538c5105fa0811b26831f17777496fe16b74c802c38a4879d39f5487c7a092",
+        "public/icons/light/icon-128.png": "14588ca68669df9d8e7ff6c5e670470dc329bfa980c8477bf5d3adfbce939fe1",
+        "public/icons/light/icon-16.png": "2a3e91fb05e611438b3fd60f8a8d8c5fed1fd5a49d10a0afa1e6705950b83ca1",
+        "public/icons/light/icon-19.png": "f4dcd20af5b18438e2c735ccdbf54ee3819ad7b4681c7546938f39472b672052",
+        "public/icons/light/icon-32.png": "6f8a26fc89d3ce2581b15173f8b12017408c9d8eb4bf2687be90cd25f4f2bd60",
+        "public/icons/light/icon-38.png": "9e26f492cf632169894991c3f160fdd08468d15f624c5cc4dbeda26c97beddcf",
+        "public/icons/light/icon-48.png": "1fa65d8e37bf9a5dba3391f2d9785203e05d34d560d1d726a9b981a2aac4a29a",
+        "public/icons/light/icon-96.png": "e94701d4621689e641a394aa66ab216a28464395ffd4ac1f581d589d53f02738",
+        "public/icons/light/icon.svg": "e857f1c20026aa8fdd2e8f80ab36e08f29c235903332a8681f9a979614f5b15a",
         "scripts/package-test.mjs": "c750b1c5c9458835c43467965f408b652c13d0122321cf13307f5108db9edf08",
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
         "src/platform/extract-article.ts": "08770f0132cb637f1f4f3cd3934a4765fb9f5782a3f95fff52024d58c36737fe",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
-        "src/platform/reader-panel.ts": "0a4ada25bdfdcac953279ad7dfc713e91538b101f58f65ff4e7964c8384b56f9",
+        "src/platform/reader-fonts.ts": "88989e16aeecd4c169d581ddb4a464e6c32d2d519eecb26ff1eacbfe11059601",
+        "src/platform/reader-panel.ts": "d1dd5337bb17ce7b0ceaa26606239782777ae934e6866317bee7d3ee7c2376f5",
         "src/platform/reader-style.ts": "d39168bf79dae149fbb387ee1dbb465e61a365660747fd41996dc18cf183cdf1",
-        "wxt.config.ts": "1083773621f52b616bbc19ed0d8881dc5805b5adf55b96607dec9f1789e44112",
         "src/platform/reader-toolbar.ts": "3504face87eb94afdbcc343d7ae3cfac457c1cef4107005208dd4666b2ca2196",
-        "entrypoints/ui.css": "c4a8fdabc6f0972017f327589353cdfe0cd072351dde3fed6759f16e8b8d30e9",
-        "src/platform/reader-fonts.ts": "88989e16aeecd4c169d581ddb4a464e6c32d2d519eecb26ff1eacbfe11059601"
+        "wxt.config.ts": "8c302fe2e76038590ef524a1098c10aae1d902e5bae92cbfba69f73ceb5f3a38"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
@@ -192,7 +241,8 @@
         "tests/regression/layout.spec.ts:#32 RN-0002",
         "tests/regression/responsive-toolbar.spec.ts:#34 RN-0002",
         "tests/regression/polished-reader.spec.ts:#36",
-        "tests/regression/editorial-controls.spec.ts:#38"
+        "tests/regression/editorial-controls.spec.ts:#38",
+        "tests/regression/branding.spec.ts:#40"
       ]
     }
   ],

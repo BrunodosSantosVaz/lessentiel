@@ -1,10 +1,18 @@
 {
-  "name": "leitor-limpo",
+  "name": "lessentiel",
   "version": "0.1.0",
-  "description": "Projeto organizado pelo Big Bang. O produto, a stack e as funcionalidades são definidos e documentados na Fundação; este README não declara entregas que ainda não ocorreram.",
+  "description": "O essencial da sua leitura. Extensão local para páginas web e PDFs, sem distrações.",
   "keywords": [],
+  "homepage": "https://github.com/BrunodosSantosVaz/lessentiel/wiki",
+  "bugs": {
+    "url": "https://github.com/BrunodosSantosVaz/lessentiel/issues"
+  },
   "license": "MIT",
-  "author": "",
+  "author": "BrunodosSantosVaz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrunodosSantosVaz/lessentiel.git"
+  },
   "directories": {
     "test": "tests"
   },

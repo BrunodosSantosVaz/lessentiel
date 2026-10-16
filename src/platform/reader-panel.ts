@@ -209,7 +209,7 @@ export async function toggleReader(article: ExtractedArticle, onOpenPdf?: (close
   host.restorePage = restorePage;
   host.dataset.leitorLimpoHost = "true";
   host.style.cssText = "all: initial; display: block;";
-  host.setAttribute("aria-label", "Leitor Limpo");
+  host.setAttribute("aria-label", "L’Essentiel");
   const shadow = host.attachShadow({ mode: "open" });
   const style = document.createElement("style");
   style.textContent = readerStyle;
