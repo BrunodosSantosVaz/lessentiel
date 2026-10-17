@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "efd8b78885ad06b98be9a583076510a1863679e0",
-    "commit": "36cfa7361c224a710b6b608ea09ffd6197a17c09",
+    "base": "36cfa7361c224a710b6b608ea09ffd6197a17c09",
+    "commit": "df0e123fbed7427465fabf1d8b6fb95fdbfc3ec9",
     "branch": "master",
-    "proposta": "bigbang/proposta-52-production-delivered"
+    "proposta": "bigbang/proposta-60-stable-version"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -52,7 +52,8 @@
     "docs/decisoes/ADR-0010-codeql-testes.md": "docs-decisoes-ADR-0010-codeql-testes",
     "docs/padroes/excecoes.md": "Excecoes-de-padroes",
     "docs/plano-original.md": "Plano-original",
-    "docs/decisoes/ADR-0011-janela-publicacao.md": "docs-decisoes-ADR-0011-janela-publicacao"
+    "docs/decisoes/ADR-0011-janela-publicacao.md": "docs-decisoes-ADR-0011-janela-publicacao",
+    "docs/correcao-versao-60.md": "Correcao-versao-60"
   },
   "categorias": {
     "produto": {
@@ -90,7 +91,7 @@
     }
   },
   "codigo": {
-    "commit": "3dfce060e5c3e4e0abddaaa395095a6da3a2862f",
+    "commit": "2fee887cc85a1758401b4cfa42b72ec41dd21b19",
     "raizes": [
       "entrypoints/",
       "flags.toml",
@@ -181,7 +182,8 @@
         "src/platform/reader-panel.ts",
         "src/platform/reader-style.ts",
         "src/platform/reader-toolbar.ts",
-        "wxt.config.ts"
+        "wxt.config.ts",
+        "src/platform/extension-version.unit.test.ts"
       ],
       "hashes": {
         "assets/brand/banner-dark.svg": "557bcbc29b03da0b7958d332e5580aacadc6a135494d2f37342916c5a58fd3e7",
@@ -201,7 +203,7 @@
         "entrypoints/reader.content.ts": "5e33f0782873d0c29f7660ad20f60caa3a547a532bc92375ed792041377e3c22",
         "entrypoints/ui.css": "a657d18ba33b314e1d942017bb69fb8d52bba22e37b0726df53889c16e847e73",
         "flags.toml": "0ad26e65af98b2d666ace6f06c804c108e5e17273aff6539ac088e34e46396bb",
-        "package.json": "64a8227704a7948a906f0e4d7855ad9ff0850af248101f3c697d036c9627de67",
+        "package.json": "63631547c0984aeb69fbd543c639df5df755fd2a5e26e972af581b9fcc170ffc",
         "public/_locales/en/messages.json": "82954de5a21885a63e2d0f33616a8a34e78b4f1477d12279e159ca7171e7ede8",
         "public/_locales/es/messages.json": "77159880d37aa1c10468cfee801f5aeb6442be42edd5993f085ed6880a159ee5",
         "public/_locales/pt_BR/messages.json": "1f1aa0907f466c1a133b5e90d7e5b37505338d29aeb1d0f229aba1e1b89c74e3",
@@ -239,7 +241,8 @@
         "src/platform/reader-panel.ts": "d1dd5337bb17ce7b0ceaa26606239782777ae934e6866317bee7d3ee7c2376f5",
         "src/platform/reader-style.ts": "d39168bf79dae149fbb387ee1dbb465e61a365660747fd41996dc18cf183cdf1",
         "src/platform/reader-toolbar.ts": "3504face87eb94afdbcc343d7ae3cfac457c1cef4107005208dd4666b2ca2196",
-        "wxt.config.ts": "8c302fe2e76038590ef524a1098c10aae1d902e5bae92cbfba69f73ceb5f3a38"
+        "wxt.config.ts": "1d139a8642818677401be137c23374278f47173c2cc0eccf397531796589f695",
+        "src/platform/extension-version.unit.test.ts": "25d797b0ae4a70a389208e90d995814cbf80499d98482dd008f031a6f79c291a"
       },
       "testes": [
         "tests/aceite/15-leitor-limpo/reader.spec.ts:CA-01",
@@ -262,7 +265,8 @@
         "tests/regression/reader.spec.ts:#47",
         "tests/regression/polished-reader.spec.ts:#47",
         "tests/regression/pdf-text.spec.ts:#47",
-        "tests/aceite/47-pdf-manual/reader.spec.ts:CA-10"
+        "tests/aceite/47-pdf-manual/reader.spec.ts:CA-10",
+        "src/platform/extension-version.unit.test.ts:#60 RN-0004"
       ]
     },
     {
