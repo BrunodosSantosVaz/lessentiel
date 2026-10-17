@@ -4,7 +4,7 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "b1e6d4641b685fc4d7ec2a2f62458be957f522a9",
-    "commit": "ced3980cd5d24fb3a7103961537494923b5428c9",
+    "commit": "939de01f6bcfd596c14a6ad1ab6831f7265bf138",
     "branch": "master",
     "proposta": "bigbang/proposta-49-bootstrap-production"
   },
@@ -43,7 +43,8 @@
     "docs/seguranca/auditorias/2026-10-17.md": "Auditoria-2026-10-17",
     "docs/decisoes/ADR-0009-bootstrap-producao.md": "docs-decisoes-ADR-0009-bootstrap-producao",
     "docs/decisoes/ADR-0010-codeql-testes.md": "docs-decisoes-ADR-0010-codeql-testes",
-    "docs/padroes/excecoes.md": "Excecoes-de-padroes"
+    "docs/padroes/excecoes.md": "Excecoes-de-padroes",
+    "docs/plano-original.md": "Plano-original"
   },
   "categorias": {
     "produto": {
@@ -81,23 +82,15 @@
     }
   },
   "codigo": {
-    "commit": "b1a5e027c4406e36ac242a6bc16c41a0070ee048",
-    "raizes": [
-      "bigbang.toml",
-      "autonomy.toml",
-      ".bigbang-producao.json",
-      ".github/",
-      "AGENTS.md"
-    ],
+    "commit": "b27822bff53c5fe2143e07dd54b4bb8b5d35001f",
+    "raizes": ["bigbang.toml", "autonomy.toml", ".bigbang-producao.json", ".github/", "AGENTS.md"],
     "excluir": []
   },
   "funcionalidades": [
     {
       "id": "RF-0003",
       "pagina": "Bootstrap-producao",
-      "requisitos": [
-        "RF-0003"
-      ],
+      "requisitos": ["RF-0003"],
       "fontes": [
         ".bigbang-producao.json",
         ".github/ISSUE_TEMPLATE/bb-bug.yml",
@@ -127,7 +120,7 @@
         "bigbang.toml"
       ],
       "hashes": {
-        ".bigbang-producao.json": "d5d2c9494d430e2521ae976518a975a9f7a29f202e016b380fcf4876e8925d23",
+        ".bigbang-producao.json": "605686aee8a60889db8ae3b0e627362bab228d8b9e44f5cf0ffa830a97d2bb99",
         ".github/ISSUE_TEMPLATE/bb-bug.yml": "10f378c7fb0a98ae3856c789e4b5d41c3b6c3872fa887826c273a34547717328",
         ".github/ISSUE_TEMPLATE/bb-docs.yml": "11809cafa787fc35c95d15b7e95ff9058098bb91e7b8b85df250e27dbfd82ae6",
         ".github/ISSUE_TEMPLATE/bb-epic.yml": "2651a17628a8c6ebb8a4e98b8a9f6e14cff0796d25563638ce87383035bc27aa",
