@@ -140,7 +140,7 @@ test("#36 RN-0004 popup e preferências têm fluxo único e estado de arquivos l
     await expect(popup.getByRole("link", { name: "Abrir PDF local", exact: true })).toHaveCount(0);
     await expect(popup.getByRole("link", { name: "Preferências", exact: true })).toBeVisible();
     await popup.goto(`chrome-extension://${id}/options.html`);
-    await expect(popup.getByRole("checkbox", { name: "Abrir arquivos locais automaticamente", exact: true })).toBeVisible();
+    await expect(popup.getByRole("checkbox", { name: "Abrir HTML local automaticamente", exact: true })).toBeVisible();
     await expect(popup.locator("#file-access-status")).not.toHaveText("");
     await popup.setViewportSize({ width: 360, height: 900 });
     expect(await popup.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -175,13 +175,96 @@ test("#36 RN-0001 HTML local entra no leitor sem ativação manual", async () =>
     await context.close();
   }
 });
-test("#36 RN-0003 PDF da aba é detectado e retorna ao original sem ciclo", async () => {
-  const { context, page } = await openLocal("tests/fixtures/sample.pdf");
+test("#47 RN-0006 PDF abre no visualizador nativo e alterna manualmente sem ciclo", async () => {
+  const { context, page, worker } = await openLocal("tests/fixtures/sample.pdf");
   try {
+    await page.waitForLoadState("networkidle");
+    await expect(page).toHaveURL(/file:.*sample\.pdf$/);
+    await expect(page.locator("[data-leitor-limpo-host]")).toHaveCount(0);
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+    await expect(page).toHaveURL(/file:.*sample\.pdf$/);
+    const id = new URL(worker.url()).host;
+    const controls = await context.newPage();
+    await controls.goto(`chrome-extension://${id}/popup.html`);
+    const toggle = async () => {
+      await page.bringToFront();
+      return controls.evaluate(() => (globalThis as any).chrome.runtime.sendMessage({ type: "ACTIVATE_READER" }));
+    };
+    expect(await toggle()).toBe(true);
+    await expect(page.getByRole("article")).toContainText("PDF de teste");
+    const readerUrl = page.url();
+    for (const url of ["file:///different.pdf", "https://reading.test/private.pdf"]) {
+      expect(await page.evaluate((url) => (globalThis as any).chrome.runtime.sendMessage({ type: "RETURN_TO_PDF", url }), url)).toBe(false);
+      await expect(page).toHaveURL(readerUrl);
+    }
+    const source = new URL(readerUrl).searchParams.get("source")!;
+    expect(await controls.evaluate((url) => (globalThis as any).chrome.runtime.sendMessage({ type: "RETURN_TO_PDF", url }), source)).toBe(false);
+    await expect(page).toHaveURL(readerUrl);
+    expect(await toggle()).toBe(true);
+    await page.waitForLoadState("networkidle");
+    await expect(page).toHaveURL(/file:.*sample\.pdf$/);
+    expect(await toggle()).toBe(true);
     await expect(page.getByRole("article")).toContainText("PDF de teste");
     await page.getByRole("button", { name: "Fechar", exact: true }).click();
     await expect(page).toHaveURL(/file:.*sample\.pdf$/);
     await expect(page.locator("[data-leitor-limpo-host]")).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
+});
+
+function formattedPdf(): Buffer {
+  const line = (x: number, y: number, text: string, size = 12) => `BT /F1 ${size} Tf 1 0 0 1 ${x} ${y} Tm (${text}) Tj ET`;
+  const stream = [
+    line(170, 750, "Leitura em duas colunas", 18),
+    line(50, 700, "Inicio da coluna esquerda"),
+    line(330, 700, "Inicio da coluna direita"),
+    line(50, 684, "continua no mesmo paragrafo."),
+    line(330, 684, "continua sem misturar colunas."),
+    line(50, 650, "Segundo paragrafo da esquerda"),
+    line(330, 650, "Segundo paragrafo da direita"),
+    line(50, 634, "encerra o primeiro bloco."),
+    line(330, 634, "encerra o segundo bloco."),
+  ].join("\n");
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}\nendstream`,
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(Buffer.byteLength(pdf));
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xref = Buffer.byteLength(pdf);
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (const offset of offsets.slice(1)) pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return Buffer.from(pdf);
+}
+
+test("#47 RN-0003 PDF recompõe linhas, parágrafos e ordem das duas colunas", async () => {
+  const { context, page, worker } = await open();
+  try {
+    const id = new URL(worker.url()).host;
+    await page.goto(`chrome-extension://${id}/pdf.html`);
+    const chooser = page.waitForEvent("filechooser");
+    await page.getByRole("button", { name: "Abrir PDF local", exact: true }).click();
+    await (await chooser).setFiles({ name: "colunas.pdf", mimeType: "application/pdf", buffer: formattedPdf() });
+    const reader = page.getByRole("article");
+    await expect(reader.locator("p")).toHaveText([
+      "Leitura em duas colunas",
+      "Inicio da coluna esquerda continua no mesmo paragrafo.",
+      "Segundo paragrafo da esquerda encerra o primeiro bloco.",
+      "Inicio da coluna direita continua sem misturar colunas.",
+      "Segundo paragrafo da direita encerra o segundo bloco.",
+    ]);
+    await expect(reader).toHaveCSS("column-count", "1");
+    await expect(reader.locator("p").nth(1)).toHaveCSS("text-indent", "0px");
   } finally {
     await context.close();
   }

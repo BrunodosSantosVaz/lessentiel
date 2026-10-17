@@ -2,6 +2,7 @@ import * as pdfjs from "pdfjs-dist";
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { browser } from "wxt/browser";
 import { toggleReader } from "../../src/platform/reader-panel";
+import { pdfParagraphs } from "../../src/platform/pdf-text";
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 const picker = document.querySelector<HTMLInputElement>("#pdf-file")!;
@@ -83,12 +84,7 @@ async function readPdf(data: ArrayBuffer, title: string, automatic = false) {
     for (let number = 1; number <= document.numPages; number += 1) {
       const page = await document.getPage(number);
       const content = await page.getTextContent();
-      pages.push(
-        content.items
-          .map((item) => ("str" in item ? item.str : ""))
-          .join(" ")
-          .trim(),
-      );
+      pages.push(...pdfParagraphs(content, page.getViewport({ scale: 1 })));
       page.cleanup();
     }
     const text = pages.filter(Boolean).join("\n\n");

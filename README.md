@@ -5,13 +5,13 @@
 
 <div align="center">
 
-[![CI](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml/badge.svg?branch=develop)](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml)
+[![CI](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml/badge.svg?branch=main)](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml)
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-2C2E3C)](LICENSE)
-[![Homologação](https://img.shields.io/badge/pr%C3%A9via-0.1.0--rc.1-2C2E3C)](https://github.com/BrunodosSantosVaz/lessentiel/releases/tag/v0.1.0-rc.1)
+[![Versões](https://img.shields.io/github/v/release/BrunodosSantosVaz/lessentiel?include_prereleases&color=2C2E3C)](https://github.com/BrunodosSantosVaz/lessentiel/releases)
 
 **Uma extensão para transformar páginas web e PDFs locais em uma leitura tranquila.**
 
-[Baixar a prévia](https://github.com/BrunodosSantosVaz/lessentiel/releases/tag/v0.1.0-rc.1) · [Como instalar](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Uso-e-instalacao) · [Documentação](https://github.com/BrunodosSantosVaz/lessentiel/wiki) · [Conversar sobre o projeto](https://github.com/BrunodosSantosVaz/lessentiel/discussions)
+[Baixar o L’Essentiel](https://github.com/BrunodosSantosVaz/lessentiel/releases) · [Como instalar](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Uso-e-instalacao) · [Documentação](https://github.com/BrunodosSantosVaz/lessentiel/wiki) · [Conversar sobre o projeto](https://github.com/BrunodosSantosVaz/lessentiel/discussions)
 
 </div>
 
@@ -21,11 +21,17 @@
 - **Mantenha o contexto.** Índice hierárquico, citações, listas, tabelas, código e imagens editoriais opcionais.
 - **Fique no seu dispositivo.** Processamento local de texto e preferências, sem conta ou sincronização.
 
-## Experimente a primeira prévia
+## Instale no seu navegador
 
-A versão **0.1.0-rc.1** é uma candidata para homologação em navegadores Chromium, como Edge e Chrome. Instalação manual, acesso a arquivos, PDFs compatíveis e limitações estão no [guia de uso](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Uso-e-instalacao). A homologação no navegador do dono continua pendente.
+**Versão estável: [0.1.0](https://github.com/BrunodosSantosVaz/lessentiel/releases/tag/v0.1.0)** · [Baixar ZIP](https://github.com/BrunodosSantosVaz/lessentiel/releases/download/v0.1.0/lessentiel-v0.1.0-universal.zip)
+
+O L’Essentiel funciona em navegadores Chromium, como Edge e Chrome. Baixe o ZIP da versão desejada em [Releases](https://github.com/BrunodosSantosVaz/lessentiel/releases); as prévias estão identificadas como homologação. Instalação manual, acesso a arquivos, PDFs compatíveis e limitações estão no [guia de uso](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Uso-e-instalacao). PDFs locais abrem primeiro no visualizador do navegador: ative e desative o leitor manualmente. O texto é recomposto em parágrafos e uma coluna.
 
 Encontrou um problema? [Abra uma issue](https://github.com/BrunodosSantosVaz/lessentiel/issues). Acompanhe o [quadro público](https://github.com/users/BrunodosSantosVaz/projects/33) e o [histórico de versões](https://github.com/BrunodosSantosVaz/lessentiel/releases).
+
+## Compilação
+
+A extensão instalada não precisa de variáveis de ambiente nem de chaves. Os perfis de compilação usam `MLA_FEATURE_READER` e `MLA_TEST_MODE`; a candidata usa `BB_RC`. Consulte a [operação](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Operacao) para comandos, permissões e verificação dos pacotes.
 
 ---
 

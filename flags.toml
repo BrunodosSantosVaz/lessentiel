@@ -8,4 +8,4 @@ expira_em = 2026-11-14
 
 [flag.estado]
 staging = true
-producao = false
+producao = true

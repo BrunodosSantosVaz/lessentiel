@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "9e287b768df40e593fcf05a96b5c413610695d18",
-    "commit": "86815354a1ada560d21e9b05370cabf51a3aa27d",
+    "base": "efd8b78885ad06b98be9a583076510a1863679e0",
+    "commit": "36cfa7361c224a710b6b608ea09ffd6197a17c09",
     "branch": "master",
-    "proposta": "bigbang/proposta-42-release-lessentiel"
+    "proposta": "bigbang/proposta-52-production-delivered"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -43,7 +43,16 @@
     "docs/design/leitura-editorial.md": "Leitura-editorial-e-controles",
     "docs/decisoes/ADR-0006-leitura-editorial.md": "docs-decisoes-ADR-0006-leitura-editorial",
     "docs/design/identidade-lessentiel.md": "Identidade-L-Essentiel",
-    "docs/decisoes/ADR-0007-identidade-lessentiel.md": "docs-decisoes-ADR-0007-identidade-lessentiel"
+    "docs/decisoes/ADR-0007-identidade-lessentiel.md": "docs-decisoes-ADR-0007-identidade-lessentiel",
+    "docs/negocio/regras/RN-0006-pdf-manual.md": "RN-0006-PDF-manual",
+    "docs/decisoes/ADR-0008-pdf-manual.md": "docs-decisoes-ADR-0008-pdf-manual",
+    "docs/operacao/bootstrap-producao.md": "Bootstrap-producao",
+    "docs/seguranca/auditorias/2026-10-17.md": "Auditoria-2026-10-17",
+    "docs/decisoes/ADR-0009-bootstrap-producao.md": "docs-decisoes-ADR-0009-bootstrap-producao",
+    "docs/decisoes/ADR-0010-codeql-testes.md": "docs-decisoes-ADR-0010-codeql-testes",
+    "docs/padroes/excecoes.md": "Excecoes-de-padroes",
+    "docs/plano-original.md": "Plano-original",
+    "docs/decisoes/ADR-0011-janela-publicacao.md": "docs-decisoes-ADR-0011-janela-publicacao"
   },
   "categorias": {
     "produto": {
@@ -81,7 +90,7 @@
     }
   },
   "codigo": {
-    "commit": "257662223520a7b7d79f5f0caef7c0cfec714a32",
+    "commit": "3dfce060e5c3e4e0abddaaa395095a6da3a2862f",
     "raizes": [
       "entrypoints/",
       "flags.toml",
@@ -92,7 +101,12 @@
       "src/",
       "wxt.config.ts",
       "assets/brand/",
-      "bigbang.toml"
+      "bigbang.toml",
+      "autonomy.toml",
+      ".bigbang-producao.json",
+      ".github/",
+      "AGENTS.md",
+      "docs/design/icone.svg"
     ],
     "excluir": []
   },
@@ -162,6 +176,7 @@
         "src/platform/assets.d.ts",
         "src/platform/extract-article.ts",
         "src/platform/feature-flag.d.ts",
+        "src/platform/pdf-text.ts",
         "src/platform/reader-fonts.ts",
         "src/platform/reader-panel.ts",
         "src/platform/reader-style.ts",
@@ -176,16 +191,16 @@
         "assets/brand/logo-dark.svg": "d2eba3e5b775f510da1efa633be2f8c7a0960495f3ef7da2eb6f921d7a05bd0f",
         "assets/brand/logo.svg": "c9a9ccfd32902f66355cf369df5790524eda0b95e4e88f1375d702e7066adb70",
         "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd",
-        "entrypoints/background.ts": "62b9e41bd94427db7c95304a240d4ff1e82dde8673409198a027a0861d6f7966",
-        "entrypoints/options/index.html": "4a4981c4b66bbc14ab3c99ba45911338b6d1d9f0018f70b088d31267ffcf1fc3",
-        "entrypoints/options/main.ts": "bf200dbe494392d969c2dafdad7d906acfdf8f82149fa46d9cebb88563f30243",
+        "entrypoints/background.ts": "d923508d59d6d03c942169e8c3753d7f76cb1fa633e778145679dde8461f9b96",
+        "entrypoints/options/index.html": "59b19877e45b674378360ed88e89bc2395eb64781f511fc45c801dee552db86a",
+        "entrypoints/options/main.ts": "5f71f739d6f643ad32342b59f1d4918a37e485eb871f01c90f844815a2f7c4c5",
         "entrypoints/pdf/index.html": "d18ee259916012e97d47995f757f3119e690bb4d461f7e8236eadd884b5ec6fd",
-        "entrypoints/pdf/main.ts": "b9bf6d163c557cff1e80e0db0c28fd3fc0f48c18dbead255b15da58365316f61",
+        "entrypoints/pdf/main.ts": "97be10f4914040965e80c166cc060cf8cd2cda58da9ca9997619b2215bfaf2c0",
         "entrypoints/popup/index.html": "49b183edc4c1efaa6887c76d545cd1dedc2084a540a619c1f87f52fe20592717",
         "entrypoints/popup/main.ts": "c585e76f5f9b366aaa307e4a8d44f6f9fd260973e3117301a1216215e8bdbfe0",
         "entrypoints/reader.content.ts": "5e33f0782873d0c29f7660ad20f60caa3a547a532bc92375ed792041377e3c22",
         "entrypoints/ui.css": "a657d18ba33b314e1d942017bb69fb8d52bba22e37b0726df53889c16e847e73",
-        "flags.toml": "9f6e89ee4209e43e095bcc5a41f66fb6dd981d5b57d373baaa6db3cc1224d3d6",
+        "flags.toml": "0ad26e65af98b2d666ace6f06c804c108e5e17273aff6539ac088e34e46396bb",
         "package.json": "64a8227704a7948a906f0e4d7855ad9ff0850af248101f3c697d036c9627de67",
         "public/_locales/en/messages.json": "82954de5a21885a63e2d0f33616a8a34e78b4f1477d12279e159ca7171e7ede8",
         "public/_locales/es/messages.json": "77159880d37aa1c10468cfee801f5aeb6442be42edd5993f085ed6880a159ee5",
@@ -217,8 +232,9 @@
         "public/icons/light/icon.svg": "e857f1c20026aa8fdd2e8f80ab36e08f29c235903332a8681f9a979614f5b15a",
         "scripts/package-test.mjs": "c750b1c5c9458835c43467965f408b652c13d0122321cf13307f5108db9edf08",
         "src/platform/assets.d.ts": "4672754b49f4f07b0db1a9c4c9b790d055c2cc4da2f9607fb358735fd5253854",
-        "src/platform/extract-article.ts": "08770f0132cb637f1f4f3cd3934a4765fb9f5782a3f95fff52024d58c36737fe",
+        "src/platform/extract-article.ts": "47206d2a17c80af6d107b01d2f3b0de1b71d156aa119f0c8ac1ef15ab9e7a682",
         "src/platform/feature-flag.d.ts": "a86f45cad5a71a7f54a5ef2a9ea7b4223a90b4cbdd3415ae9d69831382909f0b",
+        "src/platform/pdf-text.ts": "0959b3807242fbd38868321974a6a5bea55dd623b09d9c3c77cd067dd5640378",
         "src/platform/reader-fonts.ts": "88989e16aeecd4c169d581ddb4a464e6c32d2d519eecb26ff1eacbfe11059601",
         "src/platform/reader-panel.ts": "d1dd5337bb17ce7b0ceaa26606239782777ae934e6866317bee7d3ee7c2376f5",
         "src/platform/reader-style.ts": "d39168bf79dae149fbb387ee1dbb465e61a365660747fd41996dc18cf183cdf1",
@@ -242,16 +258,95 @@
         "tests/regression/responsive-toolbar.spec.ts:#34 RN-0002",
         "tests/regression/polished-reader.spec.ts:#36",
         "tests/regression/editorial-controls.spec.ts:#38",
-        "tests/regression/branding.spec.ts:#40"
+        "tests/regression/branding.spec.ts:#40",
+        "tests/regression/reader.spec.ts:#47",
+        "tests/regression/polished-reader.spec.ts:#47",
+        "tests/regression/pdf-text.spec.ts:#47",
+        "tests/aceite/47-pdf-manual/reader.spec.ts:CA-10"
+      ]
+    },
+    {
+      "id": "RF-0003",
+      "pagina": "Bootstrap-producao",
+      "requisitos": ["RF-0003"],
+      "fontes": [
+        ".bigbang-producao.json",
+        ".github/ISSUE_TEMPLATE/bb-bug.yml",
+        ".github/ISSUE_TEMPLATE/bb-docs.yml",
+        ".github/ISSUE_TEMPLATE/bb-epic.yml",
+        ".github/ISSUE_TEMPLATE/bb-foundation.yml",
+        ".github/ISSUE_TEMPLATE/bb-task.yml",
+        ".github/ISSUE_TEMPLATE/bb-test.yml",
+        ".github/ISSUE_TEMPLATE/config.yml",
+        ".github/dependabot.yml",
+        ".github/pull_request_template.md",
+        ".github/workflows/bb-board-report.yml",
+        ".github/workflows/bb-candidate.yml",
+        ".github/workflows/bb-ci.yml",
+        ".github/workflows/bb-cleanup.yml",
+        ".github/workflows/bb-codeql.yml",
+        ".github/workflows/bb-controller.yml",
+        ".github/workflows/bb-create-branches.yml",
+        ".github/workflows/bb-cut-release.yml",
+        ".github/workflows/bb-merge-pr.yml",
+        ".github/workflows/bb-publish-maintenance.yml",
+        ".github/workflows/bb-publish.yml",
+        ".github/workflows/bb-qa-reject.yml",
+        ".github/workflows/bb-start-sprint.yml",
+        "AGENTS.md",
+        "autonomy.toml",
+        "bigbang.toml",
+        "docs/design/icone.svg"
+      ],
+      "hashes": {
+        ".bigbang-producao.json": "605686aee8a60889db8ae3b0e627362bab228d8b9e44f5cf0ffa830a97d2bb99",
+        ".github/ISSUE_TEMPLATE/bb-bug.yml": "10f378c7fb0a98ae3856c789e4b5d41c3b6c3872fa887826c273a34547717328",
+        ".github/ISSUE_TEMPLATE/bb-docs.yml": "11809cafa787fc35c95d15b7e95ff9058098bb91e7b8b85df250e27dbfd82ae6",
+        ".github/ISSUE_TEMPLATE/bb-epic.yml": "2651a17628a8c6ebb8a4e98b8a9f6e14cff0796d25563638ce87383035bc27aa",
+        ".github/ISSUE_TEMPLATE/bb-foundation.yml": "7c4e829921076a445ceb86972ebe39422a64548278a1577907368f34f258d8fc",
+        ".github/ISSUE_TEMPLATE/bb-task.yml": "ec7cc1d14b2307d9a931d677e50f038cbc080b95ccddc011808c8ad1a04418d1",
+        ".github/ISSUE_TEMPLATE/bb-test.yml": "7ff98cddf9140bbce4eb98856ecfc8230702d5d83e04a6c37ab638e57ca24082",
+        ".github/ISSUE_TEMPLATE/config.yml": "c10ca45f156723831c0adb4206f9822b852be5f7b4dcbb5b6021c45c4c21553a",
+        ".github/dependabot.yml": "daae3b6d4abc4a97d4596485f551795cd44f135b36bfdababc27b68a6249824c",
+        ".github/pull_request_template.md": "6d10aa564738a4aff9a042bcf09f39c41f144377b9d45663a4eddaf19faa3751",
+        ".github/workflows/bb-board-report.yml": "e2d58b3829024fa9472a39353c26016bd324329f0b0a13ad16f8fe276631e132",
+        ".github/workflows/bb-candidate.yml": "ad562bde58034b3ceb2d4c361abc892e8110b5f6fe66052a92a945200ea22c54",
+        ".github/workflows/bb-ci.yml": "8a1ed785a3f317edbb48432cc6bba6c5e7aacac7a6958a84ea8c4dcde3f62820",
+        ".github/workflows/bb-cleanup.yml": "a74ac2452afdba5c8f044fb3a76c571b25bad33a6c024610aa0b95676af24987",
+        ".github/workflows/bb-codeql.yml": "c7c689ccff98294e9c4fde13aa2227b03877f90633a3ac178942586189c17df9",
+        ".github/workflows/bb-controller.yml": "0eea8ba38293bfedc9363abf13ff0196f4d09e21c4ed8b3c212731e009576270",
+        ".github/workflows/bb-create-branches.yml": "b37563ab61b0654e0608812f374cf5fac223528552f2a030eee271a69170bed7",
+        ".github/workflows/bb-cut-release.yml": "30adb31fbf3b480227aecb7320cde56c8150102f8d77547718cc55860e86a0a6",
+        ".github/workflows/bb-merge-pr.yml": "28a83d1082872495671296c8bd6c6ac5e78b6c7ce3f9277069fc31f0b77a37ac",
+        ".github/workflows/bb-publish-maintenance.yml": "dbe0007b42b780a1e917b7d240516644a407f2ca8dd23dc25fe511a7295bf344",
+        ".github/workflows/bb-publish.yml": "483c6f5e789563b872d976990cf762d1f42db79701e970c9051eb3e728ec4dfa",
+        ".github/workflows/bb-qa-reject.yml": "680da094c1b15734cc4c3b3b8bad2cc11c794ef1eefe1b0b49a0815db042cca1",
+        ".github/workflows/bb-start-sprint.yml": "0f70b8243956d46d8530779cf537c1f82f438dafb7d5ea65b61c92800a0fbfc8",
+        "AGENTS.md": "e85991e87216598d6847cd7ce92377835e70bc855b310b5dedea502c992fbbc7",
+        "autonomy.toml": "1454c353b576935c440408d76365ab1b636c7341e70fd1068881d70c2c41318c",
+        "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd",
+        "docs/design/icone.svg": "e857f1c20026aa8fdd2e8f80ab36e08f29c235903332a8681f9a979614f5b15a"
+      },
+      "testes": [
+        "tests/operacao/bootstrap.test.mjs:repository matches the canonical Git origin",
+        "tests/operacao/bootstrap.test.mjs:generated controls match the configuration"
       ]
     }
   ],
-  "arquivos_funcionais": [],
+  "arquivos_funcionais": [
+    {
+      "caminho": "docs/design/icone.svg",
+      "motivo": "Cópia funcional do SVG da marca aprovada, caminho canônico obrigatório DOC-17 após a primeira produção; conteúdo idêntico a assets/brand/icon.svg."
+    }
+  ],
   "requisitos": {
     "RF-0001": {
       "pagina": "Funcionalidades"
     },
     "RF-0002": {
+      "pagina": "Requisitos"
+    },
+    "RF-0003": {
       "pagina": "Requisitos"
     }
   }

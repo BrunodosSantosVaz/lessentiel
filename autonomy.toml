@@ -7,5 +7,5 @@ flags = "owner"
 wip = 2
 attempts = 3
 max_cost_usd = 20
-publish_window = "12:00-21:00"
+publish_window = "03:00-21:00"
 expires = "2027-01-15"
