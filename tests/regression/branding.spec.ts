@@ -47,7 +47,8 @@ test("#40 RN-0004 informações e links acessíveis sem alterar preferências de
     await page.goto(`${base}/options.html`);
     const about = page.getByRole("region", { name: "Sobre o sistema", exact: true });
     await expect(about).toBeVisible();
-    await expect(about.locator("#app-version")).toContainText("0.1.0");
+    const version = await worker.evaluate(() => (globalThis as any).chrome.runtime.getManifest().version);
+    await expect(about.locator("#app-version")).toHaveText(version);
     await expect(about).toContainText("MIT");
     await expect(about.getByRole("link", { name: "GitHub", exact: true })).toHaveAttribute("href", "https://github.com/BrunodosSantosVaz/lessentiel");
     await expect(about.getByRole("link", { name: "Documentação", exact: true })).toHaveAttribute(
