@@ -1,14 +1,17 @@
 import { strict as assert } from "node:assert";
-import { execFileSync } from "node:child_process";
+import { execFile } from "node:child_process";
 import { test } from "node:test";
+import { promisify } from "node:util";
 
-const output = (command, args) => execFileSync(command, args, { encoding: "utf8" }).trim();
+const execute = promisify(execFile);
+const output = async (command, args) =>
+  (await execute(command, args, { encoding: "utf8" })).stdout.trim();
 
-test("repository matches the canonical Git origin", () => {
-  const origin = output("git", ["remote", "get-url", "origin"]);
+test("repository matches the canonical Git origin", async () => {
+  const origin = await output("git", ["remote", "get-url", "origin"]);
   const repository = origin.match(/github\.com[:/]([^/]+\/[^/]+?)(?:\.git)?$/)?.[1];
   assert.ok(repository, "Expected a GitHub origin");
-  const configured = output("python3", [
+  const configured = await output("python3", [
     ".bigbang/bin/bb.py",
     "config",
     "get",
@@ -21,6 +24,6 @@ test("repository matches the canonical Git origin", () => {
   );
 });
 
-test("generated controls match the configuration", () => {
-  output("python3", [".bigbang/bin/bb.py", "verify"]);
+test("generated controls match the configuration", async () => {
+  await output("python3", [".bigbang/bin/bb.py", "verify"]);
 });
