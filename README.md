@@ -29,7 +29,7 @@ Encontrou um problema? [Abra uma issue](https://github.com/BrunodosSantosVaz/les
 
 ## Compilação
 
-A extensão instalada não precisa de variáveis de ambiente nem de chaves. Os perfis de compilação usam `MLA_FEATURE_READER` e `MLA_TEST_MODE`; a candidata usa `BB_CANDIDATE_TAG`. Consulte a [operação](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Operacao) para comandos, permissões e verificação dos pacotes.
+A extensão instalada não precisa de variáveis de ambiente nem de chaves. Os perfis de compilação usam `MLA_FEATURE_READER` e `MLA_TEST_MODE`; a candidata usa `BB_RC`. Consulte a [operação](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Operacao) para comandos, permissões e verificação dos pacotes.
 
 ---
 
