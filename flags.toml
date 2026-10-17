@@ -1,0 +1,11 @@
+[[flag]]
+nome = "leitor-avancado"
+dono = "BrunodosSantosVaz"
+motivo = "Épico #15 aguardando homologação; liberada em staging para pacote de teste local"
+epico = "#15"
+criada_em = 2026-10-15
+expira_em = 2026-11-14
+
+[flag.estado]
+staging = true
+producao = true
