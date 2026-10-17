@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "53f3d2569c52f5dae005b5680a55c924ad71a2e5",
-    "commit": "efd8b78885ad06b98be9a583076510a1863679e0",
+    "base": "efd8b78885ad06b98be9a583076510a1863679e0",
+    "commit": "36cfa7361c224a710b6b608ea09ffd6197a17c09",
     "branch": "master",
-    "proposta": "bigbang/proposta-52-publish-window"
+    "proposta": "bigbang/proposta-52-production-delivered"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -90,7 +90,7 @@
     }
   },
   "codigo": {
-    "commit": "37259f4e954f36f301a0bb1a44d0400bf524bd09",
+    "commit": "3dfce060e5c3e4e0abddaaa395095a6da3a2862f",
     "raizes": [
       "entrypoints/",
       "flags.toml",
@@ -105,7 +105,8 @@
       "autonomy.toml",
       ".bigbang-producao.json",
       ".github/",
-      "AGENTS.md"
+      "AGENTS.md",
+      "docs/design/icone.svg"
     ],
     "excluir": []
   },
@@ -294,7 +295,8 @@
         ".github/workflows/bb-start-sprint.yml",
         "AGENTS.md",
         "autonomy.toml",
-        "bigbang.toml"
+        "bigbang.toml",
+        "docs/design/icone.svg"
       ],
       "hashes": {
         ".bigbang-producao.json": "605686aee8a60889db8ae3b0e627362bab228d8b9e44f5cf0ffa830a97d2bb99",
@@ -322,7 +324,8 @@
         ".github/workflows/bb-start-sprint.yml": "0f70b8243956d46d8530779cf537c1f82f438dafb7d5ea65b61c92800a0fbfc8",
         "AGENTS.md": "e85991e87216598d6847cd7ce92377835e70bc855b310b5dedea502c992fbbc7",
         "autonomy.toml": "1454c353b576935c440408d76365ab1b636c7341e70fd1068881d70c2c41318c",
-        "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd"
+        "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd",
+        "docs/design/icone.svg": "e857f1c20026aa8fdd2e8f80ab36e08f29c235903332a8681f9a979614f5b15a"
       },
       "testes": [
         "tests/operacao/bootstrap.test.mjs:repository matches the canonical Git origin",
@@ -330,7 +333,12 @@
       ]
     }
   ],
-  "arquivos_funcionais": [],
+  "arquivos_funcionais": [
+    {
+      "caminho": "docs/design/icone.svg",
+      "motivo": "Cópia funcional do SVG da marca aprovada, caminho canônico obrigatório DOC-17 após a primeira produção; conteúdo idêntico a assets/brand/icon.svg."
+    }
+  ],
   "requisitos": {
     "RF-0001": {
       "pagina": "Funcionalidades"

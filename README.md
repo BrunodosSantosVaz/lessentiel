@@ -23,6 +23,8 @@
 
 ## Instale no seu navegador
 
+**Versão estável: [0.1.0](https://github.com/BrunodosSantosVaz/lessentiel/releases/tag/v0.1.0)** · [Baixar ZIP](https://github.com/BrunodosSantosVaz/lessentiel/releases/download/v0.1.0/lessentiel-v0.1.0-universal.zip)
+
 O L’Essentiel funciona em navegadores Chromium, como Edge e Chrome. Baixe o ZIP da versão desejada em [Releases](https://github.com/BrunodosSantosVaz/lessentiel/releases); as prévias estão identificadas como homologação. Instalação manual, acesso a arquivos, PDFs compatíveis e limitações estão no [guia de uso](https://github.com/BrunodosSantosVaz/lessentiel/wiki/Uso-e-instalacao). PDFs locais abrem primeiro no visualizador do navegador: ative e desative o leitor manualmente. O texto é recomposto em parágrafos e uma coluna.
 
 Encontrou um problema? [Abra uma issue](https://github.com/BrunodosSantosVaz/lessentiel/issues). Acompanhe o [quadro público](https://github.com/users/BrunodosSantosVaz/projects/33) e o [histórico de versões](https://github.com/BrunodosSantosVaz/lessentiel/releases).
