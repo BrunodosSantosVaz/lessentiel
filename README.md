@@ -5,7 +5,7 @@
 
 <div align="center">
 
-[![CI](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml/badge.svg?branch=develop)](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml)
+[![CI](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml/badge.svg?branch=main)](https://github.com/BrunodosSantosVaz/lessentiel/actions/workflows/bb-ci.yml)
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-2C2E3C)](LICENSE)
 [![Versões](https://img.shields.io/github/v/release/BrunodosSantosVaz/lessentiel?include_prereleases&color=2C2E3C)](https://github.com/BrunodosSantosVaz/lessentiel/releases)
 
