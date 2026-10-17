@@ -1,24 +1,12 @@
 {
-  "O backend sobe sem erro": [
-    "nao-se-aplica",
-    "Extensão local, sem backend ou serviço servidor."
-  ],
-  "O front compila": [
-    "portao",
-    "ci"
-  ],
+  "O backend sobe sem erro": ["nao-se-aplica", "Extensão local, sem backend ou serviço servidor."],
+  "O front compila": ["portao", "ci"],
   "As migrações rodam do zero e a partir da versão anterior": [
     "nao-se-aplica",
     "Não há banco nem migrações; preferências conservam chaves locais."
   ],
-  "O ambiente sobe pelo método de deploy do alvo": [
-    "portao",
-    "candidata"
-  ],
-  "Nenhum segredo no pacote do front": [
-    "portao",
-    "seguranca"
-  ],
+  "O ambiente sobe pelo método de deploy do alvo": ["portao", "candidata"],
+  "Nenhum segredo no pacote do front": ["portao", "seguranca"],
   "Rotas privadas exigem autenticação": [
     "nao-se-aplica",
     "Sem contas, rotas de backend ou dados multitenant; acesso por permissões do navegador."
@@ -35,12 +23,6 @@
     "nao-se-aplica",
     "Extensão compilada, sem endpoint de saúde HTTP."
   ],
-  "O README documenta as variáveis de ambiente sem valores": [
-    "portao",
-    "builtin"
-  ],
-  "A auditoria de segurança não tem achado crítico ou alto aberto": [
-    "portao",
-    "builtin"
-  ]
+  "O README documenta as variáveis de ambiente sem valores": ["portao", "builtin"],
+  "A auditoria de segurança não tem achado crítico ou alto aberto": ["portao", "builtin"]
 }
