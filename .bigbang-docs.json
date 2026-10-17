@@ -4,7 +4,7 @@
   "visibilidade": "publico",
   "wiki": {
     "base": "b1e6d4641b685fc4d7ec2a2f62458be957f522a9",
-    "commit": "939de01f6bcfd596c14a6ad1ab6831f7265bf138",
+    "commit": "7ea84becf1512ffe394b327098e4fb5b2e19c757",
     "branch": "master",
     "proposta": "bigbang/proposta-49-bootstrap-production"
   },
@@ -82,7 +82,7 @@
     }
   },
   "codigo": {
-    "commit": "b27822bff53c5fe2143e07dd54b4bb8b5d35001f",
+    "commit": "6e1e27ea3a7935351af859906903cdc3b455ae09",
     "raizes": ["bigbang.toml", "autonomy.toml", ".bigbang-producao.json", ".github/", "AGENTS.md"],
     "excluir": []
   },
@@ -148,8 +148,8 @@
         "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd"
       },
       "testes": [
-        "tests/operacao/test_bootstrap.py:test_repository_matches_canonical_git_origin",
-        "tests/operacao/test_bootstrap.py:test_generated_controls_match_configuration"
+        "tests/operacao/bootstrap.test.mjs:repository matches the canonical Git origin",
+        "tests/operacao/bootstrap.test.mjs:generated controls match the configuration"
       ]
     }
   ],
