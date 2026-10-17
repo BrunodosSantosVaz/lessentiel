@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "b1e6d4641b685fc4d7ec2a2f62458be957f522a9",
-    "commit": "7ea84becf1512ffe394b327098e4fb5b2e19c757",
+    "base": "53f3d2569c52f5dae005b5680a55c924ad71a2e5",
+    "commit": "efd8b78885ad06b98be9a583076510a1863679e0",
     "branch": "master",
-    "proposta": "bigbang/proposta-49-bootstrap-production"
+    "proposta": "bigbang/proposta-52-publish-window"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
@@ -44,7 +44,8 @@
     "docs/decisoes/ADR-0009-bootstrap-producao.md": "docs-decisoes-ADR-0009-bootstrap-producao",
     "docs/decisoes/ADR-0010-codeql-testes.md": "docs-decisoes-ADR-0010-codeql-testes",
     "docs/padroes/excecoes.md": "Excecoes-de-padroes",
-    "docs/plano-original.md": "Plano-original"
+    "docs/plano-original.md": "Plano-original",
+    "docs/decisoes/ADR-0011-janela-publicacao.md": "docs-decisoes-ADR-0011-janela-publicacao"
   },
   "categorias": {
     "produto": {
@@ -82,7 +83,7 @@
     }
   },
   "codigo": {
-    "commit": "6e1e27ea3a7935351af859906903cdc3b455ae09",
+    "commit": "0feb1d1a9fc9a488144a11cac5a9426e5e328adc",
     "raizes": ["bigbang.toml", "autonomy.toml", ".bigbang-producao.json", ".github/", "AGENTS.md"],
     "excluir": []
   },
@@ -144,7 +145,7 @@
         ".github/workflows/bb-qa-reject.yml": "680da094c1b15734cc4c3b3b8bad2cc11c794ef1eefe1b0b49a0815db042cca1",
         ".github/workflows/bb-start-sprint.yml": "0f70b8243956d46d8530779cf537c1f82f438dafb7d5ea65b61c92800a0fbfc8",
         "AGENTS.md": "e85991e87216598d6847cd7ce92377835e70bc855b310b5dedea502c992fbbc7",
-        "autonomy.toml": "c438cb6320d548af0d47a49c8f491b73d7714d0e98bcb71c3339a28d34b0ac56",
+        "autonomy.toml": "1454c353b576935c440408d76365ab1b636c7341e70fd1068881d70c2c41318c",
         "bigbang.toml": "4dc4f5dc2284ff1c4ed95cce17ff4805d307deb9e79043ff36e840fe37b0ccbd"
       },
       "testes": [
