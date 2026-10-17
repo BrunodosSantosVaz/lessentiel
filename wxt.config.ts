@@ -8,7 +8,7 @@ const packageVersion = JSON.parse(readFileSync(new URL("./package.json", import.
 export default defineConfig({
   manifest: {
     name: "L’Essentiel",
-    version_name: `${packageVersion}${process.env.BB_RC ? `-rc.${process.env.BB_RC}` : ""}`,
+    version_name: packageVersion,
     description: "O essencial da sua leitura. Páginas web e PDFs locais, sem distrações.",
     default_locale: "pt_BR",
     permissions: ["activeTab", "scripting", "contextMenus", "storage"],
