@@ -3,10 +3,10 @@
   "repositorio": "BrunodosSantosVaz/lessentiel",
   "visibilidade": "publico",
   "wiki": {
-    "base": "36cfa7361c224a710b6b608ea09ffd6197a17c09",
-    "commit": "df0e123fbed7427465fabf1d8b6fb95fdbfc3ec9",
+    "base": "df0e123fbed7427465fabf1d8b6fb95fdbfc3ec9",
+    "commit": "609ebedd79ebb451392257a7031eb2ab4e08e879",
     "branch": "master",
-    "proposta": "bigbang/proposta-60-stable-version"
+    "proposta": "bigbang/proposta-chrome-web-store"
   },
   "paginas": {
     "PRODUTO.md": "PRODUTO",
