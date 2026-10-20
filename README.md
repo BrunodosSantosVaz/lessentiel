@@ -221,7 +221,7 @@ Comandos, permissões e verificação dos pacotes: [Wiki → Operação](https:/
 
 ## 🤝 Contribuindo
 
-Encontrou um problema? [Abra uma issue](https://github.com/BrunodosSantosVaz/lessentiel/issues). Acompanhe o [quadro público](https://github.com/users/BrunodosSantosVaz/projects/33) e o [histórico de versões](https://github.com/BrunodosSantosVaz/lessentiel/releases).
+Encontrou um problema? [Abra uma issue](https://github.com/BrunodosSantosVaz/lessentiel/issues). Dúvidas e ideias vão para as [Discussions](https://github.com/BrunodosSantosVaz/lessentiel/discussions). Acompanhe o [quadro público](https://github.com/users/BrunodosSantosVaz/projects/33) e o [histórico de versões](https://github.com/BrunodosSantosVaz/lessentiel/releases).
 
 Este projeto é construído com o framework [Big Bang](https://github.com/BrunodosSantosVaz/big-bang): uma pessoa decide, IAs executam, e toda mudança passa por uma esteira com testes, revisão e homologação.
 
